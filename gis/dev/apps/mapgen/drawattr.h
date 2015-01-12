@@ -1,0 +1,99 @@
+#ifndef DRAWATTR_H
+#define DRAWATTR_H
+
+#include "sysdefs.h"
+#include "gltext.h"
+#include "rgbf.h"
+
+class GlObj;
+
+class DrawAttr
+{
+public:
+    enum LabelPos
+    {
+        Top = 1,
+        Middle = 2,
+        Bottom = 4,
+        Left = 8,
+        Center = 16,
+        Right = 32
+    };
+
+public:
+    DrawAttr();
+
+    static bool drawPolyFill(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+    static bool drawPolyOutline(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+    static bool drawPolyMasked(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+    static bool drawLabels(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+
+    static float alpha(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+    static Rgbf colorPolyFill(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+    static Rgbf colorPolyOutline(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+    static Rgbf colorLabels(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+
+    static const vector< shared_ptr<GlObj> >* maskPoly(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+
+    static GlText* font(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+    static std::string* feature(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+
+    static bool drawPolyFill(DrawAttr *plyr, DrawAttr *pover);
+    static bool drawPolyOutline(DrawAttr *plyr, DrawAttr *pover);
+    static bool drawPolyMasked(DrawAttr *plyr, DrawAttr *pover);
+
+    static bool drawLabels(DrawAttr *plyr, DrawAttr *pover);
+
+    static float alpha(DrawAttr *plyr, DrawAttr *pover);
+    static Rgbf colorPolyFill(DrawAttr *plyr, DrawAttr *pover);
+    static Rgbf colorPolyOutline(DrawAttr *plyr, DrawAttr *pover);
+    static Rgbf colorLabels(DrawAttr *plyr, DrawAttr *pover);
+
+    static const vector< shared_ptr<GlObj> >* maskPoly(DrawAttr *plyr, DrawAttr *pover);
+
+    static GlText* font(DrawAttr *plyr, DrawAttr *pover);
+    static std::string* feature(DrawAttr *plyr, DrawAttr *pover);
+
+
+public:
+    std::string _name;
+
+    bool _drawName;
+    bool _drawLabels;
+    std::string _feature;
+    bool _useLabelPosOffset;
+    Point2d _labelOfs;
+
+    bool _drawPolyFill;
+    bool _drawPolyOutline;
+    bool _drawPolyMasked;
+    vector< shared_ptr<GlObj> > _maskPolyList;
+
+    // TODO: this can be flushed out much better
+    float _alpha;
+    Rgbf _colorPolyFill;
+    Rgbf _colorPolyOutline;
+    Rgbf _colorLabels;
+
+    GlText _font;
+
+    bool _overrideDrawLabels;
+
+    bool _overrideDrawPolyFill;
+    bool _overrideDrawPolyOutline;
+    bool _overrideDrawPolyMasked;
+
+    bool _overrideAlpha;
+    bool _overrideColorPolyFill;
+    bool _overrideColorPolyOutline;
+    bool _overridePolyMask;
+    bool _overrideColorLabels;
+
+    bool _overrideFont;
+    bool _overrideFeature;
+
+};
+
+typedef std::tr1::shared_ptr< DrawAttr > PDrawAttr;
+
+#endif
