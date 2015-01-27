@@ -1,7 +1,6 @@
 #ifndef SYSDEFS_H
 #define SYSDEFS_H
 
-#include <tchar.h>
 #include "logger.h"
 #include <vector>
 #include <string>

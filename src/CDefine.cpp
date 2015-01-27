@@ -89,8 +89,8 @@ double CDefine::SECS_IN_24HR = 86400;
 double CDefine::EPSILON_PIVDIAM = 0.0001;
 
 #ifndef UNDER_CE
-const TCHAR CDefine::AC_DIR_LEFT[] = _T("Left");
-const TCHAR CDefine::AC_DIR_RIGHT[]=    _T("Right");
-const TCHAR CDefine::AC_DIR_CENTERED[]= _T("Centered");
+const char CDefine::AC_DIR_LEFT[] =    _T("Left");
+const char CDefine::AC_DIR_RIGHT[]=    _T("Right");
+const char CDefine::AC_DIR_CENTERED[]= _T("Centered");
 #endif
 

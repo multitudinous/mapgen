@@ -1,8 +1,6 @@
 #ifndef CDEFINE_H
 #define CDEFINE_H
 
-#include <TCHAR.H>
-
 
 class CDefine  
 {
@@ -175,9 +173,9 @@ public:
     // Time stuff
     static double SECS_IN_24HR;
 
-    static const TCHAR AC_DIR_LEFT[12];
-    static const TCHAR AC_DIR_RIGHT[12];
-    static const TCHAR AC_DIR_CENTERED[12];
+    static const char AC_DIR_LEFT[12];
+    static const char AC_DIR_RIGHT[12];
+    static const char AC_DIR_CENTERED[12];
 
 	// epsilons
 	static double EPSILON_PIVDIAM;
