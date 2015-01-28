@@ -4,6 +4,7 @@
 #include "vector3.h"
 #include "point2d.h"
 
+#define CALLBACK
 class GeoPoly;
 
 class Gldraw

@@ -14,6 +14,6 @@ public:
     virtual bool process(GisSys *pgis) { return false; } // return false when done
 };
 
-typedef std::tr1::shared_ptr<BatchCfg> PBatchCfg;
+typedef std::shared_ptr<BatchCfg> PBatchCfg;
 
 #endif

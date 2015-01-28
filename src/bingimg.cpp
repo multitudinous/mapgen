@@ -1,5 +1,5 @@
 #include "bingimg.h"
-#include <QTGui/QImageReader>
+#include <QtGui/QImageReader>
 #include "utlstring.h"
 #include "sysdefs.h"
 #include <QFile>
@@ -261,4 +261,3 @@ bool BingImg::validateCache()
 
     return dir.mkpath(_cacheFolder.c_str());
 }
-

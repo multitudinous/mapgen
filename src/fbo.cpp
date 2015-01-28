@@ -37,7 +37,7 @@ Fbo::~Fbo()
 //============================================================================
 bool Fbo::create(PCamera camera, GLuint width, GLuint height)
 {
-    if (m_tx == NULL || m_tx->GetWidth() != width || m_tx->GetHeight() != height)
+    if ( !m_tx || (m_tx->GetWidth() != width) || (m_tx->GetHeight() != height) )
     {
         m_tx.reset(new Texture());
         if (!m_tx->Create(width, height, Texture::I_FILTER_NONE))
@@ -60,7 +60,7 @@ bool Fbo::create(PCamera camera, GLuint width, GLuint height, GLuint txid)
     m_w = width;
     m_h = height;
     m_txid = txid;
-    if (m_tx != NULL && m_tx->GetId() != txid) m_tx.reset();
+    if ( m_tx && (m_tx->GetId() != txid) ) m_tx.reset();
 
     //GLint samples = 0;
     //glGetIntegerv(GL_MAX_SAMPLES_EXT, &samples);

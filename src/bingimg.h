@@ -4,20 +4,20 @@
 #include "extents.h"
 
 #include <QObject>
-#include <QTNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkAccessManager>
 #include <QUrl>
-#include <QTNetwork/QNetworkRequest>
-#include <QTNetwork/QNetworkReply>
-#include <QTGui/QImage>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
+#include <QtGui/QImage>
 
-typedef std::tr1::shared_ptr<QImage> PQImage;
+typedef std::shared_ptr<QImage> PQImage;
 
 class BingImg : public QObject
 {
     Q_OBJECT
 public:
     explicit BingImg(const char *cacheFolder="c:/mapgen/cache/bing/", bool useCache=true, QObject *parent = 0);
-    
+
     bool query(const Extents &ext);
     bool done() const;
 
@@ -27,7 +27,7 @@ public:
     bool setCachePath(const char *path);
 
 signals:
-    
+
 public slots:
     void downloadFinished();
 
@@ -55,7 +55,7 @@ protected:
 
     bool _useCache;
     std::string _cacheFolder;
-    
+
 };
 
 #endif // BINGIMG_H

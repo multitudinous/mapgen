@@ -4,7 +4,7 @@
 #include <cassert>
 #include <cmath>
 #include "basevector.h"
-#include "Point2d.h"
+#include "point2d.h"
 
 	template <typename T>
 	struct Vector3 : BaseVector<T,3>
@@ -208,7 +208,7 @@
 		T s = v.x*v.x + v.y*v.y + v.z*v.z;
 		if ( s == 0 )
 			return v;
-		
+
 		s = 1 / static_cast<T>(sqrt(s));
 		return Vector3<T>(v.x * s, v.y * s, v.z * s);
 	}
@@ -261,10 +261,10 @@
 	{
 		Vector3<T> v1, v2;
 		Vector3<T>  p1(pp1), p2(pp2), p3(pp3);
-		
+
 		v2 = p3 - p2;
 		v1 = p2 - p1;
-		
+
 		return ComputeNormal(v1, v2);
 	}
 

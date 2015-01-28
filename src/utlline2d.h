@@ -29,12 +29,12 @@ public:
       SIntersect()
       {
         ipt       = Point2d(0,0);
-        collinear  = FALSE;
-        parallel   = FALSE;
-        iOnSegs    = FALSE;
-        iOnSeg1    = FALSE;
-        iOnSeg2    = FALSE;
-        iOnLine    = FALSE;
+        collinear  = false;
+        parallel   = false;
+        iOnSegs    = false;
+        iOnSeg1    = false;
+        iOnSeg2    = false;
+        iOnLine    = false;
         seg1Pos    = 0;
         seg2Pos    = 0;
       }

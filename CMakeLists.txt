@@ -21,8 +21,10 @@ find_package( yamlcpp )
 find_package( FTGL )
 find_package( Freetype )
 find_package( GLEW )
+find_package( GLUT )
+find_package( OpenGL )
 
-FIND_PACKAGE(Qt4 REQUIRED COMPONENTS QtCore QtGui )
+FIND_PACKAGE(Qt4 REQUIRED COMPONENTS QtCore QtGui QtNetwork)
 include(${QT_USE_FILE})
 
 include(VESSetupCompiler)

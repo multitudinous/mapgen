@@ -1,7 +1,7 @@
 #include "gissys.h"
 //#include "toolsGLShader.h"
 #include "box3.h"
-#include "Gldraw.h"
+#include "gldraw.h"
 #include "utltxgeo.h"
 #include "bingimg.h"
 #include "gradientpicker.h"
@@ -173,7 +173,7 @@ bool GisSys::init(QCoreApplication *app, int argc, const char** argv, int winWid
 		LogError("%s GlutSys::Init failed", func);
 		return false;
 	}
-	
+
     //if (!initFbo()) return false;
 
 	glDisable(GL_LIGHTING);
@@ -395,4 +395,3 @@ bool GisSys::initFbo()
     //m_fbo->getDrawParams()->zfr = m_pXmlGeo->ZFar();
     return true;
 }
-

@@ -3,18 +3,18 @@
 
 #include <string>
 #include <vector>
-#include <tchar.h>
+//#include <tchar.h>
 
 class UtlString
 {
 public:
-	static std::string GetPath(const char *filePath, bool includeLastSep=true); 
+	static std::string GetPath(const char *filePath, bool includeLastSep=true);
 	static std::string GetFilename(const char *filePath);
 	static std::string RemoveExtension(const char *file, std::string *pExt=NULL);
     static std::string GetExtension(const char *filePath);
 	static void AddDirSlash(std::string &path);
 
-	static bool GetList(const TCHAR *src, std::vector<int> *pResult);
+	static bool GetList(const char *src, std::vector<int> *pResult);
 
     static int explode(std::string str, const std::string &separator, std::vector<std::string>* results);
 

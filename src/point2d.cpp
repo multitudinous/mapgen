@@ -1,11 +1,11 @@
 /**
- * Copyright 2007 
+ * Copyright 2007
  * Code Hammer Technologies, LLC
  * www.code-hammer.com
  *
  */
 
-// Includes 
+// Includes
 #pragma warning(disable: 4100)
 #include "point2d.h"
 //#include "CToolsMisc.h"
@@ -64,7 +64,7 @@ Point2d::~Point2d()
 }
 
 /**
- * 
+ *
  *
  */
 void Point2d::vGet(double ad2[2])
@@ -74,7 +74,7 @@ void Point2d::vGet(double ad2[2])
 }
 
 /**
- * 
+ *
  *
  */
 void Point2d::vSet(double ad2[2])
@@ -211,7 +211,7 @@ int Point2d::iGetQuadrant() const
  */
 void Point2d::vWinToCar(double dH)
 {
-  dY = dH - dY; 
+  dY = dH - dY;
 }
 
 /**
@@ -219,7 +219,7 @@ void Point2d::vWinToCar(double dH)
  */
 void Point2d::vCarToWin(double dH)
 {
-  dY = dH - dY; 
+  dY = dH - dY;
 }
 
 // +
@@ -322,7 +322,7 @@ Point2d Point2d::operator/ (const double d) const
 }
 
 //=======================================================================
-//=======================================================================	
+//=======================================================================
 Point2d& Point2d::operator+= (const Point2d &clPt)
 {
 	dX += clPt.dX;
@@ -369,13 +369,4 @@ bool operator== (const Point2d &clPt1, const Point2d &clPt2)
 bool operator!= (const Point2d &clPt1, const Point2d &clPt2)
 {
   return !(clPt1 == clPt2);
-}
-
-bool bPtEquality(const Point2d &clPt1, const Point2d &clPt2, double dEpsilon)
-{
-  if (fabs(clPt1.dX - clPt2.dX) < dEpsilon &&
-      fabs(clPt1.dY - clPt2.dY) < dEpsilon)
-    return true;
-
-  return false;
 }

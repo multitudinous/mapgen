@@ -8,7 +8,7 @@ class SleepSim{
      QMutex localMutex;
      QWaitCondition sleepSimulator;
 public:
-    SleepSim::SleepSim()
+    SleepSim()
     {
         localMutex.lock();
     }

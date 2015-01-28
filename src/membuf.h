@@ -27,6 +27,6 @@ protected:
 	int m_lenY;
 };
 
-typedef std::tr1::shared_ptr<MemBuf> PMemBuf;
+typedef std::shared_ptr<MemBuf> PMemBuf;
 
 #endif

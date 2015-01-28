@@ -18,7 +18,7 @@ protected:
         std::string validationFile;
         std::string name;
     };
-    typedef std::tr1::shared_ptr<BatchItem> PBatchItem;
+    typedef std::shared_ptr<BatchItem> PBatchItem;
 
 public:
     BatchCfgWordFind(const char *jsonFolder, const char *wordFolder, const char *outFolder);

@@ -153,7 +153,7 @@ class LinkedList
 
     STListNode *m_pstPoolFirst; // memory pool node
     int         m_iPoolCount;   // number of memory pool items
-    BOOL        m_bPoolOn;      // memory pool on or off
+    bool        m_bPoolOn;      // memory pool on or off
 
         STListNode **m_ppastCursor;	// array of cursors - iterator type behavior (Note: Cursors 0,1,2.. m_iTotalCursors)
         int  *m_paiLastCursorDir;		// the last vGetItem call that the user made for (for deletes)
@@ -294,7 +294,7 @@ virtual ~LinkedList()
 
 // Interface ///////////////////////////////////////////////////////////////////////////////////
 
-void vSetCursorCount(UINT uiTotalCursors=1)
+void vSetCursorCount(unsigned int uiTotalCursors=1)
 {
   if (m_ppastCursor)
     {
@@ -315,7 +315,7 @@ void vSetCursorCount(UINT uiTotalCursors=1)
     m_paiLastCursorDir = new int[uiTotalCursors];
 
     // initialize all defualt cursor specifics
-    for(UINT i=0; i < uiTotalCursors; i++)
+    for(unsigned int i=0; i < uiTotalCursors; i++)
     {
         m_ppastCursor[i] = m_pstFirst;
         m_paiLastCursorDir[i] = I_FORWARD;			// defualt
@@ -2004,7 +2004,7 @@ void vSetCursorDir(bool bForward=true, int iCursor=0)
 // *****************************************************************************
 // *****************************************************************************
 // -
-void vEnableMemPool(BOOL bOn)
+void vEnableMemPool(bool bOn)
 {
   m_bPoolOn = bOn;
 }

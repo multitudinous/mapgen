@@ -1,5 +1,5 @@
 /**
- * Copyright 2007 
+ * Copyright 2007
  * Code Hammer Technologies, LLC
  * www.code-hammer.com
  *
@@ -9,13 +9,15 @@
 
 #include "sysdefs.h"
 
+#include <cmath>
+
 //class CPoint;
 
 // +
 // Start Point2d
 class Point2d
 {
-	public:
+    public:
         Point2d();
         Point2d(double dXPt, double dYPt);
         Point2d(const Point2d &clPt);
@@ -27,7 +29,7 @@ class Point2d
     void vTrans(const Point2d &clPt);
     double dLen() const;
     double dGetAng(const Point2d &clPt, bool bNormalize=true);
-	double dPolarAngle(bool bNormalize=true) const;
+    double dPolarAngle(bool bNormalize=true) const;
     void vGetPolarPos(double dRad, double dLen);
     int iGetQuadrant() const;
     void vWinToCar(double dH);
@@ -50,11 +52,17 @@ class Point2d
     //operator CPoint() const;
     friend bool operator== (const Point2d &clPt1, const Point2d &clPt2);
     friend bool operator!= (const Point2d &clPt1, const Point2d &clPt2);
-    friend bool bPtEquality(const Point2d &clPt1, const Point2d &clPt2, double dEpsilon=.00001); // equality but allows for epsilon adjustment
+	friend bool bPtEquality(const Point2d &clPt1, const Point2d &clPt2, double dEpsilon=.00001) // equality but allows for epsilon adjustment
+	{
+		if (fabs(clPt1.dX - clPt2.dX) < dEpsilon &&
+			fabs(clPt1.dY - clPt2.dY) < dEpsilon)
+		return true;
 
+		return false;
+	}
   public:
-		double dX;
-		double dY;
+	double dX;
+	double dY;
 };
 // End Point2d
 // -

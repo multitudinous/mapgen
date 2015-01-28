@@ -94,6 +94,6 @@ public:
 
 };
 
-typedef std::tr1::shared_ptr< DrawAttr > PDrawAttr;
+typedef std::shared_ptr< DrawAttr > PDrawAttr;
 
 #endif

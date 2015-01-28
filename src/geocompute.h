@@ -10,7 +10,7 @@ class GeoCompute : public GlObj
 {
 protected:
     typedef std::vector<GeoWords::WordPos> WordsList;
-    typedef std::tr1::shared_ptr<WordsList> PWordsList;
+    typedef std::shared_ptr<WordsList> PWordsList;
     typedef std::map<std::string, PWordsList> WordMap;
     typedef std::map<std::string, GeoPoly*> PolyMap;
 

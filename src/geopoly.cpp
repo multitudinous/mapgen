@@ -1,4 +1,4 @@
-#include "GeoPoly.h"
+#include "geopoly.h"
 #include "gldraw.h"
 #include "utlline2d.h"
 

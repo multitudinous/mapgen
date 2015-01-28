@@ -72,7 +72,7 @@ bool GdalFile::Load(const char *file)
 bool GdalFile::LoadBingWms(const Extents &ext)
 {
     //const char *func = "GdalFile::LoadBingWms() - ";
-    
+
     //Testing real WMS server. Tile level not used.
     //Need to write out the file with the bounds we want
     //if ( FILE *ffile = fopen( TEMPFILE_WMSDATA, "w" ) )
@@ -128,7 +128,7 @@ bool GdalFile::LoadBingWms(const Extents &ext)
 	//str += "<ZeroBlockOnServerException>true</ZeroBlockOnServerException>";
 
     str += "</GDAL_WMS>";
-    
+
     LogTrace("wms: %s", str.c_str());
     //OGRDataSource *ds = OGRSFDriverRegistrar::Open(str.c_str());
 
@@ -154,7 +154,7 @@ bool GdalFile::LoadBingWms(const Extents &ext)
 		LogError("%s failed to load wms with extents: %s", ext.asStr().c_str());
         return false;
     }
-        
+
     // Make a copy of the raster and save it as GeoTiff
     dataSource = TEMPFILE_BASEIMAGE;
     GDALDriverManager *Mgr = GetGDALDriverManager();
@@ -179,22 +179,22 @@ bool GdalFile::LoadBingWms(const Extents &ext)
     std::cout << " and with " << newDataset->GetRasterCount() << " bands." << std::endl;
     GDALClose( newDataset );
     GDALClose( wmsDataset );
-    
-    
+
+
     try
     {
         // Base raster
         feature_type_style raster_style;
-        
+
         rule raster_style_rule;
         raster_symbolizer sym;
         sym.set_opacity( 1.0 );
         sym.set_scaling_method( SCALING_BILINEAR );
         raster_style_rule.append( sym );
         raster_style.add_rule(raster_style_rule);
-        
+
         map->insert_style("raster", raster_style);
-        
+
         // base raster
         {
             parameters p;
@@ -204,7 +204,7 @@ bool GdalFile::LoadBingWms(const Extents &ext)
             p["hix"] = m_mapExtents[1];
             p["loy"] = m_mapExtents[2];
             p["hiy"] = m_mapExtents[3];
-            
+
             layer lyr( "raster" );
             lyr.set_datasource( datasource_cache::instance().create( p ) );
             lyr.add_style( "raster" );
@@ -285,7 +285,7 @@ bool GdalFile::LoadBingTms(const Extents &ext, int tileLevel)
 	if (!InitDataset()) return false;
 
 	saveToTiff("tms.tiff");
-	
+
 
 	return false;
 
@@ -367,7 +367,7 @@ bool GdalFile::InitDataset()
 
 	if (m_pds->GetGeoTransform( m_gt ) != CE_None)
 	{
-		LogError("%s Error: failed to get the geo transform from dataset %s", func, m_name.c_str());		
+		LogError("%s Error: failed to get the geo transform from dataset %s", func, m_name.c_str());
 		return false;
     }
 
@@ -377,7 +377,7 @@ bool GdalFile::InitDataset()
 	m_extents.r = m_gt[0] + m_w*m_gt[1] + m_h*m_gt[2];
 	m_extents.b = m_gt[3] + m_w*m_gt[4] + m_h*m_gt[5];
 
-	
+
 
 	// TODO: need to time this, if the stats are not calculated and no time hit, then it would be fine to init stats here, otherwise
 	// just get stats when getting hmap
@@ -391,13 +391,13 @@ bool GdalFile::InitDataset()
 	pBand->GetStatistics(1, 1, &m_stats.min, &m_stats.max, &m_stats.mean, &m_stats.stddev);
 	*/
 
-	
-	
+
+
 	LogTrace("%s info...", m_name.c_str());
 	LogTrace("w: %d, h: %d, rasters: %d", m_w, m_h, m_c);
 	LogTrace("Origin = (%.6f,%.6f)", m_gt[0], m_gt[3]);
 	LogTrace("Pixel Size = (%.6f,%.6f)", m_gt[1], m_gt[5]);
-	LogTrace("%s extets: %s", func, m_extents.asStr());
+	LogTrace("%s extets: %s", func, m_extents.asStr().c_str() );
 
     /*
     char **meta = m_pds->GetDriver()->GetMetadata();
@@ -438,7 +438,7 @@ bool GdalFile::GetChannelInfo(int channelid, std::string *pInfo) const
     int             nBlockXSize, nBlockYSize;
     int             bGotMin, bGotMax;
     double          adfMinMax[2];
-    
+
 	if (!ValidChannel(channelid)) return false;
 
     pBand = m_pds->GetRasterBand( channelid );
@@ -463,7 +463,7 @@ bool GdalFile::GetChannelInfo(int channelid, std::string *pInfo) const
     if( ! (bGotMin && bGotMax) ) GDALComputeRasterMinMax((GDALRasterBandH)pBand, TRUE, adfMinMax);
 
     Msg(pInfo, "Min=%.3fd, Max=%.3f\n", adfMinMax[0], adfMinMax[1] );
-        
+
     if (pBand->GetOverviewCount() > 0) Msg(pInfo, "Band has %d overviews.\n", pBand->GetOverviewCount() );
 
     if (pBand->GetColorTable() != NULL)
@@ -503,14 +503,14 @@ bool GdalFile::saveToTiff(const char *path)
 	const char *func = "GdalFile::saveToTiff() - ";
 
 	LogTrace("");
-	LogTrace("%s saving to tiff: %s...", func, path); 
+	LogTrace("%s saving to tiff: %s...", func, path);
 
 	// Make a copy of the raster and save it as GeoTiff
     GDALDriverManager *Mgr = GetGDALDriverManager();
     GDALDriver *driver = Mgr->GetDriverByName( "GTiff" );
     if ( driver == NULL )
     {
-		LogError("%s Unable to obtain GDAL driver for GeoTiff.", func); 
+		LogError("%s Unable to obtain GDAL driver for GeoTiff.", func);
 		return false;
 	}
 
@@ -521,7 +521,7 @@ bool GdalFile::saveToTiff(const char *path)
 		LogError("%s Failed to copy to %s, last error: %s", func, path, CPLGetLastErrorMsg());
         return false;
 	}
-    
+
 	GDALClose(newDataset);
 
 	return true;
@@ -546,7 +546,7 @@ bool GdalFile::GetRGB(MemBuf *pbuf, bool addAlpha) const
 	LogTrace("", func);
 	LogTrace("", func);
 	LogTrace("%s loading RGB data from raster...", func);
-	
+
 	for (int i=1; i<=3; i++)
 	{
 		GDALRasterBand *pBand = m_pds->GetRasterBand(i);
@@ -648,7 +648,7 @@ bool GdalFile::ValidImage(int numChannels) const
 		}
 	}
 
-	
+
 	return true;
 }
 
@@ -691,7 +691,7 @@ void GdalFile::GetExtentsUtm(UtmPos *pTL, UtmPos *pBR)
 
 void GdalFile::Msg(std::string *pMsg, const char *format, ...)
 {
-	if (pMsg == NULL) return;
+	/*if (pMsg == NULL) return;
 
 	char buffer[10240];
 	va_list args;
@@ -700,7 +700,7 @@ void GdalFile::Msg(std::string *pMsg, const char *format, ...)
 	vsprintf_s(buffer, 10240, format, args);
 	va_end(args);
 
-	*pMsg += buffer;
+	*pMsg += buffer;*/
 }
 
 void GdalFile::Close()

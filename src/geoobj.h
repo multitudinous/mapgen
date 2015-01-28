@@ -1,7 +1,7 @@
 #ifndef GEOOBJ_H
 #define GEOOBJ_H
 
-#include "GlObj.h"
+#include "globj.h"
 #include "drawattr.h"
 
 class GeoObj : public GlObj

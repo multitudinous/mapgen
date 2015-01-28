@@ -45,6 +45,6 @@ protected:
     std::string _datafile;
 };
 
-typedef std::tr1::shared_ptr<Config> PConfig;
+typedef std::shared_ptr<Config> PConfig;
 
 #endif
