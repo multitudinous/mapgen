@@ -514,7 +514,7 @@ bool GdalFile::saveToTiff(const char *path)
 		return false;
 	}
 
-    char *options[] = {"TILED=NO", NULL};
+    char* options[2] = {"TILED=NO", NULL};
     GDALDataset *newDataset = driver->CreateCopy(path, m_pds, false, options, NULL, NULL);
     if ( newDataset == NULL )
     {

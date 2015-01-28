@@ -288,7 +288,7 @@ bool GeoPoly::getFeatureValue(const std::string &feature, std::string *value)
     MapFieldsInt::iterator iti = _fieldsInt.find(feature);
     if (iti != _fieldsInt.end())
     {
-        sprintf(format, "%.2f", iti->second);
+        sprintf(format, "%.2i", iti->second);
         *value = format;
         return true;
     }
@@ -324,7 +324,7 @@ bool GeoPoly::getDrawFeature(DrawData *pdd, char *str)
     MapFieldsInt::iterator iti = _fieldsInt.find(*pfeature);
     if (iti != _fieldsInt.end())
     {
-        sprintf(str, "%.2f", iti->second);
+        sprintf(str, "%.2i", iti->second);
         return true;
     }
 
