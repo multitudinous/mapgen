@@ -1,5 +1,9 @@
 #include "texture.h"
-#include <gl\GLU.h>
+#ifdef __APPLE__
+#include <OpenGL/glu.h>
+#else
+#include <GL/glu.h>
+#endif
 
 Texture::Texture()
 {
@@ -52,7 +56,7 @@ bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
 
     // create the mipmaps
 	/*
-    if (m_filter != I_FILTER_NONE) 
+    if (m_filter != I_FILTER_NONE)
     {
 	// this will resize your texture if it is not a power of 2
 		if (gluBuild2DMipmaps(GL_TEXTURE_2D, m_pImg->GetSize(), m_pImg->GetLenX(), m_pImg->GetLenY(), eFormat, GL_UNSIGNED_BYTE, m_pImg->GetBuf()))
@@ -98,7 +102,7 @@ bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 		  break;
 	}
-	
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 
@@ -116,9 +120,9 @@ void Texture::Destroy()
 	m_pImg.reset();
 }
 
-GLuint Texture::GetId() 
-{ 
-	return m_glid; 
+GLuint Texture::GetId()
+{
+	return m_glid;
 }
 
 GLuint Texture::GetWidth()

@@ -11,13 +11,13 @@ std::string UtlString::GetPath(const char *filePath, bool includeLastSep)
 	bool foundSep = false;
 	int lenToSep = 0;
     int lenTot = (int)strlen(filePath);
-	
+
 	if (lenTot <= 0) return path;
 
     for (int i=lenTot-1; i>0; i--)
 	{
 		lenToSep++;
-		if (filePath[i] == '\\' || filePath[i] == '/') 
+		if (filePath[i] == '\\' || filePath[i] == '/')
 		{
 			foundSep = true;
 			break;
@@ -41,13 +41,13 @@ std::string UtlString::GetFilename(const char *filePath)
 	bool foundSep = false;
 	int lenToSep = 0;
     int lenTot = (int)strlen(filePath);
-	
+
 	if (lenTot <= 0) return path;
 
 	for (int i=lenTot-1; i>0; i--)
 	{
 		lenToSep++;
-		if (filePath[i] == '\\' || filePath[i] == '/') 
+		if (filePath[i] == '\\' || filePath[i] == '/')
 		{
 			foundSep = true;
 			break;
@@ -76,14 +76,14 @@ std::string UtlString::RemoveExtension(const char *file, std::string *pExt)
 	bool foundSep = false;
 	int lenToSep = 0;
     int lenTot = (int)strlen(file);
-	
+
 	if (pExt) *pExt = "";
 	if (lenTot <= 0) return fileName;
 
 	for (int i=lenTot-1; i>0; i--)
 	{
 		lenToSep++;
-		if (file[i] == '.') 
+		if (file[i] == '.')
 		{
 			foundSep = true;
 			break;
@@ -121,11 +121,11 @@ std::string UtlString::GetExtension(const char *filePath)
 
 //============================================================================
 //============================================================================
-bool UtlString::GetList(const TCHAR *src, std::vector<int> *pResult)
+bool UtlString::GetList(const char *src, std::vector<int> *pResult)
 {
 	if (!src || !pResult) return false;
 
-    int len = (int)_tcslen(src);
+    int len = (int)strlen(src);
 	if (len <= 0) return false;
 
 	std::string scur;
@@ -137,19 +137,19 @@ bool UtlString::GetList(const TCHAR *src, std::vector<int> *pResult)
 		{
 			if (scur.size())
 			{
-				pResult->push_back(_tstoi(scur.c_str()));
+				pResult->push_back( std::stoi(scur) );
 				scur.clear();
 				fnd++;
 			}
 			break;
 		}
 
-		TCHAR c = src[loc];
-		if (c == _T(','))
+		char c = src[loc];
+		if (c == ',')
 		{
 			if (scur.size())
 			{
-				pResult->push_back(_tstoi(scur.c_str()));
+				pResult->push_back( std::stoi(scur) );
 				scur.clear();
 				fnd++;
 			}
@@ -180,23 +180,23 @@ void UtlString::AddDirSlash(std::string &path)
 //============================================================================
 void UtlString::format(std::string& a_string, const char* fmt, ...)
 {
-    va_list vl;
+    /*va_list vl;
     va_start(vl, fmt);
     int size = _vscprintf( fmt, vl );
     a_string.resize( ++size );
     vsnprintf_s((char*)a_string.data(), size, _TRUNCATE, fmt, vl);
-    va_end(vl);
+    va_end(vl);*/
 }
 
 std::string UtlString::format(const char* fmt, ...)
 {
     std::string a_string;
-    va_list vl;
+    /*va_list vl;
     va_start(vl, fmt);
     int size = _vscprintf( fmt, vl );
     a_string.resize( ++size );
     vsnprintf_s((char*)a_string.data(), size, _TRUNCATE, fmt, vl);
-    va_end(vl);
+    va_end(vl);*/
 
     return a_string;
 }
