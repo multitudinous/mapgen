@@ -18,6 +18,7 @@ endif()
 
 find_package( GDAL )
 find_package( yamlcpp )
+find_package( FTGL )
 
 FIND_PACKAGE(Qt4 REQUIRED COMPONENTS QtCore QtGui )
 include(${QT_USE_FILE})
