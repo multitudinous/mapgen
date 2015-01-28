@@ -313,9 +313,10 @@ bool GeoWords::updateBoxHeightIfNeeded(double h)
         _box.t = _box.b + h;
         return true;
         break;
+    default:
     //case BoxCompute_TLBR:
         // should already be good
-       // break;
+        break;
     }
 
     return false;
