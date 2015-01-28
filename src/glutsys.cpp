@@ -155,11 +155,12 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
 	glewInit();
 	//wglewInit();
 
+#ifdef _WIN32
 	if (wglSwapIntervalEXT)
 	{
 		wglSwapIntervalEXT(1); 
 	}
-
+#endif
 	/*
 	int (*SwapInterval)(int);
 SwapInterval = getProcAddress("glXSwapInterval");

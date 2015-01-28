@@ -357,7 +357,7 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
 {
     const char *func = "MapYaml::loadDataObj( - )";
 
-    std::string type = getString(node, "type");   
+    std::string type = getString(node, "type");
     std::string name = getString(node, "name");
 
     if (type == "geojson")
@@ -725,7 +725,7 @@ PGlObj MapYaml::getComputeObj(const std::string &name)
         return PGlObj();
     }
 
-    PGlObj obj = std::tr1::dynamic_pointer_cast<GlObj>(it->second);
+    PGlObj obj = std::dynamic_pointer_cast<GlObj>(it->second);
     return obj;
 }
 

@@ -1,4 +1,4 @@
-#include "GradientPicker.h"
+#include "gradientpicker.h"
 #include <QPainter>
 #include <QLinearGradient>
 #include <QRect>

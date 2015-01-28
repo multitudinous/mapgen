@@ -1,7 +1,7 @@
 #include "gltext.h"
 
-#include "FTGL/ftgl.h"
-#include "FTInternals.h"
+#include <FTGL/ftgl.h>
+//#include "FTInternals.h"
 
 //============================================================================
 //============================================================================
@@ -47,9 +47,9 @@ bool GlText::initFontExtrude(const char *name, int size, float depth)
 
 	/*
 Then you can use a different colour for the two render modes:
-glColor3f(1.0, 1.0, 1.0); // White inside 
+glColor3f(1.0, 1.0, 1.0); // White inside
 font->Render("Hello", FTPoint(), FTPoint(), FTGL::RENDER_FRONT);
-glColor3f(1.0, 0.0, 0.0); // Red outline 
+glColor3f(1.0, 0.0, 0.0); // Red outline
 font->Render("Hello", FTPoint(), FTPoint(), FTGL::RENDER_SIDE);
 */
 

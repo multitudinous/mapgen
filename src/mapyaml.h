@@ -1,5 +1,5 @@
 #ifndef MAPYAML_H
-#define MAPYMAL_H
+#define MAPYAML_H
 
 #include "sysdefs.h"
 #include "yaml-cpp/yaml.h"

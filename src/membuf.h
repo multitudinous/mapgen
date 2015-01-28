@@ -21,7 +21,7 @@ public:
 	const void* GetBufRead() const { return m_pbuf; }
 
 protected:
-	void *m_pbuf;
+	void* m_pbuf;
 	int m_size;
 	int m_lenX;
 	int m_lenY;

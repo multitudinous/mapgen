@@ -1,6 +1,9 @@
 #include "membuf.h"
+#ifdef __APPLE__
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
-
+#endif
 MemBuf::MemBuf()
 {
 	m_pbuf = NULL;

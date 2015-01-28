@@ -1,12 +1,13 @@
 #include "logger.h"
 #include <stdarg.h>
 #include <string>
+#include <iostream>
 
 bool gLogXml = false;
 
 void LogError(const tchar *format, ...)
 {
-	tchar buffer[10240];
+	/*tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
@@ -27,12 +28,12 @@ void LogError(const tchar *format, ...)
 		strOut += "\n";
 	}
 
-	LogMsg(strOut.c_str());
+	LogMsg(strOut.c_str());*/
 }
 
 void LogWarning(const tchar *format, ...)
 {
-	tchar buffer[10240];
+	/*tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
@@ -53,12 +54,12 @@ void LogWarning(const tchar *format, ...)
 		strOut += "\n";
 	}
 
-	LogMsg(strOut.c_str());
+	LogMsg(strOut.c_str());*/
 }
 
 void LogTrace(const tchar *format, ...)
 {
-	tchar buffer[10240];
+	/*tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
@@ -78,11 +79,11 @@ void LogTrace(const tchar *format, ...)
 		strOut += "\n";
 	}
 
-	LogMsg(strOut.c_str());
+	LogMsg(strOut.c_str());*/
 }
 
 void LogMsg(const tchar *pacMsg)
 {
 	//OutputDebugString(pacMsg);
-	printf(pacMsg);
+	std::cout << pacMsg << std::endl;
 }

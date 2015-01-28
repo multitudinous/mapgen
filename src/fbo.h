@@ -92,4 +92,4 @@ protected:
 
 typedef shared_ptr<Fbo> PFbo;
 
-#endif;
+#endif

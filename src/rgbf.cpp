@@ -327,7 +327,7 @@ Rgbf::operator DWORD() const
     int iG = (int)(m_af[G] * 255.0);
     int iB = (int)(m_af[B] * 255.0);
 
-    return RGB(iR,iG,iB);
+    return Rgbf(iR,iG,iB);
 }
 
 //=======================================================================
@@ -345,4 +345,3 @@ float Rgbf::operator[](int i) const
     assert(static_cast<unsigned int>(i) < 4);	// Only 3 elements to access
     return m_af[i];
 }
-

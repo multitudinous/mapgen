@@ -16,6 +16,9 @@ using namespace std;
 #include <wglew.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
+#elif __APPLE__
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
 #endif
 
 #define QT
