@@ -39,6 +39,7 @@ Rgbf::Rgbf(float fLevel)
     m_af[A] = 1;
 }
 
+/*
 Rgbf::Rgbf(DWORD dwRGB)
 {
     m_af[R] = (float)GetRValue(dwRGB)/255.0f;
@@ -46,6 +47,7 @@ Rgbf::Rgbf(DWORD dwRGB)
     m_af[B] = (float)GetBValue(dwRGB)/255.0f;
     m_af[A] = 1;
 }
+*/
 
 Rgbf::~Rgbf()
 {
@@ -126,6 +128,7 @@ Rgbf& Rgbf::operator= (const Rgbf &clRGB)
     return *this;
 }
 
+/*
 Rgbf& Rgbf::operator= (DWORD dwRGB)
 {
     m_af[R] = (float)GetRValue(dwRGB)/255.0f;
@@ -135,6 +138,7 @@ Rgbf& Rgbf::operator= (DWORD dwRGB)
 
     return *this;
 }
+*/
 
 Rgbf& Rgbf::operator= (float fLevel)
 {

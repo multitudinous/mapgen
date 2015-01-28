@@ -20,7 +20,7 @@ class Rgbf
         Rgbf(int iR, int iG, int iB, int iA=1);
         Rgbf(const Rgbf &clRGB);
         Rgbf(float fLevel);
-        Rgbf(DWORD dwRGB);
+        //Rgbf(DWORD dwRGB);
         ~Rgbf();
 
         void SetColor(float r, float g, float b, float a);
@@ -40,7 +40,7 @@ class Rgbf
         void vScale();
 
         Rgbf& operator= (const Rgbf &clRGB);
-        Rgbf& operator= (DWORD dwRGB);
+        //Rgbf& operator= (DWORD dwRGB);
         Rgbf& operator= (float fLevel);
         Rgbf  operator+ (const Rgbf &clRGB);
         Rgbf  operator- (const Rgbf &clRGB);
