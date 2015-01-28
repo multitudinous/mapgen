@@ -48,14 +48,14 @@ class Rgbf
         Rgbf  operator* (const Rgbf &clRGB);
         Rgbf& operator+= (float fLevel);
         Rgbf& operator+= (const Rgbf &clRGB);
-    Rgbf& operator-= (float fLevel);
+        Rgbf& operator-= (float fLevel);
         Rgbf& operator-= (const Rgbf &clRGB);
         Rgbf& operator/= (float fLevel);
         Rgbf& operator*= (float fLevel);
         Rgbf& operator*= (const Rgbf &clRGB);
-    Rgbf& operator++ ();
+        Rgbf& operator++ ();
         Rgbf& operator-- ();
-              operator DWORD() const;
+        //operator DWORD() const;
         float& operator[]		 (int i);
         float  operator[]		 (int i) const;
 

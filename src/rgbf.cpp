@@ -325,6 +325,7 @@ Rgbf& Rgbf::operator-- ()
     return *this;
 }
 
+/*
 Rgbf::operator DWORD() const
 {
     int iR = (int)(m_af[R] * 255.0);
@@ -333,6 +334,7 @@ Rgbf::operator DWORD() const
 
     return Rgbf(iR,iG,iB);
 }
+*/
 
 //=======================================================================
 //=======================================================================
