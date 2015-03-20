@@ -7,7 +7,7 @@ bool gLogXml = false;
 
 void LogError(const tchar *format, ...)
 {
-	/*tchar buffer[10240];
+	tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
@@ -28,12 +28,12 @@ void LogError(const tchar *format, ...)
 		strOut += "\n";
 	}
 
-	LogMsg(strOut.c_str());*/
+	LogMsg(strOut.c_str());
 }
 
 void LogWarning(const tchar *format, ...)
 {
-	/*tchar buffer[10240];
+	tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
@@ -54,12 +54,12 @@ void LogWarning(const tchar *format, ...)
 		strOut += "\n";
 	}
 
-	LogMsg(strOut.c_str());*/
+	LogMsg(strOut.c_str());
 }
 
 void LogTrace(const tchar *format, ...)
 {
-	/*tchar buffer[10240];
+	tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
@@ -79,11 +79,13 @@ void LogTrace(const tchar *format, ...)
 		strOut += "\n";
 	}
 
-	LogMsg(strOut.c_str());*/
+	LogMsg(strOut.c_str());
 }
 
 void LogMsg(const tchar *pacMsg)
 {
+#ifdef _MSC_VER
 	//OutputDebugString(pacMsg);
+#endif
 	std::cout << pacMsg << std::endl;
 }

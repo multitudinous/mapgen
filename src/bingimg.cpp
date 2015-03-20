@@ -210,7 +210,8 @@ bool BingImg::setCachePath(const char *path)
 
    if ( end != '/' && end != '\\')
    {
-       _cacheFolder += QDir::separator().toAscii();
+       //_cacheFolder += QDir::separator().toAscii();
+       _cacheFolder += QDir::separator().toLatin1(); // for Qt5
    }
 
    return validateCache();

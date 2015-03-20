@@ -1,6 +1,8 @@
 #ifndef SYSDEFS_H
 #define SYSDEFS_H
 
+#define NOMINMAX
+
 #include "logger.h"
 #include <vector>
 #include <string>
@@ -16,6 +18,7 @@ using namespace std;
 #include <wglew.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
+#include <GL/glut.h>
 #elif __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>

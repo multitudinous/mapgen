@@ -1,12 +1,14 @@
 #ifndef GLUTSYS_H
 #define GLUTSYS_H
 
+/*
 #ifdef __APPLE__
 #include <GL/glew.h>
-#include <GLUT/glut.h>
+#include <GL/glut.h>
 #else
-#include <glut.h>
+#include <GL/glut.h>
 #endif
+*/
 #include "sysdefs.h"
 #include "MoveSys.h"
 #include "filepaths.h"

@@ -34,7 +34,7 @@ if( WIN32 )
         source_group( "Source Files\\${PATH}" FILES ${SRC} )
     endforeach()
 
-    include( InstallPDBFiles )
+    include( VESInstallPDBFiles )
 endif()
 
 if( ${TARGET_CATEGORY} STREQUAL "App" OR ${TARGET_CATEGORY} STREQUAL "Test" )

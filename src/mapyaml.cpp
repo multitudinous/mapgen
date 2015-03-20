@@ -5,6 +5,7 @@
 #include "geoaerial.h"
 #include "geowords.h"
 #include "utlqt.h"
+#include <iostream>
 
 //============================================================================
 //============================================================================
@@ -32,6 +33,15 @@ bool MapYaml::load(const std::string &text, GisSys *pgis)
     {
         clear();
         doc = YAML::Load(text);
+        //std::cout << doc << "\n";
+        // debug
+        /*
+        for (YAML::iterator it = doc.begin(); it != doc.end(); ++it) 
+        {
+            std::string scalar = it->as<std::string>();
+            LogTrace("Found scalar: %s", scalar.c_str());
+        }
+        */
     }
     catch (...)//catch (YAML::ParserException &e)
     {

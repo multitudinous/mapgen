@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 void initYaml(const char *file, GisSys *sys)
 {
     MapYaml yaml;
-    yaml.load(file, sys);
+    yaml.loadFile(file, sys);
     //yaml.load("D:/dev/gis/test/aerial/yaml.txt", sys);
 }
 
