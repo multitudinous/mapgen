@@ -1,6 +1,7 @@
 #include "gdalFile.h"
 #include "membuf.h"
-//#include "utmpos.h"
+#include "logger.h"
+#include "sysdefs.h"
 
 ///Desired output spatial reference as EPSG number.
 #define EPSG_DESIRED_SPATIALREF    3857

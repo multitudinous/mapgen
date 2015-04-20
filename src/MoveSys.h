@@ -1,7 +1,7 @@
 #ifndef MOVESYS_H
 #define MOVESYS_H
 #include "camera.h"
-
+#include <memory>
 
 class MoveSys
 {
@@ -42,6 +42,6 @@ public:
 	float m_elapsedTime;
 };
 
-typedef shared_ptr<MoveSys> PMoveSys;
+typedef std::shared_ptr<MoveSys> PMoveSys;
 
 #endif

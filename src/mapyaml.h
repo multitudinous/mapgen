@@ -1,8 +1,7 @@
 #ifndef MAPYAML_H
 #define MAPYAML_H
 
-#include "sysdefs.h"
-#include "yaml-cpp/yaml.h"
+#include <yaml-cpp/yaml.h>
 #include "drawattr.h"
 #include "geojson.h"
 #include "globj.h"

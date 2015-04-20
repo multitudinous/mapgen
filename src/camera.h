@@ -1,9 +1,9 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "sysdefs.h"
 #include "vector3.h"
 #include "extents.h"
+#include <memory>
 
 class Camera
 {
@@ -64,6 +64,6 @@ public:
 
 };
 
-typedef shared_ptr<Camera> PCamera;
+typedef std::shared_ptr<Camera> PCamera;
 
 #endif

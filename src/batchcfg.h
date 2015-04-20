@@ -11,7 +11,7 @@ public:
     BatchCfg() {}
 
     virtual bool init() { return true; }
-    virtual bool process(GisSys *pgis) { return false; } // return false when done
+    virtual bool process( GisSys* ) { return false; } // return false when done
 };
 
 typedef std::shared_ptr<BatchCfg> PBatchCfg;

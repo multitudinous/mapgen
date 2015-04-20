@@ -1,7 +1,6 @@
 #ifndef DRAWATTR_H
 #define DRAWATTR_H
 
-#include "sysdefs.h"
 #include "gltext.h"
 #include "rgbf.h"
 

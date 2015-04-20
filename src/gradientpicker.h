@@ -1,7 +1,7 @@
 #ifndef GRADIENTPICKER_H
 #define GRADIENTPICKER_H
 
-#include "sysdefs.h"
+#include <memory>
 #include <QImage>
 #include <QColor>
 
@@ -17,8 +17,8 @@ public:
     QColor pick(float percent);
 
 protected:
-    shared_ptr<QImage> _img;
+    std::shared_ptr<QImage> _img;
 };
 
-typedef shared_ptr< GradientPicker > PGradientPicker;
+typedef std::shared_ptr< GradientPicker > PGradientPicker;
 #endif

@@ -1,7 +1,6 @@
 #ifndef GLOBJ_H
 #define GLOBJ_H
 
-#include "sysdefs.h"
 #include "drawdata.h"
 #include "box3.h"
 
@@ -19,7 +18,7 @@ public:
     virtual void insertFront(shared_ptr<GlObj> obj);
     virtual void clearChildren();
 
-    virtual void setDrawAttr(PDrawAttr da) {}
+    virtual void setDrawAttr(PDrawAttr ) {}
 
     virtual void initLabels(DrawData *pdd);
 

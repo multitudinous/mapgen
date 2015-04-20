@@ -1,7 +1,8 @@
 #ifndef FILEPATHS_H
 #define FILEPATHS_H
 
-#include "sysdefs.h"
+#include <string>
+#include <memory>
 
 class FilePaths
 {
@@ -23,6 +24,6 @@ public:
 	std::string m_appName;
 };
 
-typedef shared_ptr<FilePaths> PFilePaths;
+typedef std::shared_ptr<FilePaths> PFilePaths;
 
 #endif

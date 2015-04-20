@@ -1,10 +1,8 @@
 #ifndef BOX3_H
 #define BOX3_H
 
-#include "sysdefs.h"
 #include <limits>
 #include "vector3.h"
-//#include "frustum.h"
 #include "utl3d.h"
 
 #ifdef max

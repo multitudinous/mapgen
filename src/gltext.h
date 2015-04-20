@@ -2,6 +2,8 @@
 #define GLTEXT_H
 
 #include "box3.h"
+#include <memory>
+
 class FTFont;
 
 class GlText
@@ -30,7 +32,7 @@ public:
 
 protected:
 
-	shared_ptr<FTFont> _font;
+	std::shared_ptr<FTFont> _font;
 };
 
 #endif

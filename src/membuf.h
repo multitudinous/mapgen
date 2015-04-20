@@ -1,7 +1,7 @@
 #ifndef MEMBUF_H
 #define MEMBUF_H
 
-#include "sysdefs.h"
+#include <memory>
 
 class MemBuf
 {

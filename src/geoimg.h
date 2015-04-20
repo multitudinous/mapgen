@@ -1,7 +1,6 @@
 #ifndef GEOIMG_H
 #define GEOIMG_H
 
-#include "sysdefs.h"
 #include "geoobj.h"
 #include "texture.h"
 #include "extents.h"

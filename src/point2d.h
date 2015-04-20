@@ -7,8 +7,7 @@
 #ifndef POINT2D_H
 #define POINT2D_H
 
-#include "sysdefs.h"
-
+#include <vector>
 #include <cmath>
 
 //class CPoint;

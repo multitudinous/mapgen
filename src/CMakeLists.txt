@@ -6,19 +6,10 @@ include_directories( ${CMAKE_SOURCE_DIR}/src )
 include_directories( ${Boost_INCLUDE_DIRS} )
 include_directories( ${YAMLCPP_INCLUDE_DIRS} )
 include_directories( ${GDAL_INCLUDE_DIR} )
-include_directories( ${GLEW_INCLUDE_DIR} )
-include_directories( ${GLEW_INCLUDE_DIR}/GL )
-#include_directories( ${FREEGLUT_INCLUDE_DIR} )
+include_directories( ${GLEW_INCLUDE_DIRS} )
 include_directories( ${FTGL_INCLUDE_DIR} )
 include_directories( ${FREETYPE_INCLUDE_DIRS} )
-#include_directories( ${Boost_INCLUDE_DIRS} )
-
-#add_definitions( -DLEAF_GIS_LIBRARY )
-#add_definitions( -D_USE_MATH_DEFINES )
-
-#IF(APPLE)
 INCLUDE_DIRECTORIES( ${GLUT_INCLUDE_DIRS} )
-#ENDIF (APPLE)
 
 #set( HDRS_TO_MOC
 #    bingimg.h
@@ -37,15 +28,12 @@ target_link_libraries( ${TARGET_NAME}
     ${GDAL_LIBRARY}
     ${OPENGL_LIBRARIES}
     ${GLUT_LIBRARIES}
-    #${FREEGLUT_LIBRARY}
-    ${GLEW_LIBRARY}
+    ${GLEW_LIBRARIES}
     ${FTGL_LIBRARY}
     ${FREETYPE_LIBRARIES}
-    ${ZLIB_LIBRARIES}
-    ${PNG_LIBRARIES}
-    Qt5::Gui
-    Qt5::Network
     )
 
+qt5_use_modules(${TARGET_NAME} Gui)
+qt5_use_modules(${TARGET_NAME} Network)
 
 include( VESModuleInstall )

@@ -9,7 +9,7 @@
 #include <memory>
 using namespace std;
 
-#include <glew.h>
+#include <GL/glew.h>
 #ifdef _WIN32
 #define NOMINMAX
 #include <wglew.h>
@@ -19,6 +19,8 @@ using namespace std;
 #elif __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#else
+#include <GL/glut.h>
 #endif
 
 #define QT

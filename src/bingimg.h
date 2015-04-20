@@ -10,6 +10,8 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtGui/QImage>
 
+#include <memory>
+
 typedef std::shared_ptr<QImage> PQImage;
 
 class BingImg : public QObject

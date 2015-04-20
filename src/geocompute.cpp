@@ -236,7 +236,7 @@ bool GeoCompute::computeWordFinder()
 
     if (_name == "t95n_r46w")
     {
-        int idebug = 1;
+        ;
     }
 
     box3d boxWords, boxPolys;

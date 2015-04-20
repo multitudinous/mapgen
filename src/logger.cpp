@@ -7,6 +7,7 @@ bool gLogXml = false;
 
 void LogError(const tchar *format, ...)
 {
+#if WIN32
 	tchar buffer[10240];
 	va_list args;
 
@@ -29,10 +30,12 @@ void LogError(const tchar *format, ...)
 	}
 
 	LogMsg(strOut.c_str());
+#endif
 }
 
 void LogWarning(const tchar *format, ...)
 {
+#if WIN32
 	tchar buffer[10240];
 	va_list args;
 
@@ -55,10 +58,12 @@ void LogWarning(const tchar *format, ...)
 	}
 
 	LogMsg(strOut.c_str());
+#endif
 }
 
 void LogTrace(const tchar *format, ...)
 {
+#if WIN32
 	tchar buffer[10240];
 	va_list args;
 
@@ -80,6 +85,7 @@ void LogTrace(const tchar *format, ...)
 	}
 
 	LogMsg(strOut.c_str());
+#endif
 }
 
 void LogMsg(const tchar *pacMsg)

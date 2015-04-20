@@ -1,7 +1,7 @@
 #include "bingimg.h"
 #include <QtGui/QImageReader>
 #include "utlstring.h"
-#include "sysdefs.h"
+#include "logger.h"
 #include <QFile>
 #include <QDir>
 

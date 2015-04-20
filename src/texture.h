@@ -2,6 +2,7 @@
 #define TEXTURE_H
 
 #include "membuf.h"
+#include "sysdefs.h"
 
 class Texture
 {
@@ -21,7 +22,7 @@ public:
 	virtual ~Texture();
 
 	bool Create(GLuint width, GLuint height, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR);
-	bool Create(shared_ptr<MemBuf> pImg, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR);
+	bool Create(std::shared_ptr<MemBuf> pImg, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR);
 	bool ReCreate();
 	void Destroy();
 
@@ -31,10 +32,10 @@ public:
 
 protected:
 	GLuint m_glid;
-	shared_ptr<MemBuf> m_pImg; // TODO: do we really want to keep this in memory
+	std::shared_ptr<MemBuf> m_pImg; // TODO: do we really want to keep this in memory
 	int m_filter;
 };
 
-typedef shared_ptr<Texture> PTexture;
+typedef std::shared_ptr<Texture> PTexture;
 
 #endif

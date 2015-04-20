@@ -452,7 +452,7 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
         words->_name = name;
 
         // get bounding box mode, and data need to find bounding box of map in pdf
-        std:string computebox = UtlString::toLower(getString(node, "computebox", "auto"));
+        std::string computebox = UtlString::toLower(getString(node, "computebox", "auto"));
         if (computebox == "lrt")
         {
             words->setComputeBoxMode(GeoWords::BoxCompute_LRT);

@@ -3,6 +3,7 @@
 
 #include "vector3.h"
 #include "point2d.h"
+#include "sysdefs.h"
 
 #define CALLBACK
 class GeoPoly;

@@ -220,7 +220,7 @@ LinkedList(int iTotalCursors=1)
   // memory pool items
   m_pstPoolFirst  = NULL;
   m_iPoolCount    = 0;
-  m_bPoolOn       = FALSE;
+  m_bPoolOn       = false;
 }
 
 // +
@@ -246,7 +246,7 @@ LinkedList(LinkedList &clList2)
   // memory pool items
   m_pstPoolFirst  = NULL;
   m_iPoolCount    = 0;
-  m_bPoolOn       = FALSE;
+  m_bPoolOn       = false;
 
     // init cursor specifics
     m_ppastCursor      = NULL;
@@ -271,7 +271,7 @@ LinkedList(LinkedList &clList2)
 // -
 virtual ~LinkedList()
 {
-  m_bPoolOn = FALSE; // don't want to add to the pool in delete list
+  m_bPoolOn = false; // don't want to add to the pool in delete list
 
     // clean up
   vMakeEmpty();

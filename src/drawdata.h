@@ -1,11 +1,6 @@
 #ifndef DRAWDATA_H
 #define DRAWDATA_H
 
-#include "sysdefs.h"
-
-//#include "light.h"
-//#include "frustum.h"
-
 #include "config.h"
 #include "drawattr.h"
 

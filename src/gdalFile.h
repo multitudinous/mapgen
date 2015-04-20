@@ -1,13 +1,10 @@
 #ifndef GDALFILE_H
 #define GDALFILE_H
 
-#include "sysdefs.h"
 #include "gdal_priv.h"
 #include "cpl_conv.h" // for CPLMalloc()
 #include "extents.h"
-
-//#pragma comment(lib, "gdal_i.lib") 
-//#pragma comment(lib, "libcurl_imp.lib")
+#include <memory>
 
 class MemBuf;
 
@@ -74,6 +71,6 @@ protected:
 	std::string m_name;
 };
 
-typedef shared_ptr<GdalFile> PGdalFile;
+typedef std::shared_ptr<GdalFile> PGdalFile;
 
 #endif

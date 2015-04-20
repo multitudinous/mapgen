@@ -69,7 +69,7 @@ bool BatchCfgWordFind::init()
     UtlQt::findFiles(QString(_wordFolder.c_str()), QString("*.txt"), &wordList, false);
 
     // match all json files with word files
-    for (int i=0; i<jsonList.size(); i++)
+    for (size_t i=0; i<jsonList.size(); i++)
     {
         QFileInfo info(jsonList[i]);
         QString jsonName = info.baseName();

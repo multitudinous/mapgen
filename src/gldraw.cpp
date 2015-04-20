@@ -2,8 +2,11 @@
 #include "vector3.h"
 #include "geopoly.h"
 
+#if WIN32
 #define GLU_FUNC_CAST (void (__stdcall *)(void))
-
+#else
+#define GLU_FUNC_CAST (void (*)(void))
+#endif
 struct SVertInfoVN3
 {
 	double adV[3];
@@ -86,7 +89,7 @@ void Gldraw::drawPolyConcaveVN(GLUtesselator *hTess, const std::vector<Point2d> 
   gluNextContour(hTess, GLU_EXTERIOR);
 
   SVertInfoVN3 *v = new SVertInfoVN3[ptlist.size()];
-  for (int i=0; i<ptlist.size(); i++)
+  for (size_t i=0; i<ptlist.size(); i++)
   {
     Point2d p = ptlist[i];
 

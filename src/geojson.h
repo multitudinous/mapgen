@@ -1,7 +1,6 @@
 #ifndef GEOJSON_H
 #define GEOJSON_H
 
-#include "sysdefs.h"
 #include "geopoly.h"
 
 class OGRDataSource;

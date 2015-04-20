@@ -1,7 +1,6 @@
 #ifndef GEOLAYER_H
 #define GEOLAYER_H
 
-#include "sysdefs.h"
 #include "geoobj.h"
 
 class GeoLayer : public GeoObj
