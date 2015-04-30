@@ -387,7 +387,19 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
         }
 
         PGlObj polys(new GeoObj());
-        json.getGeometry(polys);
+
+        // need a layer name, or layer num, default to the first layer which is 0 if neither setting is found.
+        std::string lyrname = getString(node, "lyrname");
+        if (lyrname.size() > 0)
+        {
+            json.getGeometry(lyrname.c_str(), polys);
+        }
+        else
+        {
+            int lyrnum = getInt(node, "lyrnum", 0);
+            json.getGeometry(lyrnum, polys);
+        }
+
         polys->_name = name;
         return polys;
     }

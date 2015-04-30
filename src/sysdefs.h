@@ -12,9 +12,10 @@ using namespace std;
 #include <GL/glew.h>
 #ifdef _WIN32
 #define NOMINMAX
-#include <wglew.h>
+#include <GL/wglew.h>
 #include <gl/gl.h>
 #include <gl/glu.h>
+//#include "D:/d/freeglut_12/include/GL/glut.h"
 #include <GL/glut.h>
 #elif __APPLE__
 #include <OpenGL/gl.h>

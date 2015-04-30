@@ -38,10 +38,10 @@ bool GeoJson::loadFile(const char *jsonfile)
 
 //============================================================================
 //============================================================================
-int GeoJson::getGeometry(PGlObj parent)
+int GeoJson::getGeometry(int lyrnum, PGlObj parent)
 {
     std::vector<PGlObj> polys;
-    int ret = getGeometry(&polys);
+    int ret = getGeometry(lyrnum, &polys);
 
     for (unsigned int i = 0; i<polys.size(); i++)
     {
@@ -53,16 +53,113 @@ int GeoJson::getGeometry(PGlObj parent)
 
 //============================================================================
 //============================================================================
+int GeoJson::getGeometry(const char *lyrname, PGlObj parent)
+{
+    std::vector<PGlObj> polys;
+    int ret = getGeometry(lyrname, &polys);
+
+    for (unsigned int i = 0; i<polys.size(); i++)
+    {
+        parent->insertBack(polys[i]);
+    }
+
+    return ret;
+}
+
+//============================================================================
+//============================================================================
+int GeoJson::getGeometry(int lyrnum, std::vector<PGlObj> *vpolys)
+{
+    if (!_ds) return 0;
+    if (_ds->GetLayerCount() <= 0) return 0;
+
+    int lyrcount = _ds->GetLayerCount();
+    if (lyrnum >= lyrcount)
+    {
+        LogError("layer number %d is not valid given the total layer count %d", lyrnum, lyrcount);
+        return 0;
+    }
+
+    OGRLayer *lyr = _ds->GetLayer(lyrnum);
+    return getGeometry(lyr, vpolys);
+}
+
+//============================================================================
+//============================================================================
+int GeoJson::getGeometry(const char *lyrname, std::vector<PGlObj> *vpolys)
+{
+    if (!_ds) return 0;
+    if (_ds->GetLayerCount() <= 0) return 0;
+
+    OGRLayer *lyr =  _ds->GetLayerByName(lyrname);
+    if (!lyr)
+    {
+        LogError("layer named $s not found", lyrname);
+        logLayerNames();
+        return 0;
+    }
+
+    return getGeometry(lyr, vpolys);
+}
+
+//============================================================================
+//============================================================================
+/*
 int GeoJson::getGeometry(std::vector<PGlObj> *vpolys)
 {
     if (!_ds) return 0;
     if (_ds->GetLayerCount() <= 0) return 0;
+
+    int lyrCount = _ds->GetLayerCount();
+    for (int i = 0; i < lyrCount; i++)
+    {
+        OGRLayer *plyr = _ds->GetLayer(i);
+        const char *name = plyr->GetName();
+        std::string lyrname = name;
+    }
 
     OGRLayer *plyr = _ds->GetLayer(0);
     OGRFeature *poFeature;
     int countstart = (int)vpolys->size();
 
     LogTrace("parsing layer 0..");
+    plyr->ResetReading();
+    while ((poFeature = plyr->GetNextFeature()) != NULL)
+    {
+
+        OGRFeatureDefn *poFDefn = plyr->GetLayerDefn();
+
+        // Starting with OGR 1.11, several geometry fields can be associated to a feature.
+
+        int iGeomField;
+        int nGeomFieldCount;
+
+        LogTrace("parsing geometry...");
+        nGeomFieldCount = poFeature->GetGeomFieldCount();
+        for (iGeomField = 0; iGeomField < nGeomFieldCount; iGeomField++)
+        {
+            OGRGeometry *geom = poFeature->GetGeomFieldRef(iGeomField);
+            convertGeometry(geom, poFDefn, poFeature, vpolys);
+        }
+
+        OGRFeature::DestroyFeature(poFeature);
+    }
+
+    // polys loaded
+    return (int)vpolys->size() - countstart;
+}
+*/
+
+//============================================================================
+//============================================================================
+int GeoJson::getGeometry(OGRLayer *plyr, std::vector<PGlObj> *vpolys)
+{
+    if (!plyr) return 0;
+
+    OGRFeature *poFeature;
+    int countstart = (int)vpolys->size();
+
+    LogTrace("parsing layer ..");
     plyr->ResetReading();
     while( (poFeature = plyr->GetNextFeature()) != NULL )
     {
@@ -234,4 +331,22 @@ void GeoJson::initFields(GeoPoly *poly, OGRFeatureDefn *poFDefn, OGRFeature *poF
             poly->insertField(poFieldDefn->GetNameRef(), poFeature->GetFieldAsString(iField));
         }
     }
+}
+
+//============================================================================
+//============================================================================
+void GeoJson::logLayerNames()
+{
+    std::string strlyrs = "";
+    for (int i = 0; i < _ds->GetLayerCount(); i++)
+    {
+        OGRLayer *lyr = _ds->GetLayer(i);
+        if (lyr)
+        {
+            if (strlyrs.size() > 0) strlyrs += ",";
+            strlyrs += lyr->GetName();
+        }
+    }
+
+    LogTrace("Layer count: %d, Layer Names: %s", _ds->GetLayerCount(), strlyrs.c_str());
 }

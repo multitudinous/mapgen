@@ -40,7 +40,7 @@ PGlObj GisSys::loadTiff(const char *file, GradientPicker *picker)
 
 //============================================================================
 //============================================================================
-PGlObj GisSys::loadGeoJson(const char *file, const char *objname)
+PGlObj GisSys::loadGeoJson(const char *file, const char *lyrname, const char *objname)
 {
     const char *func = "GisSys::loadGeoJson() -";
 
@@ -53,7 +53,27 @@ PGlObj GisSys::loadGeoJson(const char *file, const char *objname)
     }
 
     PGlObj polys(new GeoObj());
-    json.getGeometry(polys);
+    json.getGeometry(lyrname, polys);
+    polys->_name = objname;
+    return polys;
+}
+
+//============================================================================
+//============================================================================
+PGlObj GisSys::loadGeoJson(const char *file, int lyrnum, const char *objname)
+{
+    const char *func = "GisSys::loadGeoJson() -";
+
+    // load the json
+    GeoJson json;
+    if (!json.loadFile(file))
+    {
+        LogError("%s failed to load json file: %s, for dataobj: %s", func, file, objname);
+        return PGlObj();
+    }
+
+    PGlObj polys(new GeoObj());
+    json.getGeometry(lyrnum, polys);
     polys->_name = objname;
     return polys;
 }

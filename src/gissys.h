@@ -74,7 +74,8 @@ public:
     virtual DrawData* dd() { return m_dd.get(); }
 
     static PGlObj loadTiff(const char *file, GradientPicker *picker);
-    static PGlObj loadGeoJson(const char *file, const char *objname="");
+    static PGlObj loadGeoJson(const char *file, const char *lyrname, const char *objname="");
+    static PGlObj loadGeoJson(const char *file, int lyrnum, const char *objname="");
 
     PGlObj loadDem(const char *file);
     PGlObj loadChan(const char *file);

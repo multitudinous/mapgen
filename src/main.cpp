@@ -100,7 +100,7 @@ void initTestSci(GisSys *sys)
     json.loadFile("D:/dev/gis/test/input.geojson");
 
     PGlObj lyrPolysFill(new GeoLayer());
-    json.getGeometry(lyrPolysFill);
+    json.getGeometry(0, lyrPolysFill);
 
     PGlObj lyrLabels(new GeoLayer());
     lyrLabels->shallowCopy(lyrPolysFill.get());
@@ -161,7 +161,7 @@ void initTestSciDemMask(GisSys *sys)
     json.loadFile("D:/dev/gis/test/aae80f3c-93da-4fee-a986-596f00fb1505_11581d06-4620-45fd-9401-bc51f06decb0_fieldboundary.json");
 
     PGlObj lyrPolysFill(new GeoLayer());
-    json.getGeometry(lyrPolysFill);
+    json.getGeometry(0, lyrPolysFill);
 
     /*
     PGlObj lyrLabels(new GeoLayer());
@@ -238,7 +238,7 @@ void initAerialDemMask(GisSys *sys)
     json.loadFile("D:/dev/gis/test/aerial/bnd.json");
 
     PGlObj lyrBnd(new GeoLayer());
-    json.getGeometry(lyrBnd);
+    json.getGeometry(0, lyrBnd);
 
     PDrawAttr attrFill(new DrawAttr());
     attrFill->_drawLabels = false;
