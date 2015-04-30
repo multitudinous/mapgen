@@ -7,7 +7,7 @@
 class GeoPoly : public GeoObj
 {
 public:
-    GeoPoly() {}
+    GeoPoly();
     GeoPoly(const GeoPoly &poly);
 
     virtual void draw(DrawData *pdd);
@@ -43,6 +43,7 @@ protected:
     void drawOutline(DrawData *pdd);
     void drawMask(DrawData *pdd);
     void drawLabel(DrawData *pdd);
+    void drawDebug(DrawData *pdd);
 
     bool getDrawFeature(DrawData *pdd, char *str);
     Point2d findLabelPt(DrawData *pdd);

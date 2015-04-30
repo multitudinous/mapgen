@@ -286,7 +286,8 @@ PGlObj GeoJson::getPoly(OGRPolygon *ogrpoly)
 
     for (int i=0; i<ring->getNumPoints(); i++)
     {
-        Point2d pt(ring->getX(i), ring->getY(i)); //pt->getZ(i)
+        Point2d ptin(ring->getX(i), ring->getY(i)); //pt->getZ(i)
+        Point2d pt = convertPt(ptin, _trans);
         poly->push_back(pt);
     }
 
@@ -349,4 +350,41 @@ void GeoJson::logLayerNames()
     }
 
     LogTrace("Layer count: %d, Layer Names: %s", _ds->GetLayerCount(), strlyrs.c_str());
+}
+
+//============================================================================
+//============================================================================
+Point2d GeoJson::convertPt(const Point2d &ptin, const EpsgTrans &trans)
+{
+    return convertPt(ptin, trans.epsgFr, trans.epsgTo);
+}
+
+//============================================================================
+//============================================================================
+Point2d GeoJson::convertPt(const Point2d &ptin, int inEPSG, int outEPSG)
+{
+    if (inEPSG == 0)
+    {
+        return ptin;
+    }
+
+    OGRPoint *geompt = (OGRPoint *)OGRGeometryFactory::createGeometry(wkbPoint);
+    geompt->setX(ptin.dX);
+    geompt->setY(ptin.dY);
+
+    OGRSpatialReference spatRefIn;
+    spatRefIn.importFromEPSG(inEPSG);
+
+    OGRSpatialReference spatRefOut;
+    spatRefOut.importFromEPSG(outEPSG);
+
+    OGRCoordinateTransformation *trans = OGRCreateCoordinateTransformation(&spatRefIn, &spatRefOut);
+
+    geompt->transform(trans);
+    Point2d newPt(geompt->getX(), geompt->getY());
+
+    OGRCoordinateTransformation::DestroyCT(trans);
+    OGRGeometryFactory::destroyGeometry(geompt);
+
+    return newPt;
 }

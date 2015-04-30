@@ -386,6 +386,24 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
             return PGlObj();
         }
 
+        GeoJson::EpsgTrans trans;
+        trans.epsgFr = getInt(node, "epsgfr", 0);
+        trans.epsgTo = getInt(node, "epsgTo", 0);
+        if (trans.epsgFr != 0 && trans.epsgTo == 0)
+        {
+            if (trans.epsgFr == 3857)
+            {
+                trans.epsgFr = 0; // 3857 is the default we want, so set it to 0 because no transform is needed
+            }
+            else
+            {
+                // the input is not 3857 but no to specified so set it to our default of 3857
+                trans.epsgTo = 3857;
+            }
+        }
+
+        json.setTransform(trans);
+
         PGlObj polys(new GeoObj());
 
         // need a layer name, or layer num, default to the first layer which is 0 if neither setting is found.

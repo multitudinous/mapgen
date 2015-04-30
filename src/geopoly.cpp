@@ -4,15 +4,22 @@
 
 //============================================================================
 //============================================================================
+GeoPoly::GeoPoly()
+{
+
+}
+
+//============================================================================
+//============================================================================
 GeoPoly::GeoPoly(const GeoPoly &poly) :
     GeoObj(poly)
 {
    _pts = poly._pts;
 
-   _fieldsInt =  poly._fieldsInt;
-   _fieldsDbl =  poly._fieldsDbl;
-   _fieldsStr =  poly._fieldsStr;
-    _labelPt = poly._labelPt;
+    _fieldsInt  =  poly._fieldsInt;
+    _fieldsDbl  =  poly._fieldsDbl;
+    _fieldsStr  =  poly._fieldsStr;
+    _labelPt    = poly._labelPt;
 }
 
 //============================================================================
@@ -33,6 +40,7 @@ void GeoPoly::draw(DrawData *pdd)
     drawFill(pdd);
     drawOutline(pdd);
     drawLabel(pdd);
+    //drawDebug(pdd);
 }
 
 //============================================================================
@@ -114,6 +122,7 @@ void GeoPoly::drawLabel(DrawData *pdd)
    glColor4fv(color.m_af);
    pfont->renderC(str, _labelPt);
 
+
    /*
    glPointSize(5);
    glBegin(GL_POINTS);
@@ -134,6 +143,26 @@ void GeoPoly::drawLabel(DrawData *pdd)
    pdd->_drawAttr->_font.render(str);
    glPopMatrix();
    */
+}
+
+//============================================================================
+//============================================================================
+void GeoPoly::drawDebug(DrawData *pdd)
+{
+    box3d box;
+    computeBox(pdd, &box);
+
+    float c[] { 1, 0, 0, 1 };
+    glColor4fv(c);
+    glLineWidth(1);
+    glBegin(GL_LINE_LOOP);
+
+    glVertex2d(box.vmin.x, box.vmin.y);
+    glVertex2d(box.vmax.x, box.vmin.y);
+    glVertex2d(box.vmax.x, box.vmax.y);
+    glVertex2d(box.vmin.x, box.vmax.y);
+
+    glEnd();
 }
 
 //============================================================================
@@ -346,6 +375,9 @@ Point2d GeoPoly::findLabelPt(DrawData *pdd)
 
     box3d box;
     computeBoxNoLabel(&box);
+
+    double w = box.GetSize().x;
+    double h = box.GetSize().y;
 
     if (!DrawAttr::drawLabels(pdd->_drawAttr, _drawAttr))
     {
