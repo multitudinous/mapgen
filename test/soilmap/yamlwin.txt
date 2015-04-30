@@ -1,0 +1,55 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  file: map.png
+
+styles:
+
+  - name: soils
+
+    polyfill:
+        draw: true
+        crand:
+            s: .6 # smaller the number the lighter
+            v: 1 #smaller the number the darker
+    polyoutline:
+        draw: true
+        linewidth: 2
+        color: 000000
+    labels:
+        draw: true
+        fontsize: 28
+        color: 000000
+        feature: musym
+
+  
+colorramps:
+
+  - name: colordem
+    min: 00ff00
+    mid: ffff00
+    max: ff0000  
+
+  - name: colorchan
+    min: 000000
+    max: 0000ff  
+
+
+dataobjs:
+
+  - name: fielddata
+    type: geojson
+    file: oregon_field.json
+    lyrname: mups_geojson
+    epsgfr: 4326
+    epsgto: 3857
+
+mapobjs: #note back to front order
+
+   - name: field
+     type: layer
+     style: soils
+     children:
+       - dataobj: fielddata
