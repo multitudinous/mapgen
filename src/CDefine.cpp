@@ -94,3 +94,5 @@ const char CDefine::AC_DIR_RIGHT[]=    "Right";
 const char CDefine::AC_DIR_CENTERED[]= "Centered";
 #endif
 
+
+double CDefine::GOLDEN_RATIO_CONJUGATE = 0.618033988749895;

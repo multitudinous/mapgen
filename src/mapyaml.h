@@ -46,6 +46,8 @@ protected:
     void loadColorRamps(const YAML::Node& styles);
     PColorRamp loadColorRamp(const YAML::Node& styles);
 
+    PColorRand loadColorRand(const YAML::Node& node, const char *name="crand");
+
     void loadDataObjs(const YAML::Node& styles);
     PGlObj loadDataObj(const YAML::Node& styles);
 

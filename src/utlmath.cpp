@@ -35,3 +35,17 @@ float UtlMath::rad(float angle)
 {
 	return angle*piover180;
 }
+
+//======================================================
+//======================================================
+double UtlMath::saturate(double v)
+{
+    return clamp<double>(v, 0, 1);
+}
+
+//======================================================
+//======================================================
+float UtlMath::saturate(float v)
+{
+    return clamp<float>(v, 0, 1);
+}

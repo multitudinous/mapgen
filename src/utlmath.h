@@ -16,6 +16,15 @@ public:
 	static float degArcCos(float value);
 	static float deg(float rad);
 	static float rad(float angle);
+
+    static double saturate(double v);
+    static float saturate(float v);
+
+    template<class T>
+    static T clamp(T v, T min, T max)
+    {
+        return v < min ? min : (v > max ? max : v);
+    }
 };
 
 #endif

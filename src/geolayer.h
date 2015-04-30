@@ -10,6 +10,7 @@ public:
 
     virtual void draw(DrawData *pdd);
     virtual void computeBox(DrawData *pdd, box3d *pbox);
+    virtual void initAttr(DrawData *pdd);
     virtual void initLabels(DrawData *pdd);
 };
 

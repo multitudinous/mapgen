@@ -180,6 +180,8 @@ public:
 	// epsilons
 	static double EPSILON_PIVDIAM;
 
+    static double GOLDEN_RATIO_CONJUGATE;
+
 };
 
 #endif // CDEFINE_H

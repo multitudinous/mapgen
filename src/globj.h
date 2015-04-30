@@ -20,6 +20,8 @@ public:
 
     virtual void setDrawAttr(PDrawAttr ) {}
 
+    virtual void init(DrawData *pdd);
+    virtual void initAttr(DrawData *pdd);
     virtual void initLabels(DrawData *pdd);
 
     virtual void scale(double x, double y, double z=1.0);

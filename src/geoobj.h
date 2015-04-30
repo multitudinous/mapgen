@@ -12,8 +12,10 @@ public:
 
     virtual void setDrawAttr(PDrawAttr da) { _drawAttr = da; }
     PDrawAttr getDrawAttr() { return _drawAttr; }
+    virtual void initAttr(DrawData *pdd);
 
     virtual GlObj* clone() const;
+
 protected:
     PDrawAttr _drawAttr;
 

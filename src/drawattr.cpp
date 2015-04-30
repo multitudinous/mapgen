@@ -38,6 +38,74 @@ DrawAttr::DrawAttr()
 
 //============================================================================
 //============================================================================
+bool DrawAttr::haveRandColor()
+{
+    if (haveRandColorPolyFill() || haveRandColorPolyOutline() || haveRandColorLabels()) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveRandColorPolyFill()
+{
+    if (_colorRandPolyFill) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveRandColorPolyOutline()
+{
+    if (_colorRandPolyOutline) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveRandColorLabels()
+{
+    if (_colorRandLabels) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
+Rgbf DrawAttr::getColorPolyFill()
+{
+    if (_colorRandPolyFill)
+    {
+        return _colorRandPolyFill->getNext();
+    }
+
+    return _colorPolyFill;
+}
+
+//============================================================================
+//============================================================================
+Rgbf DrawAttr::getColorPolyOutline()
+{
+    if (_colorRandPolyOutline)
+    {
+        return _colorRandPolyOutline->getNext();
+    }
+
+    return _colorPolyOutline;
+}
+
+//============================================================================
+//============================================================================
+Rgbf DrawAttr::getColorLabels()
+{
+    if (_colorRandLabels)
+    {
+        return _colorRandLabels->getNext();
+    }
+
+    return _colorLabels;
+}
+
+//============================================================================
+//============================================================================
 bool DrawAttr::drawPolyFill(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover)
 {
     return DrawAttr::drawPolyFill(plyr.get(), pover.get());

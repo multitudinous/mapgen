@@ -190,7 +190,7 @@ bool BatchCfgWordFind::process(GisSys *pgis)
 
         // lets render the compute layer map
         pgis->insertBack(lyr);
-        pgis->initLabels();
+        pgis->initObjs();
         pgis->zoomExtents();
         pgis->saveFrameToDisk(item->outImgFile);
 

@@ -295,9 +295,9 @@ void GisSys::insert(GlObjList *list)
 
 //============================================================================
 //============================================================================
-void GisSys::initLabels()
+void GisSys::initObjs()
 {
-    if (_rootNode) _rootNode->initLabels(m_dd.get());
+    if (_rootNode) _rootNode->init(m_dd.get());
 }
 
 //============================================================================

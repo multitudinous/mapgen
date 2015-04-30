@@ -32,6 +32,18 @@ void GeoLayer::computeBox(DrawData *pdd, box3d *pbox)
 
 //============================================================================
 //============================================================================
+void GeoLayer::initAttr(DrawData *pdd)
+{
+    PDrawAttr drawprev = pdd->_drawAttr;
+    pdd->_drawAttr = _drawAttr;
+
+    GlObj::initAttr(pdd);
+
+    pdd->_drawAttr = drawprev;
+}
+
+//============================================================================
+//============================================================================
 void GeoLayer::initLabels(DrawData *pdd)
 {
     PDrawAttr drawprev = pdd->_drawAttr;

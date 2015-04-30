@@ -3,6 +3,7 @@
 
 #include "gltext.h"
 #include "rgbf.h"
+#include "colorrand.h"
 
 class GlObj;
 
@@ -22,6 +23,15 @@ public:
 public:
     DrawAttr();
 
+    bool haveRandColor();
+    bool haveRandColorPolyFill();
+    bool haveRandColorPolyOutline();
+    bool haveRandColorLabels();
+
+    Rgbf getColorPolyFill();
+    Rgbf getColorPolyOutline();
+    Rgbf getColorLabels();
+    
     static bool drawPolyFill(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
     static bool drawPolyOutline(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
     static bool drawPolyMasked(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
@@ -73,6 +83,10 @@ public:
     Rgbf _colorPolyFill;
     Rgbf _colorPolyOutline;
     Rgbf _colorLabels;
+
+    PColorRand _colorRandPolyFill;
+    PColorRand _colorRandPolyOutline;
+    PColorRand _colorRandLabels;
 
     GlText _font;
 

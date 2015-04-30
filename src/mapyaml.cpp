@@ -159,7 +159,7 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
     initCompute(pgis);
     initAerial(pgis);
     pgis->setConfig(_cfg);
-    pgis->initLabels();
+    pgis->initObjs();
     pgis->zoomExtents();
 
 
@@ -277,6 +277,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
 
         attr->_drawPolyFill = getBool(an, "draw");
         attr->_colorPolyFill = getColorRgbf(an, "color");
+        attr->_colorRandPolyFill = loadColorRand(an);
     }
 
     if (node["polyoutline"])
@@ -285,6 +286,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
 
         attr->_drawPolyOutline = getBool(an, "draw");
         attr->_colorPolyOutline = getColorRgbf(an, "color");
+        attr->_colorRandPolyOutline = loadColorRand(an);
 
         // if (an["linewidth"])
     }
@@ -295,6 +297,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
 
         attr->_drawLabels = getBool(an, "draw");
         attr->_colorLabels = getColorRgbf(an, "color");
+        attr->_colorRandLabels = loadColorRand(an);
         attr->_feature =  getString(an, "feature");
 
         // TODO: figure out how to configure fonts folder, and search path
@@ -348,6 +351,29 @@ MapYaml::PColorRamp MapYaml::loadColorRamp(const YAML::Node& node)
 
     return PColorRamp();
 
+}
+
+//============================================================================
+//============================================================================
+PColorRand MapYaml::loadColorRand(const YAML::Node& node, const char *name)
+{
+    if (!node[name]) return PColorRand();
+
+    double h = getDbl(node[name], "h", -1.0);
+    double s = getDbl(node[name], "s", .99);
+    double v = getDbl(node[name], "v", .99);
+
+    PColorRand c;
+    if (h == -1)
+    {
+        c.reset(new ColorRand(s, v));
+    }
+    else
+    {
+        c.reset(new ColorRand(h, s, v));
+    }
+
+    return c;
 }
 
 //============================================================================

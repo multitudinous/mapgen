@@ -67,7 +67,7 @@ public:
     void insertFront(PGlObj obj);
     void insert(GlObjList *list);
     void clearObjs();
-    void initLabels();
+    void initObjs();
 
     box3d computeBox();
 
