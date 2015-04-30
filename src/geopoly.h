@@ -47,6 +47,7 @@ protected:
 
     bool getDrawFeature(DrawData *pdd, char *str);
     Point2d findLabelPt(DrawData *pdd);
+    bool findLabelPointFromIsects(DrawData *pdd, const Point2d &left, const Point2d &right, Point2d *result);
 
 protected:
     ListPt2d _pts;

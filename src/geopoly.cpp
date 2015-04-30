@@ -376,15 +376,38 @@ Point2d GeoPoly::findLabelPt(DrawData *pdd)
     box3d box;
     computeBoxNoLabel(&box);
 
-    double w = box.GetSize().x;
-    double h = box.GetSize().y;
-
     if (!DrawAttr::drawLabels(pdd->_drawAttr, _drawAttr))
     {
         return box.GetCenter().get2d();
     }
 
+    char str[64];
+    getDrawFeature(pdd, str);
+    if (!strcmp(str, "16B"))
+    {
+        int idebug = 1;
+    }
 
+    vec3d c = box.GetCenter();
+    Point2d boxcLeft(box.vmin.x, c.y);
+    Point2d boxcRight(box.vmax.x, c.y);
+
+    Point2d centroid = findCentroid();
+    Point2d centLeft(box.vmin.x, centroid.dY);
+    Point2d centRight(box.vmax.x, centroid.dY);
+
+    Point2d labelPt;
+    if (!findLabelPointFromIsects(pdd, centLeft, centRight, &labelPt))
+    {
+        if (!findLabelPointFromIsects(pdd, boxcLeft, boxcRight, &labelPt))
+        {
+            labelPt = Point2d(c.x, c.y);
+        }
+    }
+
+    return labelPt;
+
+    /*
     //if (loc & DrawAttr::Middle)
 
     // teting just compute middle
@@ -438,6 +461,60 @@ Point2d GeoPoly::findLabelPt(DrawData *pdd)
      }
 
     return pos;
+    */
+}
+
+//============================================================================
+//============================================================================
+bool GeoPoly::findLabelPointFromIsects(DrawData *pdd, const Point2d &left, const Point2d &right, Point2d *result)
+{
+    const char *func = "GeoPoly::findLabelPtFromIsects() - ";
+
+    ListPt2d isects;
+    findIntersections(left, right, &isects, false, true);
+
+    Point2d pt1, pt2;
+
+    if (isects.size() < 2)
+    {
+        LogError("%s Unexpected intersection count %d, should be 2", func, isects.size());
+        return false;
+    }
+    else if (isects.size() > 2)
+    {
+        LogTrace("%s More than 2 intersections, find closest 2 points", func, isects.size());
+
+        // todo: find mid points of all combinations and make sure result is in the poly
+
+        double dis = 99999999999;
+        pt1 = isects[0];
+        for (unsigned int i = 1; i<isects.size(); i++)
+        {
+            Point2d vdis = isects[i] - pt1;
+            if (vdis.dLen() < dis) pt2 = isects[i];
+        }
+    }
+    else
+    {
+        pt1 = isects[0];
+        pt2 = isects[1];
+    }
+
+    Point2d vmove = pt2 - pt1;
+    double len = vmove.dLen();
+    vmove.vNormalize();
+    vmove *= len / 2;
+
+    Point2d pos = pt1 + vmove;
+    // TODO: get override attribute here if there is one
+    if (pdd->_drawAttr && pdd->_drawAttr->_useLabelPosOffset)
+    {
+        pos.dX += pdd->_drawAttr->_labelOfs.dX;
+        pos.dY += pdd->_drawAttr->_labelOfs.dY;
+    }
+
+    *result = pos;
+    return true;
 }
 
 //============================================================================
