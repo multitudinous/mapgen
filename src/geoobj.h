@@ -14,6 +14,8 @@ public:
     PDrawAttr getDrawAttr() { return _drawAttr; }
     virtual void initAttr(DrawData *pdd);
 
+    virtual bool haveFeature(DrawData *pdd, std::string *value);
+
     virtual GlObj* clone() const;
 
 protected:

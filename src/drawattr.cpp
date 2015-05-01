@@ -23,6 +23,8 @@ DrawAttr::DrawAttr()
         _colorLabels[i] = 1;
     }
 
+    _colorByFeaturePolyFill = false;
+
     _overrideAlpha = false;
     _overrideDrawPolyFill = false;
     _overrideDrawPolyOutline = false;
@@ -34,6 +36,20 @@ DrawAttr::DrawAttr()
     _overrideColorLabels = false;
     _overrideFeature = false;
     _overrideFont = false;
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveColorByFeature()
+{
+    return haveColorByFeaturePolyFill();
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveColorByFeaturePolyFill() 
+{ 
+    return _colorByFeaturePolyFill; 
 }
 
 //============================================================================
@@ -66,6 +82,34 @@ bool DrawAttr::haveRandColorLabels()
 {
     if (_colorRandLabels) return true;
     return false;
+}
+
+//============================================================================
+//============================================================================
+Rgbf DrawAttr::getColorPolyFill(const std::string& feature)
+{
+    const char *func = "DrawAttr::getColorPolyFill()";
+
+    if (!_colorByFeaturePolyFill)
+    {
+        return getColorPolyFill();
+    }
+
+    std::map<std::string, Rgbf>::const_iterator it = _colorFeatureMap.find(feature);
+    if (it != _colorFeatureMap.end()) return it->second;
+
+    
+    if (!_colorRandPolyFill)
+    {
+        // must already have the color in the map
+        LogTrace("%s unexpected error trying to find feature color %s", func, feature);
+        return Rgbf(0, 0, 0, 1);
+    }
+
+    // add the feature
+    Rgbf c = _colorRandPolyFill->getNext();
+    _colorFeatureMap[feature] = c;
+    return c;
 }
 
 //============================================================================

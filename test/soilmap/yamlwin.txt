@@ -12,16 +12,18 @@ styles:
     polyfill:
         draw: true
         crand:
-            h: 0 # set h to maintain same result between runs, leave h off to create a different random starting point each run
-            s: .6 # smaller the number the lighter
+            h: .1 # set h to maintain same result between runs, leave h off to create a different random starting point each run
+            s: .55 # smaller the number the lighter
             v: 1 #smaller the number the darker
+        colorbyfeature: true
+        
     polyoutline:
         draw: true
         linewidth: 2
         color: 000000
     labels:
         draw: true
-        fontsize: 28
+        fontsize: 32
         color: 000000
         feature: musym
 

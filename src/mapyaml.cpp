@@ -278,6 +278,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_drawPolyFill = getBool(an, "draw");
         attr->_colorPolyFill = getColorRgbf(an, "color");
         attr->_colorRandPolyFill = loadColorRand(an);
+        attr->_colorByFeaturePolyFill = getBool(an, "colorbyfeature", false);
     }
 
     if (node["polyoutline"])

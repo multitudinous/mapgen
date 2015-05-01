@@ -296,6 +296,14 @@ void GeoPoly::insertField(const char *name, const char *v)
 
 //============================================================================
 //============================================================================
+bool GeoPoly::haveFeature(DrawData *pdd, std::string *value)
+{
+    if (!getDrawFeature(pdd, value)) return false;
+    return true;
+}
+
+//============================================================================
+//============================================================================
 bool GeoPoly::getFeatureValue(const char *feature, std::string *value)
 {
     return getFeatureValue(std::string(feature), value);
@@ -333,6 +341,17 @@ bool GeoPoly::getFeatureValue(const std::string &feature, std::string *value)
 }
 
 //============================================================================
+//============================================================================
+bool GeoPoly::getDrawFeature(DrawData *pdd, std::string *str)
+{
+    char s[256];
+    if (!getDrawFeature(pdd, s)) return false;
+    *str = s;
+    return true;
+}
+
+//============================================================================
+// todo: convert this to format and stl string
 //============================================================================
 bool GeoPoly::getDrawFeature(DrawData *pdd, char *str)
 {

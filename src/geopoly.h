@@ -25,6 +25,8 @@ public:
     void insertField(const char *name, double v);
     void insertField(const char *name, const char *v);
 
+    virtual bool haveFeature(DrawData *pdd, std::string *value);
+
     bool getFeatureValue(const char *feature, std::string *value);
     bool getFeatureValue(const std::string &feature, std::string *value);
 
@@ -45,6 +47,7 @@ protected:
     void drawLabel(DrawData *pdd);
     void drawDebug(DrawData *pdd);
 
+    bool getDrawFeature(DrawData *pdd, std::string *str);
     bool getDrawFeature(DrawData *pdd, char *str);
     Point2d findLabelPt(DrawData *pdd);
     bool findLabelPointFromIsects(DrawData *pdd, const Point2d &left, const Point2d &right, Point2d *result);

@@ -23,11 +23,14 @@ public:
 public:
     DrawAttr();
 
+    bool haveColorByFeature();
+    bool haveColorByFeaturePolyFill();
     bool haveRandColor();
     bool haveRandColorPolyFill();
     bool haveRandColorPolyOutline();
     bool haveRandColorLabels();
 
+    Rgbf getColorPolyFill(const std::string& feature);
     Rgbf getColorPolyFill();
     Rgbf getColorPolyOutline();
     Rgbf getColorLabels();
@@ -87,6 +90,9 @@ public:
     PColorRand _colorRandPolyFill;
     PColorRand _colorRandPolyOutline;
     PColorRand _colorRandLabels;
+
+    bool _colorByFeaturePolyFill;
+    std::map<std::string, Rgbf> _colorFeatureMap;
 
     GlText _font;
 
