@@ -107,7 +107,7 @@ void BingImg::downloadFinished()
         *img = imageReader.read();
 
         // save to cachefolder
-        saveToCache(img.get());
+        bool ret = saveToCache(img.get());
 
         // done
         onDone(img);

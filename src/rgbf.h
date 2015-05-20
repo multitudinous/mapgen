@@ -31,10 +31,16 @@ class Rgbf
         void SetColorB(float b);
         void SetColorA(float a);
 
-        BYTE GetR() const { return (BYTE)(255.0*m_af[R]); }
-        BYTE GetG() const { return (BYTE)(255.0*m_af[G]); }
-        BYTE GetB() const { return (BYTE)(255.0*m_af[B]); }
-        BYTE GetA() const { return (BYTE)(255.0*m_af[A]); }
+        float GetR() const { return m_af[R]; }
+        float GetG() const { return m_af[G]; }
+        float GetB() const { return m_af[B]; }
+        float GetA() const { return m_af[A]; }
+        BYTE GetRB() const { return (BYTE)(255.0*m_af[R]); }
+        BYTE GetGB() const { return (BYTE)(255.0*m_af[G]); }
+        BYTE GetBB() const { return (BYTE)(255.0*m_af[B]); }
+        BYTE GetAB() const { return (BYTE)(255.0*m_af[A]); }
+        const float* GetColor() const { return m_af;  }
+        
 
 
         void vScale();

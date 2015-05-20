@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include "rgbf.h"
 
 class Config
 {
@@ -11,26 +12,33 @@ public:
 
     bool windowless();
 
-    const std::string& mode() { return _mode; }
+    const std::string& mode() const { return _mode; }
     void mode(const std::string &mode) { _mode = mode; }
 
-    bool toDisk() { return _toDisk; }
+    bool toDisk() const { return _toDisk; }
     void toDisk(bool set) { _toDisk = set; }
 
-    int width() { return _width; }
+    int width() const { return _width; }
     void width(int w) { _width = w; }
 
-    int height() { return _height; }
+    int height() const { return _height; }
     void height(int h) { _height = h; }
 
-    const std::string& imgFile() { return _imgfile; }
-    void imgFile(const std::string &file) { _imgfile = file; }
+    const std::string& imgFile() const { return _imgfile; }
+    void imgFile(const std::string &file);
+    const std::string& imgFolder() const { return _imgfolder; }
 
-    const std::string& outType() { return _outtype; }
+    const std::string& outType() const { return _outtype; }
     void outType(const std::string &t) { _outtype = t; }
 
-    const std::string& dataFile() { return _datafile; }
+    const std::string& dataFile() const { return _datafile; }
     void dataFile(const std::string &file) { _datafile = file; }
+
+    bool lyrOutMode() const { return _lyrOutMode;  }
+    void lyrOutMode(bool on) { _lyrOutMode = on;  }
+
+    const Rgbf& colrClear() { return _colrClear;  }
+    void colrClear(const Rgbf &rgb) { _colrClear = rgb;  }
 
 protected:
     std::string _mode; // windowless, desktop
@@ -39,7 +47,10 @@ protected:
     bool _toDisk;
     int _width;
     int _height;
+    std::string _imgfolder;
     std::string _imgfile;
+    bool _lyrOutMode; // render each layer to its own image with a transparent background
+    Rgbf _colrClear;
 
     std::string _outtype;
     std::string _datafile;

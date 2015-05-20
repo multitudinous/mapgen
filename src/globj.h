@@ -17,6 +17,7 @@ public:
     virtual void insertBack(shared_ptr<GlObj> obj);
     virtual void insertFront(shared_ptr<GlObj> obj);
     virtual void clearChildren();
+    vector< shared_ptr<GlObj> >& childList() { return _childList; }
 
     virtual void setDrawAttr(PDrawAttr ) {}
 
@@ -34,13 +35,13 @@ public:
     void setName(const std::string &name) { _name = name; }
     std::string getName() { return _name; }
 
-   vector< shared_ptr<GlObj> >& childList() { return _childList; }
+   
 
 public:
     std::string _name;
 
 protected:
-    vector< shared_ptr<GlObj> > _childList;
+    vector<shared_ptr<GlObj>> _childList;
 };
 
 typedef shared_ptr<GlObj> PGlObj;

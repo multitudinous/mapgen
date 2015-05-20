@@ -1,4 +1,5 @@
 #include "config.h"
+#include "utlstring.h"
 
 Config::Config()
 {
@@ -9,10 +10,19 @@ Config::Config()
     _imgfile = "map.png";
     _outtype = "";
     _datafile = "data.txt";
+    _lyrOutMode = true;
+    _colrClear.SetColor(1, 1, 1, 1);
 }
 
 bool Config::windowless()
 {
     if (_mode == "windowless") return true;
     return false;
+}
+
+void Config::imgFile(const std::string &file)
+{ 
+    _imgfile = file; 
+
+    _imgfolder = UtlString::GetPath(_imgfile.c_str(), true);
 }

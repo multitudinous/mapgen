@@ -8,6 +8,7 @@
 #include "geoimg.h"
 #include "geoaerial.h"
 #include "geojson.h"
+#include "geolayer.h"
 #include "sleepsim.h"
 
 //============================================================================
@@ -230,6 +231,10 @@ bool GisSys::setConfig(PConfig cfg)
     }
     */
 
+    const Rgbf& c = cfg->colrClear();
+    glClearColor(c.GetR(), c.GetG(), c.GetB(), c.GetA());
+    
+
     return true;
 }
 
@@ -337,15 +342,15 @@ void GisSys::displayData()
 {
     GlutSys::displayData();
 
-    _rootNode->draw(m_dd.get());
-
-    if (_fboToDisk && _fbo)
+    if (m_dd->_cfg && m_dd->_cfg->lyrOutMode())
     {
-        _fbo->drawStart();
-        _rootNode->draw(m_dd.get());
-        _fbo->drawEnd();
-        _fboToDisk = false;
+        displayLyrOutMode();
     }
+    else
+    {
+        displayStandard();
+    }
+    
 
     // only exit if there is no batch config, if there is one we want to keep running
     if (!_batchCfg)
@@ -355,6 +360,67 @@ void GisSys::displayData()
             exit(); // done
         }
     }
+}
+
+//============================================================================
+//============================================================================
+void GisSys::displayStandard()
+{
+    if (!_rootNode) return;
+
+    _rootNode->draw(m_dd.get());
+
+    if (_fboToDisk && _fbo)
+    {
+        _fbo->drawStart();
+        _rootNode->draw(m_dd.get());
+        _fbo->drawEnd();
+        _fboToDisk = false;
+    }
+}
+
+//============================================================================
+//============================================================================
+void GisSys::displayLyrOutMode()
+{
+    if (!_rootNode) return;
+
+    GlObjList &lyrList = _rootNode->childList();
+    GlObjList::iterator it = lyrList.begin();
+
+    int lyrnum = 0;
+    while (it != lyrList.end())
+    {
+        GeoLayer *lyr = dynamic_cast<GeoLayer *>(it->get());
+        it++;
+
+        if (!lyr) continue;
+        displayLyrOut(lyr, lyrnum);
+        lyrnum++;
+    }
+
+    _fboToDisk = false;
+}
+
+//============================================================================
+//============================================================================
+void GisSys::displayLyrOut(GeoLayer *lyr, int lyrnum)
+{
+    lyr->draw(m_dd.get());
+
+    if (!_fboToDisk || !_fbo) return;
+    
+    std::string name = lyr->getName();
+    
+    if (name.size() <= 0) name = to_string(lyrnum);
+    name += ".png";
+
+    std::string fullpath = m_dd->_cfg->imgFolder() + name;
+
+    _fbo->getDrawParams()->pathScreenShot = fullpath;
+    _fbo->drawStart();
+    lyr->draw(m_dd.get());
+    _fbo->drawEnd();
 }
 
 //============================================================================
@@ -403,13 +469,19 @@ bool GisSys::initFbo()
         return false;
     }
 
+
+    const Rgbf& c = m_dd->_cfg->colrClear();
     _fbo->getDrawParams()->saveFrame = false;
     _fbo->getDrawParams()->saveScreenShot = m_dd->_cfg->toDisk();
     _fbo->getDrawParams()->pathScreenShot = m_dd->_cfg->imgFile(); //m_filePaths->m_pathImgOut + "map.png";
-    _fbo->getDrawParams()->colr[0] = 1;
-    _fbo->getDrawParams()->colr[1] = 1;
-    _fbo->getDrawParams()->colr[2] = 1;
-    _fbo->getDrawParams()->colr[3] = 1;
+    _fbo->getDrawParams()->colr[0] = c.GetR();
+    _fbo->getDrawParams()->colr[1] = c.GetG();
+    _fbo->getDrawParams()->colr[2] = c.GetB();
+    _fbo->getDrawParams()->colr[3] = c.GetA();
+    if (m_dd->_cfg->lyrOutMode())
+    {
+        _fbo->getDrawParams()->colr[3] = 0;
+    }
 
     //m_fbo->getDrawParams()->znr = m_pXmlGeo->ZNear();
     //m_fbo->getDrawParams()->zfr = m_pXmlGeo->ZFar();

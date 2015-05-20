@@ -220,6 +220,7 @@ void MapYaml::loadOutput(const YAML::Node& node)
     _cfg->imgFile( getString(node, "file", _cfg->imgFile()) );
     _cfg->outType( getString(node, "outtype", _cfg->outType()) );
     _cfg->dataFile( getString(node, "datafile", _cfg->dataFile()) );
+    _cfg->lyrOutMode( getBool(node, "layeroutmode", _cfg->lyrOutMode()) );
 
     _cfg->imgFile( validateOutfile(_cfg->imgFile()) );
     /*

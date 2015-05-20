@@ -2,17 +2,17 @@
 #include <stdarg.h>
 #include <string>
 #include <iostream>
+#include "platform.h"
 
 bool gLogXml = false;
 
 void LogError(const tchar *format, ...)
 {
-#if WIN32
 	tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
-	vsprintf_s(buffer, 10240, format, args);
+	vsprintf(buffer, 10240, format, args);
 	va_end(args);
 
 	std::string strOut;
@@ -30,17 +30,16 @@ void LogError(const tchar *format, ...)
 	}
 
 	LogMsg(strOut.c_str());
-#endif
 }
 
 void LogWarning(const tchar *format, ...)
 {
-#if WIN32
+//#if WIN32
 	tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
-	vsprintf_s(buffer, 10240, format, args);
+	vsprintf(buffer, 10240, format, args);
 	va_end(args);
 
 	std::string strOut;
@@ -58,17 +57,15 @@ void LogWarning(const tchar *format, ...)
 	}
 
 	LogMsg(strOut.c_str());
-#endif
 }
 
 void LogTrace(const tchar *format, ...)
 {
-#if WIN32
 	tchar buffer[10240];
 	va_list args;
 
 	va_start(args, format);
-	vsprintf_s(buffer, 10240, format, args);
+	vsprintf(buffer, 10240, format, args);
 	va_end(args);
 
 	std::string strOut;
@@ -85,7 +82,6 @@ void LogTrace(const tchar *format, ...)
 	}
 
 	LogMsg(strOut.c_str());
-#endif
 }
 
 void LogMsg(const tchar *pacMsg)

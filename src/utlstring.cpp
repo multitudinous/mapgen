@@ -3,6 +3,7 @@
 #include <stdarg.h>
 #include <algorithm>
 #include <cstring>
+#include "platform.h"
 
 //============================================================================
 //============================================================================
@@ -181,23 +182,25 @@ void UtlString::AddDirSlash(std::string &path)
 //============================================================================
 void UtlString::format(std::string& a_string, const char* fmt, ...)
 {
-    /*va_list vl;
+    va_list vl;
     va_start(vl, fmt);
     int size = _vscprintf( fmt, vl );
     a_string.resize( ++size );
     vsnprintf_s((char*)a_string.data(), size, _TRUNCATE, fmt, vl);
-    va_end(vl);*/
+    va_end(vl);
 }
 
+//============================================================================
+//============================================================================
 std::string UtlString::format(const char* fmt, ...)
 {
     std::string a_string;
-    /*va_list vl;
+    va_list vl;
     va_start(vl, fmt);
     int size = _vscprintf( fmt, vl );
     a_string.resize( ++size );
     vsnprintf_s((char*)a_string.data(), size, _TRUNCATE, fmt, vl);
-    va_end(vl);*/
+    va_end(vl);
 
     return a_string;
 }
@@ -206,8 +209,8 @@ std::string UtlString::format(const char* fmt, ...)
 //============================================================================
 int UtlString::explode(std::string str, const std::string &separator, std::vector<std::string>* results)
 {
-    int found, count=0;
-    found = str.find_first_of(separator);
+    int count = 0;
+    size_t found = str.find_first_of(separator);
     while(found != std::string::npos)
     {
         if (found == 0 && count > 0)

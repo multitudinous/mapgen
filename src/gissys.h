@@ -10,6 +10,7 @@
 
 class GradientPicker;
 class GeoAerial;
+class GeoLayer;
 
 class GisSys : protected GlutSys
 {
@@ -91,6 +92,10 @@ protected:
     virtual void onKeyboard(unsigned char key, int x, int y);
 
     bool initFbo();
+
+    void displayStandard();
+    void displayLyrOutMode();
+    void displayLyrOut(GeoLayer *lyr, int lyrnum);
 
 
 protected:
