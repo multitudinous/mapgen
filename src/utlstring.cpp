@@ -184,9 +184,9 @@ void UtlString::format(std::string& a_string, const char* fmt, ...)
 {
     va_list vl;
     va_start(vl, fmt);
-    int size = _vscprintf( fmt, vl );
-    a_string.resize( ++size );
-    vsnprintf_s((char*)a_string.data(), size, _TRUNCATE, fmt, vl);
+    int size = _vscprintf( fmt, vl ) + 1;
+    a_string.resize( size );
+    vsnprintf((char*)a_string.data(), size, fmt, vl);
     va_end(vl);
 }
 
@@ -197,9 +197,9 @@ std::string UtlString::format(const char* fmt, ...)
     std::string a_string;
     va_list vl;
     va_start(vl, fmt);
-    int size = _vscprintf( fmt, vl );
-    a_string.resize( ++size );
-    vsnprintf_s((char*)a_string.data(), size, _TRUNCATE, fmt, vl);
+    int size = _vscprintf( fmt, vl ) + 1;
+    a_string.resize( size );
+    vsnprintf((char*)a_string.data(), size, fmt, vl);
     va_end(vl);
 
     return a_string;

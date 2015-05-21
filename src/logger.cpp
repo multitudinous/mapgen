@@ -12,7 +12,7 @@ void LogError(const tchar *format, ...)
 	va_list args;
 
 	va_start(args, format);
-	vsprintf(buffer, 10240, format, args);
+	vsnprintf(buffer, 10240, format, args);
 	va_end(args);
 
 	std::string strOut;
@@ -39,7 +39,7 @@ void LogWarning(const tchar *format, ...)
 	va_list args;
 
 	va_start(args, format);
-	vsprintf(buffer, 10240, format, args);
+	vsnprintf(buffer, 10240, format, args);
 	va_end(args);
 
 	std::string strOut;
@@ -65,7 +65,7 @@ void LogTrace(const tchar *format, ...)
 	va_list args;
 
 	va_start(args, format);
-	vsprintf(buffer, 10240, format, args);
+	vsnprintf(buffer, 10240, format, args);
 	va_end(args);
 
 	std::string strOut;
