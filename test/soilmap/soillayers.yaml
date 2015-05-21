@@ -1,0 +1,76 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  file: map.png
+  layeroutmode: true
+  bgcolor: 00FFFFFF
+
+styles:
+
+  - name: fill
+
+    polyfill:
+        draw: true
+        crand:
+            h: .1 # set h to maintain same result between runs, leave h off to create a different random starting point each run
+            s: .55 # smaller the number the lighter
+            v: 1 #smaller the number the darker
+        colorbyfeature: true
+        
+  - name: outline
+        
+    polyoutline:
+        draw: true
+        linewidth: 2
+        color: 000000
+
+  - name: labels
+
+    labels:
+        draw: true
+        fontsize: 32
+        color: FF0000
+        feature: musym
+        
+colorramps:
+
+  - name: colordem
+    min: 00ff00
+    mid: ffff00
+    max: ff0000  
+
+  - name: colorchan
+    min: 000000
+    max: 0000ff  
+
+
+dataobjs:
+
+  - name: fielddata
+    type: geojson
+    file: oregon_field.json
+    lyrname: mups_geojson
+    epsgfr: 4326
+    epsgto: 3857
+
+mapobjs: #note back to front order
+
+   - name: field_fill
+     type: layer
+     style: fill
+     children:
+       - dataobj: fielddata
+       
+   - name: field_outline
+     type: layer
+     style: outline
+     children:
+       - dataobj: fielddata
+       
+   - name: field_labels
+     type: layer
+     style: labels
+     children:
+       - dataobj: fielddata

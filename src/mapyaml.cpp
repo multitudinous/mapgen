@@ -221,6 +221,7 @@ void MapYaml::loadOutput(const YAML::Node& node)
     _cfg->outType( getString(node, "outtype", _cfg->outType()) );
     _cfg->dataFile( getString(node, "datafile", _cfg->dataFile()) );
     _cfg->lyrOutMode( getBool(node, "layeroutmode", _cfg->lyrOutMode()) );
+    _cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
 
     _cfg->imgFile( validateOutfile(_cfg->imgFile()) );
     /*
@@ -766,7 +767,47 @@ Rgbf MapYaml::getColorRgbf(const YAML::Node& node, const char *name)
 {
     QColor c = getColor(node, name);
 
-    Rgbf rgb(c.redF()/255.0f, c.greenF()/255.0f, c.blueF()/255.0f, 1.0f);
+    float r = c.redF();
+    float g = c.greenF();
+    float b = c.blueF();
+    float a = c.alphaF();
+
+    Rgbf rgb(r, g, b, a);
+    return rgb;
+}
+
+//============================================================================
+//============================================================================
+bool MapYaml::getColor(const YAML::Node& node, const char *name, QColor *c)
+{
+    std::string str = "#000000";
+    bool ret = false;
+    if (node[name])
+    {
+        str = node[name].as<std::string>();
+        if (str.size()) str = "#" + str;
+        else str = "#000000";
+        ret = true;
+    }
+
+    QColor color(str.c_str());
+    *c = color;
+    return ret;
+}
+
+//============================================================================
+//============================================================================
+Rgbf MapYaml::getColorRgbf(const YAML::Node& node, const char *name, const Rgbf &def)
+{
+    QColor c;
+    if (!getColor(node, name, &c)) return def;
+
+    float r = c.redF();
+    float g = c.greenF();
+    float b = c.blueF();
+    float a = c.alphaF();
+
+    Rgbf rgb(r, g, b, a);
     return rgb;
 }
 

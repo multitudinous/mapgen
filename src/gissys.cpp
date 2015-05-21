@@ -232,7 +232,7 @@ bool GisSys::setConfig(PConfig cfg)
     */
 
     const Rgbf& c = cfg->colrClear();
-    glClearColor(c.GetR(), c.GetG(), c.GetB(), c.GetA());
+    glClearColor(c.GetR(), c.GetG(), c.GetB(), 1.0);
     
 
     return true;
@@ -478,10 +478,6 @@ bool GisSys::initFbo()
     _fbo->getDrawParams()->colr[1] = c.GetG();
     _fbo->getDrawParams()->colr[2] = c.GetB();
     _fbo->getDrawParams()->colr[3] = c.GetA();
-    if (m_dd->_cfg->lyrOutMode())
-    {
-        _fbo->getDrawParams()->colr[3] = 0;
-    }
 
     //m_fbo->getDrawParams()->znr = m_pXmlGeo->ZNear();
     //m_fbo->getDrawParams()->zfr = m_pXmlGeo->ZFar();
