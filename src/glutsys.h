@@ -34,11 +34,7 @@ public:
 	virtual ~GlutSys();
     virtual bool init(QCoreApplication *app, int argc, const char** argv, int winWidth, int winHeight, PFilePaths pPaths = PFilePaths());
 
-#ifdef QT
-    virtual void run(QCoreApplication *app);
-#else
     virtual void run();
-#endif
 
     virtual void exit();
 

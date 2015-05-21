@@ -205,7 +205,7 @@ bool GisSys::init(QCoreApplication *app, int argc, const char** argv, int winWid
 
 //============================================================================
 //============================================================================
-void GisSys::run(QCoreApplication *app)
+void GisSys::run()
 {
     // init fbo if not already
     if (!_fbo)
@@ -213,7 +213,7 @@ void GisSys::run(QCoreApplication *app)
         initFbo();
     }
 
-    GlutSys::run(app);
+    GlutSys::run();
 }
 
 //============================================================================
@@ -260,9 +260,16 @@ void GisSys::saveFrameToDisk(const std::string &path)
 void GisSys::zoomExtents()
 {
     box3d bbox = computeBox();
+    LogTrace("Map bounding box: L: %f, R: %f, T: %f, B: %f", bbox.vmin.x, bbox.vmax.x, bbox.vmax.y, bbox.vmin.y);
 
     Extents ext(bbox.vmin.x, bbox.vmax.y, bbox.vmax.x, bbox.vmin.y);
-   // ext.grow(50);
+    zoomExtents(ext);
+}
+
+//============================================================================
+//============================================================================
+void GisSys::zoomExtents(const Extents &ext)
+{
     m_moveSys->m_camera->setExtents2d(ext, true);
     //m_moveSys->m_camera->SetUpOrthoZoom(m_winW, m_winH, ext);
 

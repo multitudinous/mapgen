@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "rgbf.h"
+#include "extents.h"
 
 class Config
 {
@@ -37,8 +38,12 @@ public:
     bool lyrOutMode() const { return _lyrOutMode;  }
     void lyrOutMode(bool on) { _lyrOutMode = on;  }
 
-    const Rgbf& colrClear() { return _colrClear;  }
+    const Rgbf& colrClear() const { return _colrClear;  }
     void colrClear(const Rgbf &rgb) { _colrClear = rgb;  }
+
+    const Extents& mapExtents() const { return _mapExtents;  }
+    void mapExtents(const Extents &e) { _mapExtents = e; }
+    bool mapExentsValid() const { return (fabs(_mapExtents.area()) > 0.0001); }
 
 protected:
     std::string _mode; // windowless, desktop
@@ -54,6 +59,8 @@ protected:
 
     std::string _outtype;
     std::string _datafile;
+
+    Extents _mapExtents;
 };
 
 typedef std::shared_ptr<Config> PConfig;

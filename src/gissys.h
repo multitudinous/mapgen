@@ -53,7 +53,7 @@ public:
 	GisSys();
 
     virtual bool init(QCoreApplication *app, int argc, const char** argv, int winWidth, int winHeight, PFilePaths pPaths);
-    virtual void run(QCoreApplication *app);
+    virtual void run();
 
     bool setConfig(PConfig cfg);
     Config* getConfig();
@@ -63,6 +63,7 @@ public:
     void saveFrameToDisk(const std::string &path);
 
     void zoomExtents();
+    void zoomExtents(const Extents &ext);
 
     void insertBack(PGlObj obj);
     void insertFront(PGlObj obj);

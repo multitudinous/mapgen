@@ -183,20 +183,11 @@ SwapInterval(1);
 
 //============================================================================
 //============================================================================
-#ifdef QT
-//a.processEvents();
-void GlutSys::run(QCoreApplication *app)
-{
-  m_app = app;
-  glutMainLoop();
-}
-#else
 void GlutSys::run()
 {
 	// could use a try catch here an throw and exception in Exit to exit
 	glutMainLoop();
 }
-#endif
 
 //============================================================================
 //============================================================================

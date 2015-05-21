@@ -160,7 +160,17 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
     initAerial(pgis);
     pgis->setConfig(_cfg);
     pgis->initObjs();
-    pgis->zoomExtents();
+
+    if (_cfg->mapExentsValid())
+    {
+        LogTrace("%s Map extents set to %s", func, _cfg->mapExtents().asStr().c_str());
+        pgis->zoomExtents(_cfg->mapExtents());
+    }
+    else
+    {
+        LogTrace("%s Map extents not set or not valid, so zooming to data extents.", func);
+        pgis->zoomExtents();
+    }
 
 
     return true;
@@ -222,6 +232,8 @@ void MapYaml::loadOutput(const YAML::Node& node)
     _cfg->dataFile( getString(node, "datafile", _cfg->dataFile()) );
     _cfg->lyrOutMode( getBool(node, "layeroutmode", _cfg->lyrOutMode()) );
     _cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
+    _cfg->mapExtents(getExtents(node, "extents"));
+    
 
     _cfg->imgFile( validateOutfile(_cfg->imgFile()) );
     /*
@@ -809,6 +821,60 @@ Rgbf MapYaml::getColorRgbf(const YAML::Node& node, const char *name, const Rgbf 
 
     Rgbf rgb(r, g, b, a);
     return rgb;
+}
+
+//============================================================================
+//============================================================================
+int MapYaml::getExtents(const YAML::Node& node, const char *name, Extents *ext)
+{
+    const char *func = "MapYaml::getExtents() -";
+    if (!node[name])
+    {
+        return 0;
+    }
+
+    std::vector<std::string> vexts;
+    std::string strexts = node[name].as<std::string>();
+    UtlString::explode(strexts, ",", &vexts);
+    if (vexts.size() != 4)
+    {
+        LogError("%s Failed to parse extents, not enought items, should be L,R,T,B but found %s", func, strexts.c_str());
+        return -1;
+    }
+
+    for (int i = 0; i < 4; i++)
+    {
+        double d = std::atof(vexts[i].c_str());
+
+        switch(i)
+        {
+        case 0:
+            ext->l = d;
+            break;
+        case 1:
+            ext->r = d;
+            break;
+        case 2:
+            ext->t = d;
+            break;
+        case 3:
+            ext->b = d;
+            break;
+        }
+    }
+
+
+    return 1;
+}
+
+//============================================================================
+//============================================================================
+Extents MapYaml::getExtents(const YAML::Node& node, const char *name, Extents def, int *res)
+{
+    int ret = getExtents(node, name, &def);
+    if (res) *res = ret;
+
+    return def;
 }
 
 //============================================================================

@@ -9,6 +9,7 @@
 #include "mapyaml.h"
 #include "batchcfgwordfind.h"
 
+int run(QCoreApplication *a, PFilePaths filePaths, int argc, char *argv[]);
 void initYaml(const char *file, GisSys *sys);
 bool initBatchWordFind(int argc, char *argv[], GisSys *sys);
 
@@ -31,9 +32,17 @@ int main(int argc, char *argv[])
     PFilePaths filePaths(new FilePaths());
     filePaths->Init(argv[0]);
 
-    GisSys sys;
-    if (!sys.init(&a, argc, (const char **)argv, 800, 600, filePaths)) return -1;
+    std::string logfile = filePaths->m_pathBin + "mapgen.log";
+    Logger::init(true, logfile.c_str());
 
+    int ret = run(&a, filePaths, argc, argv);
+
+    LogTrace("Exit with code: %d", ret);
+    Logger::shutdown();
+
+    return ret;
+
+    /*
    // GdalFile file;
     //file.WmsTest();
 
@@ -58,6 +67,40 @@ int main(int argc, char *argv[])
     }
 
     sys.run(&a);
+
+    return 0;
+    */
+}
+
+//============================================================================
+//============================================================================
+int run(QCoreApplication *a, PFilePaths filePaths, int argc, char *argv[])
+{
+    GisSys sys;
+    if (!sys.init(a, argc, (const char **)argv, 800, 600, filePaths))
+    {
+        Logger::shutdown();
+        return -1;
+    }
+
+    if (argc < 2)
+    {
+        LogError("usage yamlfilepath or --batchwordfind jsonfolder wordfolder outfolder");
+        return 0;
+    }
+    else if (!strcmp(argv[1], "--batchwordfind"))
+    {
+        if (!initBatchWordFind(argc, argv, &sys))
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        initYaml(argv[1], &sys);
+    }
+
+    sys.run();
 
     return 0;
 }

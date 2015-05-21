@@ -70,6 +70,8 @@ protected:
     Rgbf getColorRgbf(const YAML::Node& node, const char *name);
     bool getColor(const YAML::Node& node, const char *name, QColor *c);
     Rgbf getColorRgbf(const YAML::Node& node, const char *name, const Rgbf &def);
+    int getExtents(const YAML::Node& node, const char *name, Extents *ext);
+    Extents getExtents(const YAML::Node& node, const char *name, Extents def = Extents(0, 0, 0, 0), int *res = NULL);
 
     PGlObj getDataObj(const std::string &name);
     PGlObj getComputeObj(const std::string &name);

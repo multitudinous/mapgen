@@ -6,6 +6,11 @@ output:
   file: map.png
   layeroutmode: true
   bgcolor: 00FFFFFF
+  extents: -13670541.558019,-13669953.351200,5520144.834970,5519016.194474
+  #
+  # NOTE: extents is not needed for this map because zoom to extents would work, 
+  #       but if your are rendering layers in seperate mapgen runs, 
+  #       this will need to be the same for each run.
 
 styles:
 

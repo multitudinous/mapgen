@@ -37,6 +37,7 @@ struct Extents
     Point2d center() const { return Point2d(cx(), cy()); }
     double width() const { return r-l; }
     double height() const { return t-b; }
+    double area() const { return width() * height(); }
 
 
     void move(const Point2d &mv)
