@@ -1,0 +1,109 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  file: map.png
+  layeroutmode: true
+  bgcolor: 00FFFFFF
+  extents: -13670541.558019,-13669953.351200,5520144.834970,5519016.194474
+  #
+  # NOTE: extents is not needed for this map because zoom to extents would work, 
+  #       but if your are rendering layers in seperate mapgen runs, 
+  #       this will need to be the same for each run.
+
+styles:
+
+  - name: fill
+
+    polyfill:
+        draw: true
+        crand:
+            h: .1 # set h to maintain same result between runs, leave h off to create a different random starting point each run
+            s: .55 # smaller the number the lighter
+            v: 1 #smaller the number the darker
+        colorbyfeature: true
+        
+  - name: outline
+        
+    polyoutline:
+        draw: true
+        linewidth: 2
+        color: 000000
+
+  - name: labels
+
+    labels:
+        draw: true
+        fontsize: 32
+        color: FF0000
+        feature: musym
+        
+  - name: textstyle1
+
+    polyoutline:
+        draw: true
+        linewidth: 1
+        color: 00FF00
+    labels:
+        draw: true
+        fontsize: 32
+        color: 0000FF
+        
+colorramps:
+
+  - name: colordem
+    min: 00ff00
+    mid: ffff00
+    max: ff0000  
+
+  - name: colorchan
+    min: 000000
+    max: 0000ff  
+
+
+dataobjs:
+
+  - name: fielddata
+    type: geojson
+    file: oregon_field.json
+    lyrname: mups_geojson
+    epsgfr: 4326
+    epsgto: 3857
+
+mapobjs: #note back to front order
+
+   - name: field_fill
+     type: layer
+     style: fill
+     children:
+       - dataobj: fielddata
+       
+   - name: field_outline
+     type: layer
+     style: outline
+     children:
+       - dataobj: fielddata
+       
+   - name: field_labels
+     type: layer
+     style: labels
+     children:
+       - dataobj: fielddata
+       
+   - name: text
+     type: layer
+     style: textstyle1
+     children:
+       - textobj: text1
+         text: "Cgentergpq"
+         extents: -13670541.558019,-13669953.351200,5520144.834970,5519016.194474
+         align: center
+       - textobj: text2
+         text: "Left Bottom"
+         extents: -13670541.558019,-13669953.351200,5520144.834970,5519016.194474
+         align: left, bottom
+       - textobj: text3
+         text: "Right Top"
+         extents: -13670541.558019,-13669953.351200,5520144.834970,5519016.194474
+         align: right, top

@@ -295,6 +295,67 @@ std::string UtlString::toLower(const std::string &s)
     return lower;
 }
 
+//============================================================================
+//============================================================================
+std::string UtlString::triml(const std::string &s)
+{
+    std::string t;
+    bool cfound = false;
+    for (size_t i = 0; i < s.size(); i++)
+    {
+        char c = s.at(i);
+
+        if (cfound)
+        {
+            t.append(1, c);
+            continue;
+        }
+
+
+        if (c == ' ') continue;
+
+        cfound = true;
+        t.append(1, c);
+    }
+
+    return t;
+}
+
+//============================================================================
+//============================================================================
+std::string UtlString::trimr(const std::string &s)
+{
+    std::string t;
+    bool cfound = false;
+
+    if (s.size() <= 0) return t;
+
+    for (int i = (int)(s.size()-1); i >= 0; i--)
+    {
+        char c = s.at(i);
+
+        if (cfound)
+        {
+            t.insert(0, 1, c);
+            continue;
+        }
+
+
+        if (c == ' ') continue;
+
+        cfound = true;
+        t.insert(0, 1, c);
+    }
+
+    return t;
+}
+
+//============================================================================
+//============================================================================
+std::string UtlString::trim(const std::string &s)
+{
+    return trimr(triml(s));
+}
 
 //============================================================================
 //============================================================================

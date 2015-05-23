@@ -159,8 +159,8 @@ void GeoCompute::computeBox(DrawData *pdd, box3d *pbox)
         for (unsigned int i=0; i<pwords->size(); i++)
         {
             const GeoWords::WordPos *wp = &(*pwords)[i];
-            pbox->UpdateBox(wp->box.l, wp->box.t, 0);
-            pbox->UpdateBox(wp->box.r, wp->box.b, 0);
+            pbox->updateBox(wp->box.l, wp->box.t, 0);
+            pbox->updateBox(wp->box.r, wp->box.b, 0);
 
         }
     }
@@ -246,8 +246,8 @@ bool GeoCompute::computeWordFinder()
     // TODO: SHOULD WE MAKE A COPY OF THE DATA AND TRANSFORM IT, LEAVING ORIGINAL INTACT
 
     // scale the polys to match words box
-    vec3d szWords = boxWords.GetSize();
-    vec3d szPolys = boxPolys.GetSize();
+    vec3d szWords = boxWords.getSize();
+    vec3d szPolys = boxPolys.getSize();
 
     double scaleX = szWords.x / szPolys.x;
     double scaleY = scaleX; // don't have a height to scale with so use x scale, which it should be the same anyway.
@@ -260,13 +260,13 @@ bool GeoCompute::computeWordFinder()
     pPolys->scale(scaleX, scaleY, 0);
 
     // recompute box
-    boxPolys.Reset();
+    boxPolys.reset();
     pPolys->computeBox(NULL, &boxPolys);
 
     // update the height now if we need to and get the updated word bounding box
-    if (pWords->updateBoxHeightIfNeeded(boxPolys.GetSize().y))
+    if (pWords->updateBoxHeightIfNeeded(boxPolys.getSize().y))
     {
-        boxWords.Reset();
+        boxWords.reset();
         pWords->computeBox(NULL, &boxWords);
     }
     /*
@@ -277,8 +277,8 @@ bool GeoCompute::computeWordFinder()
     }
     */
 
-    vec3d fr = boxPolys.GetCenter();
-    vec3d to = boxWords.GetCenter();
+    vec3d fr = boxPolys.getCenter();
+    vec3d to = boxWords.getCenter();
     pPolys->moveFromTo(fr, to);
 
     // now that polygons have been transformed into word space, lets find what words fit into which poly
@@ -468,14 +468,14 @@ void GeoCompute::getPolyVerbose(const PolyMap &polyMap, const std::string &featu
     GeoPoly *poly = it->second;
     poly->computeBoxNoLabel(&box);
 
-    vec3d c = box.GetCenter();
+    vec3d c = box.getCenter();
 
     double l = box.vmin.x;
     double t = box.vmax.y;
     double r = box.vmax.x;
     double b = box.vmin.y;
-    double w = box.GetSize().x;
-    double h = box.GetSize().y;
+    double w = box.getSize().x;
+    double h = box.getSize().y;
 
     char frmt[512];
     sprintf(frmt, "l,t,r,b: %.2f, %.2f, %.2f, %.2f, center(%.2f, %.2f), w: %.2f, h: %.2f", l, t, r, b, c.x, c.y, w, h);

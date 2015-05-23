@@ -33,6 +33,7 @@ GlObj* GeoPoly::clone() const
 //============================================================================
 void GeoPoly::draw(DrawData *pdd)
 {
+    GlObj::draw(pdd);
     // TODO: if this is null, use objects attributes
     // need routines for each items to precisely compute what attribute
 
@@ -64,15 +65,7 @@ void GeoPoly::drawOutline(DrawData *pdd)
 
     glColor4fv(color.m_af);
     glLineWidth(2);
-    glBegin(GL_LINE_LOOP);
-
-        for (int i=0; i<size(); i++)
-        {
-            Point2d pt = at(i);
-            glVertex2d(pt.dX, pt.dY);
-        }
-
-    glEnd();
+    Gldraw::drawLineLoop(getPts());
 }
 
 //============================================================================
@@ -85,6 +78,9 @@ void GeoPoly::drawMask(DrawData *pdd)
     if (!maskList) return;
     if (maskList->size() <= 0) return;
 
+    Gldraw::drawMask(pdd, maskList, getPts());
+
+    /*
     for (unsigned int i=0; i<maskList->size(); i++)
     {
         glClearStencil(0);
@@ -105,6 +101,7 @@ void GeoPoly::drawMask(DrawData *pdd)
         //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDisable(GL_STENCIL_TEST);
     }
+    */
 }
 
 //============================================================================
@@ -121,28 +118,6 @@ void GeoPoly::drawLabel(DrawData *pdd)
 
    glColor4fv(color.m_af);
    pfont->renderC(str, _labelPt);
-
-
-   /*
-   glPointSize(5);
-   glBegin(GL_POINTS);
-    glVertex2d(_labelPt.dX, _labelPt.dY);
-   glEnd();
-    */
-
-   /*
-   Point2d ptc = findLabelPt(DrawAttr::Middle);
-
-   box3d box = pdd->_drawAttr->_font.getBBoxd(str);
-   ptc.dX -= box.GetSize().x/2;
-   ptc.dY += box.GetSize().y/2;
-
-   glColor4fv(color.m_af);
-   glPushMatrix();
-   glTranslated(ptc.dX, ptc.dY, 0);
-   pdd->_drawAttr->_font.render(str);
-   glPopMatrix();
-   */
 }
 
 //============================================================================
@@ -174,7 +149,7 @@ void GeoPoly::computeBox(DrawData *pdd, box3d *pbox)
     for (unsigned int i=0; i<size(); i++)
     {
         Point2d pt = at(i);
-        pbox->UpdateBox(pt.dX, pt.dY, 0);
+        pbox->updateBox(pt.dX, pt.dY, 0);
     }
 
     if (!pdd) return;
@@ -185,6 +160,8 @@ void GeoPoly::computeBox(DrawData *pdd, box3d *pbox)
 
     GlText *pfont = DrawAttr::font(pdd->_drawAttr, _drawAttr);
     if (!pfont) return;
+
+    // TODO: we need the text box here don't we
 
 
 }
@@ -198,7 +175,7 @@ void GeoPoly::computeBoxNoLabel(box3d *pbox) const
     for (unsigned int i=0; i<size(); i++)
     {
         Point2d pt = at(i);
-        pbox->UpdateBox(pt.dX, pt.dY, 0);
+        pbox->updateBox(pt.dX, pt.dY, 0);
     }
 }
 
@@ -397,7 +374,7 @@ Point2d GeoPoly::findLabelPt(DrawData *pdd)
 
     if (!DrawAttr::drawLabels(pdd->_drawAttr, _drawAttr))
     {
-        return box.GetCenter().get2d();
+        return box.getCenter().get2d();
     }
 
     char str[64];
@@ -407,7 +384,7 @@ Point2d GeoPoly::findLabelPt(DrawData *pdd)
         int idebug = 1;
     }
 
-    vec3d c = box.GetCenter();
+    vec3d c = box.getCenter();
     Point2d boxcLeft(box.vmin.x, c.y);
     Point2d boxcRight(box.vmax.x, c.y);
 

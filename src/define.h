@@ -2,12 +2,9 @@
 #define CDEFINE_H
 
 
-class CDefine  
+class Define  
 {
 public:
-	CDefine();
-	virtual ~CDefine();
-  public:
 
     // flags and boolean
     enum
@@ -181,6 +178,20 @@ public:
 	static double EPSILON_PIVDIAM;
 
     static double GOLDEN_RATIO_CONJUGATE;
+
+    enum AlignH
+    {
+        align_h_ctr = 1,
+        align_h_lft = 2,
+        align_h_rht = 4
+    };
+
+    enum AlignV
+    {
+        align_v_ctr = 8,
+        align_v_top = 16,
+        align_v_btm = 32
+    };
 
 };
 

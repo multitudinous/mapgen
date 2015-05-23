@@ -2,6 +2,8 @@
 #include "gradientpicker.h"
 #include <QImage>
 
+//============================================================================
+//============================================================================
 PTexture UtlTxGeo::load(const QImage *img)
 {
     int bytesPerPix = img->depth() / 8;
@@ -36,6 +38,8 @@ PTexture UtlTxGeo::load(const QImage *img)
     return tx;
 }
 
+//============================================================================
+//============================================================================
 PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, GradientPicker *pcolor)
 {
 	MemBuf hmap;
@@ -53,6 +57,8 @@ PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, GradientPicker *pcolor)
 	return tx;
 }
 
+//============================================================================
+//============================================================================
 PTexture UtlTxGeo::loadRgb(const GdalFile *pfile)
 {
 	PMemBuf rgb(new MemBuf());
@@ -66,6 +72,8 @@ PTexture UtlTxGeo::loadRgb(const GdalFile *pfile)
 	return tx;
 }
 
+//============================================================================
+//============================================================================
 PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, Stats stats, GradientPicker *pcolor)
 {
     PMemBuf rgb(new MemBuf(4, hmap->GetLenX(), hmap->GetLenY()));

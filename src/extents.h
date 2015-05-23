@@ -38,6 +38,7 @@ struct Extents
     double width() const { return r-l; }
     double height() const { return t-b; }
     double area() const { return width() * height(); }
+    bool isZero() const { if (fabs(width()) < .001 && fabs(height()) < .001) return true; return false; }
 
 
     void move(const Point2d &mv)

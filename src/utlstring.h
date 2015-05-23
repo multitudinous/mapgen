@@ -27,6 +27,10 @@ public:
     static void toLower(const std::string &s, std::string *lower);
     static std::string toLower(const std::string &s);
 
+    static std::string triml(const std::string &s);
+    static std::string trimr(const std::string &s);
+    static std::string trim(const std::string &s);
+
     static void replaceString(std::string& subject, const std::string& search, const std::string& replace);
     static std::string replaceStringCopy(std::string subject, const std::string& search, const std::string& replace);
 

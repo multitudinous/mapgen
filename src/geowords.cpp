@@ -827,6 +827,6 @@ void GeoWords::computeBox(DrawData *pdd, box3d *pbox)
 {
     GlObj::computeBox(pdd, pbox);
 
-    pbox->UpdateBox(_box.l, _box.t, 0);
-    pbox->UpdateBox(_box.r, _box.b, 0);
+    pbox->updateBox(_box.l, _box.t, 0);
+    pbox->updateBox(_box.r, _box.b, 0);
 }

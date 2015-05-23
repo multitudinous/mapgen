@@ -32,7 +32,7 @@ struct Box3
 
     Box3()
 	{
-		Reset();
+		reset();
 	}
 
     Box3(const Vector3<T>& umin, const Vector3<T>& umax)
@@ -51,13 +51,18 @@ struct Box3
 	}
 
 	// methods
-	void Reset()
+	void reset()
 	{
 		vmin.SetVector(std::numeric_limits<T>::max(), std::numeric_limits<T>::max(), std::numeric_limits<T>::max());
 		vmax = (T)-1 * vmin;
 	}
 
-	void UpdateBox(const Vector3<T>& umin, const Vector3<T>& umax)
+    void updateBox(const Box3<T>& box)
+    {
+        updateBox(box.getMin(), box.getMax());
+    }
+
+	void updateBox(const Vector3<T>& umin, const Vector3<T>& umax)
 	{
 		if ( umin.x < vmin.x) vmin.x = umin.x;
 		if ( umin.y < vmin.y) vmin.y = umin.y;
@@ -67,14 +72,14 @@ struct Box3
 		if ( umax.z > vmax.z) vmax.z = umax.z;
 	}
 
-	void UpdateBox(const Vector3<T>& v)
+	void updateBox(const Vector3<T>& v)
 	{
 		if ( v.x < vmin.x ) vmin.x = v.x; if ( v.x > vmax.x ) vmax.x = v.x;
 		if ( v.y < vmin.y ) vmin.y = v.y; if ( v.y > vmax.y ) vmax.y = v.y;
 		if ( v.z < vmin.z ) vmin.z = v.z; if ( v.z > vmax.z ) vmax.z = v.z;
 	}
 
-	void UpdateBox(const T &x, const T &y, const T &z)
+	void updateBox(const T &x, const T &y, const T &z)
 	{
 		if ( x < vmin.x ) vmin.x = x; 
 		if ( y < vmin.y ) vmin.y = y; 
@@ -85,41 +90,86 @@ struct Box3
 		if ( z > vmax.z ) vmax.z = z;
 	}
 
-	Vector3<T> GetCenter() const
+    const Vector3<T>& getMin() const
+    {
+        return vmin;
+    }
+
+    const Vector3<T>& getMax() const
+    {
+        return vmax;
+    }
+
+	Vector3<T> getCenter() const
 	{
 		return (vmin + vmax) * static_cast<T>(0.5);
 	}
 
-    Vector3<T> GetTopLeft() const
+    Vector3<T> getTopLeft() const
     {
         return Vector3<T>(vmin.x, vmax.y, vmin.z);
     }
 
-    Vector3<T> GetBtmLeft() const
+    Vector3<T> getBtmLeft() const
     {
         return Vector3<T>(vmin.x, vmin.y, vmin.z);
     }
 
-	Vector3<T> GetSize() const
+    T getLeft() const
+    {
+        return vmin.x;
+    }
+
+    T getRight() const
+    {
+        return vmax.x;
+    }
+
+    T getTop() const
+    {
+        return vmax.y;
+    }
+
+    T getBtm() const
+    {
+        return vmin.y;
+    }
+
+	Vector3<T> getSize() const
 	{
 		return vmax - vmin;
 	}
 
-	bool IsInside(const Vector3<T>& point) const
+    T getWidth() const
+    {
+        return vmax.x - vmin.x;
+    }
+
+    T getHeight() const
+    {
+        return vmax.y - vmin.y;
+    }
+
+    T getDepth() const
+    {
+        return vmax.z - vmin.z;
+    }
+
+	bool isInside(const Vector3<T>& point) const
 	{
 		if ( point.x < vmin.x || point.y < vmin.y || point.z < vmin.z ) return false;
 		if ( point.x > vmax.x || point.y > vmax.y || point.z > vmax.z ) return false;
 		return true;
 	}
 
-	bool IsInside(T x, T y, T z) const
+	bool isInside(T x, T y, T z) const
 	{
 		if ( x < vmin.x || y < vmin.y || z < vmin.z ) return false;
 		if ( x > vmax.x || y > vmax.y || z > vmax.z ) return false;
 		return true;
 	}
 
-	bool IsInsideOrOn(T x, T y, T z) const
+	bool isInsideOrOn(T x, T y, T z) const
 	{
 		if ( x <= vmin.x || y <= vmin.y || z <= vmin.z ) return false;
 		if ( x >= vmax.x || y >= vmax.y || z >= vmax.z ) return false;

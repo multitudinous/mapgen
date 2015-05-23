@@ -1,11 +1,12 @@
 #include "mapyaml.h"
 #include <fstream>
+#include <iostream>
 #include "utlstring.h"
 #include "geolayer.h"
 #include "geoaerial.h"
+#include "geotext.h"
 #include "geowords.h"
 #include "utlqt.h"
-#include <iostream>
 
 //============================================================================
 //============================================================================
@@ -654,6 +655,14 @@ PGlObj MapYaml::loadLayerChild(const YAML::Node& node)
         return dataobj;
     }
 
+    // load text objects
+    str = getString(node, "textobj");
+    if (str.size() > 0)
+    {
+        PGlObj dataobj = loadTextObj(node);
+        return dataobj;
+    }
+
     // load compute objects
     str = getString(node, "computeobj");
     if (str.size() > 0)
@@ -669,6 +678,25 @@ PGlObj MapYaml::loadLayerChild(const YAML::Node& node)
     }
 
     return PGlObj();
+}
+
+//============================================================================
+//============================================================================
+PGlObj MapYaml::loadTextObj(const YAML::Node& node)
+{
+    GeoText *textObj = new GeoText();
+
+    textObj->text(getString(node, "text"));
+    textObj->extents(getExtents(node, "extents"));
+
+    Define::AlignH ah = Define::align_h_ctr;
+    Define::AlignV av = Define::align_v_ctr;
+    getAlign(node, "align", &ah, &av);
+    textObj->alignH(ah);
+    textObj->alignV(av);
+
+
+    return PGlObj(textObj);
 }
 
 //============================================================================
@@ -828,6 +856,7 @@ Rgbf MapYaml::getColorRgbf(const YAML::Node& node, const char *name, const Rgbf 
 int MapYaml::getExtents(const YAML::Node& node, const char *name, Extents *ext)
 {
     const char *func = "MapYaml::getExtents() -";
+
     if (!node[name])
     {
         return 0;
@@ -875,6 +904,62 @@ Extents MapYaml::getExtents(const YAML::Node& node, const char *name, Extents de
     if (res) *res = ret;
 
     return def;
+}
+
+//============================================================================
+//============================================================================
+bool MapYaml::getAlign(const YAML::Node& node, const char *name, Define::AlignH *ah, Define::AlignV *av)
+{
+    const char *func = "MapYaml::getAlign() -";
+
+    if (!node[name])
+    {
+        return false;
+    }
+
+    std::vector<std::string> alist;
+    UtlString::explode(node[name].as<std::string>(), ",", &alist);
+    for (unsigned int i = 0; i < alist.size(); i++)
+    {
+        std::string s = UtlString::toLower(alist[i]);
+        s = UtlString::trim(s);
+
+        if (s == "center")
+        {
+            *ah = Define::align_h_ctr;
+            *av = Define::align_v_ctr;
+        }
+        else if (s == "centerh")
+        {
+            *ah = Define::align_h_ctr;
+        }
+        else if (s == "centerv")
+        {
+            *av = Define::align_v_ctr;
+        }
+        else if (s == "left")
+        {
+            *ah = Define::align_h_lft;
+        }
+        else if (s == "right")
+        {
+            *ah = Define::align_h_rht;
+        }
+        else if (s == "top")
+        {
+            *av = Define::align_v_top;
+        }
+        else if (s == "bottom")
+        {
+            *av = Define::align_v_btm;
+        }
+        else
+        {
+            LogTrace("%s UnRecognized alignment type found: %s", func, s.c_str());
+        }
+    }
+
+    return true;
 }
 
 //============================================================================

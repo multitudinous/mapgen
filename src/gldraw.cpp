@@ -71,12 +71,107 @@ void GlDraw::drawPolyConcaveVN(GLUtesselator *hTess, const std::vector<vec3d> &p
 } 
 */
 
+//============================================================================
+//============================================================================
+void Gldraw::drawLineLoop(const ListPt2d &pts)
+{
+    glBegin(GL_LINE_LOOP);
+
+    for (int i = 0; i<pts.size(); i++)
+    {
+        Point2d pt = pts.at(i);
+        glVertex2d(pt.dX, pt.dY);
+    }
+
+    glEnd();
+}
+
+//============================================================================
+//============================================================================
+void Gldraw::drawMask(DrawData *pdd, const GlObjList* maskList, const ListPt2d &regionPtList)
+{
+    if (!maskList) return;
+    if (maskList->size() <= 0) return;
+    if (regionPtList.size() < 3) return;
+
+    for (unsigned int i = 0; i<maskList->size(); i++)
+    {
+        PGlObj colorObj = (*maskList)[i];
+        drawMask(pdd, colorObj.get(), regionPtList);
+    }
+}
+
+//============================================================================
+//============================================================================
+void Gldraw::drawMask(DrawData *pdd, GlObj *maskColoring, const ListPt2d &regionPtList)
+{
+    if (!maskColoring) return;
+    if (regionPtList.size() < 3) return;
+
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT);
+
+    glEnable(GL_STENCIL_TEST);
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+    glStencilFunc(GL_ALWAYS, 1, -1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    Gldraw::drawPolyConcaveVN(pdd->m_hGluTess, regionPtList);
+    glStencilFunc(GL_EQUAL, 1, -1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    maskColoring->draw(pdd);
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glDisable(GL_STENCIL_TEST);
+}
+
+//============================================================================
+//============================================================================
+void Gldraw::drawQuad(double l, double r, double t, double b, double z)
+{
+    drawQuad(GL_QUADS, l, r, t, b, z);
+}
+
+//============================================================================
+//============================================================================
+void Gldraw::drawQuadLine(double l, double r, double t, double b, double z)
+{
+    drawQuad(GL_LINE_LOOP, l, r, t, b, z);
+}
+
+//============================================================================
+//============================================================================
+void Gldraw::drawQuad(GLenum mode, double l, double r, double t, double b, double z)
+{
+    glBegin(mode);
+
+    glTexCoord2f(0, 0);
+    glVertex3d(l, b, z);
+
+    glTexCoord2f(1, 0);
+    glVertex3d(r, b, z);
+
+    glTexCoord2f(1, 1);
+    glVertex3d(r, t, z);
+
+    glTexCoord2f(0, 1);
+    glVertex3d(l, t, z);
+
+    glEnd();
+}
+
+//============================================================================
+//============================================================================
 void Gldraw::drawPolyConcaveVN(GLUtesselator *hTess, const GeoPoly *poly)
 {
     drawPolyConcaveVN(hTess, poly->getPts());
 }
 
-void Gldraw::drawPolyConcaveVN(GLUtesselator *hTess, const std::vector<Point2d> &ptlist)
+//============================================================================
+//============================================================================
+void Gldraw::drawPolyConcaveVN(GLUtesselator *hTess, const ListPt2d &ptlist)
 {
 	// Set up the begin callback to call glBegin directly; there's no need    
   // to do anything special in this case.  If you had a flat-shaded         
@@ -110,7 +205,7 @@ void Gldraw::drawPolyConcaveVN(GLUtesselator *hTess, const std::vector<Point2d> 
 
 //=======================================================================
 //=======================================================================
-void CALLBACK Gldraw::gluCallbackTessalateVertVN3F(void *pvVertInfoVN3) 
+void Gldraw::gluCallbackTessalateVertVN3F(void *pvVertInfoVN3) 
 { 
   SVertInfoVN3 *pstVertInfo = (SVertInfoVN3 *)pvVertInfoVN3;
 
@@ -121,7 +216,7 @@ void CALLBACK Gldraw::gluCallbackTessalateVertVN3F(void *pvVertInfoVN3)
 
 //=======================================================================
 //=======================================================================
-void CALLBACK Gldraw::gluCallbackBeginPoly(GLenum eWhich) 
+void Gldraw::gluCallbackBeginPoly(GLenum eWhich) 
 {
   switch (eWhich)
   {

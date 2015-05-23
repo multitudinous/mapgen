@@ -67,6 +67,6 @@ void GeoImg::computeBox(DrawData *pdd, box3d *pbox)
     if (!_tx) return;
 
     GeoObj::computeBox(pdd, pbox);
-    pbox->UpdateBox(_ext.l, _ext.t, 0);
-    pbox->UpdateBox(_ext.r, _ext.b, 0);
+    pbox->updateBox(_ext.l, _ext.t, 0);
+    pbox->updateBox(_ext.r, _ext.b, 0);
 }

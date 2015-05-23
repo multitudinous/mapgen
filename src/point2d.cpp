@@ -9,7 +9,7 @@
 #pragma warning(disable: 4100)
 #include "point2d.h"
 //#include "CToolsMisc.h"
-#include "CDefine.h"
+#include "Define.h"
 #include <math.h>
 #pragma warning(error: 4100)
 
@@ -177,7 +177,7 @@ double Point2d::dPolarAngle(bool bNormalize) const
   {
     case 3:
     case 4:
-      dAngle = CDefine::TWOPI - dAngle;
+      dAngle = Define::TWOPI - dAngle;
       break;
   }
 

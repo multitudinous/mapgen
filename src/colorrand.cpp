@@ -1,5 +1,5 @@
 #include "colorrand.h"
-#include "CDefine.h"
+#include "define.h"
 #include "utlmath.h"
 #include "randgen.h"
 #include <qcolor.h>
@@ -71,7 +71,7 @@ void ColorRand::setV(double d)
 //============================================================================
 Rgbf ColorRand::getNext()
 {
-    _h += CDefine::GOLDEN_RATIO_CONJUGATE;
+    _h += Define::GOLDEN_RATIO_CONJUGATE;
     //_h = 1 - _h;
     _h = fmod(_h, 1.0);
 

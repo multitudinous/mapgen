@@ -9,6 +9,7 @@
 #include "gissys.h"
 #include "gradientpicker.h"
 #include "rgbf.h"
+#include "define.h"
 
 #include <QColor>
 
@@ -58,6 +59,8 @@ protected:
     void loadLayerChildren(const YAML::Node& node, GlObj *lyr);
     PGlObj loadLayerChild(const YAML::Node& node);
 
+    PGlObj loadTextObj(const YAML::Node& node);
+
     void loadComputeObjs(const YAML::Node& styles);
     PGeoCompute loadComputeObj(const YAML::Node& styles);
 
@@ -72,6 +75,7 @@ protected:
     Rgbf getColorRgbf(const YAML::Node& node, const char *name, const Rgbf &def);
     int getExtents(const YAML::Node& node, const char *name, Extents *ext);
     Extents getExtents(const YAML::Node& node, const char *name, Extents def = Extents(0, 0, 0, 0), int *res = NULL);
+    bool getAlign(const YAML::Node& node, const char *name, Define::AlignH *ah, Define::AlignV *av);
 
     PGlObj getDataObj(const std::string &name);
     PGlObj getComputeObj(const std::string &name);

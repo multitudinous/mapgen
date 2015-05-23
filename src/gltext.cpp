@@ -71,19 +71,28 @@ bool GlText::initFontOutline(const char *name, int size)
 void GlText::renderC(const char *str, const Point2d &c, double z)
 {
    box3d box = getBBoxd(c, str);
-   renderBL(str, box.GetBtmLeft().get2d(), z);
+   renderBL(str, box.getBtmLeft().get2d(), z);
    //renderTL(str, c, z);
 }
 
 //============================================================================
 // render text positioned, bl = bottom left position of the texts bounds
 //============================================================================
-void GlText::renderBL(const char *str, const Point2d &tl, double z)
+void GlText::renderBL(const char *str, const Point2d &bl, double z)
 {
     glPushMatrix();
-    glTranslated(tl.dX, tl.dY, z);
+    glTranslated(bl.dX, bl.dY, z);
     render(str);
     glPopMatrix();
+}
+
+//============================================================================
+// first align the text within the text box and then render it
+//============================================================================
+void GlText::render(const char *str, const Extents &textbox, Define::AlignH ah, Define::AlignV av, double z)
+{
+    box3d box = getBBoxd(str, textbox, ah, av, z);
+    renderBL(str, box.getBtmLeft().get2d(), z);
 }
 
 //============================================================================
@@ -109,8 +118,8 @@ box3f GlText::getBBoxf(const char *str)
 	box3d boxd = GlText::getBBoxd(str);
 
 	box3f boxf;
-	boxf.UpdateBox((float)boxd.vmin.x, (float)boxd.vmin.y, (float)boxd.vmin.z);
-	boxf.UpdateBox((float)boxd.vmax.x, (float)boxd.vmax.y, (float)boxd.vmax.z);
+	boxf.updateBox((float)boxd.vmin.x, (float)boxd.vmin.y, (float)boxd.vmin.z);
+	boxf.updateBox((float)boxd.vmax.x, (float)boxd.vmax.y, (float)boxd.vmax.z);
 	return boxf;
 }
 
@@ -123,8 +132,8 @@ box3d GlText::getBBoxd(const char *str)
 	FTBBox ftbox = _font->BBox(str);
 
 	box3d box;
-	box.UpdateBox(ftbox.Lower().X(), ftbox.Lower().Y(), ftbox.Lower().Z());
-	box.UpdateBox(ftbox.Upper().X(), ftbox.Upper().Y(), ftbox.Upper().Z());
+	box.updateBox(ftbox.Lower().X(), ftbox.Lower().Y(), ftbox.Lower().Z());
+	box.updateBox(ftbox.Upper().X(), ftbox.Upper().Y(), ftbox.Upper().Z());
 	return box;
 }
 
@@ -136,18 +145,68 @@ box3d GlText::getBBoxd(const Point2d &center, const char *str)
     box3d boxnew;
 
     vec3d tl, br;
-    tl.x = center.dX - box.GetSize().x/2.0;
-    tl.y = center.dY + box.GetSize().y/2.0;
+    tl.x = center.dX - box.getSize().x/2.0;
+    tl.y = center.dY + box.getSize().y/2.0;
     tl.z = box.vmin.z;
 
-    br.x = tl.x + box.GetSize().x;
-    br.y = tl.y - box.GetSize().y;
+    br.x = tl.x + box.getSize().x;
+    br.y = tl.y - box.getSize().y;
     br.z = box.vmax.z;
 
-    boxnew.UpdateBox(tl);
-    boxnew.UpdateBox(br);
+    boxnew.updateBox(tl);
+    boxnew.updateBox(br);
 
     return boxnew;
+}
+
+//============================================================================
+// compute actual bounding box from an extents box and alighment specificiations
+//============================================================================
+box3d GlText::getBBoxd(const char *str, const Extents &ext, Define::AlignH ah, Define::AlignV av, double z)
+{
+    // this gets the bounding box but its aligned with the baseline, need to modifiy FTGL to run through the render code without drawing anything to compute proper bounding box
+    box3d box = getBBoxd(str);
+    Extents aexts;
+
+    // horizontal
+    if (ah == Define::align_h_lft)
+    {
+        aexts.l = ext.l;
+        aexts.r = aexts.l + box.getWidth();
+    }
+    else if (ah == Define::align_h_rht)
+    {
+        aexts.r = ext.r;
+        aexts.l = aexts.r - box.getWidth();
+    }
+    else
+    {
+        aexts.l = ext.cx() - box.getWidth() / 2.0;
+        aexts.r = aexts.l + box.getWidth();
+    }
+
+    // cartesian vertical
+    if (av == Define::align_v_top)
+    {
+        aexts.t = ext.t;
+        aexts.b = aexts.t - box.getHeight();
+    }
+    else if (av == Define::align_v_btm)
+    {
+        aexts.b = ext.b;
+        aexts.t = aexts.b + box.getHeight();
+    }
+    else
+    {
+        aexts.t = ext.cy() + box.getHeight() / 2.0;
+        aexts.b = aexts.t - box.getHeight();
+    }
+
+    box3d boxnew;
+    boxnew.updateBox(aexts.l, aexts.t, z);
+    boxnew.updateBox(aexts.r, aexts.b, z);
+
+    return boxnew; // the aligned bounding box of the text
 }
 
 
