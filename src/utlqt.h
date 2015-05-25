@@ -22,6 +22,10 @@ public:
     static void findFiles(const QString &dirPath, const QString &search, std::vector<QString> *plist, bool checkSubDirs=false); // search = QString("*.ext")
     static void findFiles(const QString &dirPath, const QString &search, std::list<QString> *plist, bool checkSubDirs=false); // search = QString("*.ext")
 
+    static bool findFile(const char *file, const std::vector<std::string> &searchPaths, std::string *pathFound);
+    static bool findFile(const char *file, const std::vector<std::string> &searchPaths, const std::vector<std::string> &searchExts, std::string *pathFound);
+    static bool findFileFromExt(const char *file, const std::vector<std::string> &searchExt, std::string *pathFound);
+
 
 protected:
     typedef std::back_insert_iterator< std::vector<QString> > IteratorBackInsertQStringVector;

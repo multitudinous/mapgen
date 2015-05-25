@@ -62,9 +62,10 @@ void GeoPoly::drawOutline(DrawData *pdd)
 {
     if (!DrawAttr::drawPolyOutline(pdd->_drawAttr, _drawAttr)) return;
     Rgbf color = DrawAttr::colorPolyOutline(pdd->_drawAttr, _drawAttr);
+    float linew = DrawAttr::lineWidth(pdd->_drawAttr, _drawAttr);
 
     glColor4fv(color.m_af);
-    glLineWidth(2);
+    glLineWidth(linew);
     Gldraw::drawLineLoop(getPts());
 }
 

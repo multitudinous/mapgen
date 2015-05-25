@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <vector>
+#include <string>
 
 //============================================================================
 //============================================================================
@@ -15,5 +17,12 @@
 #ifndef WIN32
     int _vscprintf(const char * format, va_list pargs);
 #endif
+
+
+class Platform
+{
+public:
+    static void getFontSearchPaths(std::vector<std::string> *list);
+};
 
 #endif

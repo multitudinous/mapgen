@@ -16,7 +16,26 @@ int _vscprintf(const char * format, va_list pargs)
 
 #endif
 
+//============================================================================
+//============================================================================
+void Platform::getFontSearchPaths(std::vector<std::string> *list)
+{
+#ifdef WIN32
+    list->push_back(std::getenv("WINDIR") + std::string("/fonts/"));
+#endif
 
+#ifdef _APPLE_
+    list->push_back(std::string("/System/Library/Fonts/"));
+    list->push_back(std::string("/Library/Fonts/"));
+    list->push_back(std::string("~/Library/Fonts/"));
+    list->push_back(std::string("/Network/Library/Fonts/"));
+#endif
+
+#if defined(LINUX) || defined(__linux)
+    list->push_back(std::string("/usr/share/fonts/"));
+    list->push_back(std::string("~/.fonts/"));
+#endif
+}
 
 /*
 

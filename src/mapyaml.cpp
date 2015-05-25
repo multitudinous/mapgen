@@ -7,11 +7,13 @@
 #include "geotext.h"
 #include "geowords.h"
 #include "utlqt.h"
+#include "platform.h"
 
 //============================================================================
 //============================================================================
 MapYaml::MapYaml()
 {
+    Platform::getFontSearchPaths(&_searchPathFonts);
 }
 
 //============================================================================
@@ -223,35 +225,35 @@ void MapYaml::initCompute(GisSys *pgis)
 //============================================================================
 void MapYaml::loadOutput(const YAML::Node& node)
 {
-    _cfg.reset(new Config());
+_cfg.reset(new Config());
 
-    _cfg->mode( getString(node, "mode", _cfg->mode().c_str()) );
-    _cfg->width( getInt(node, "width", _cfg->width()) );
-    _cfg->height( getInt(node, "height", _cfg->height()) );
-    _cfg->imgFile( getString(node, "file", _cfg->imgFile()) );
-    _cfg->outType( getString(node, "outtype", _cfg->outType()) );
-    _cfg->dataFile( getString(node, "datafile", _cfg->dataFile()) );
-    _cfg->lyrOutMode( getBool(node, "layeroutmode", _cfg->lyrOutMode()) );
-    _cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
-    _cfg->mapExtents(getExtents(node, "extents"));
-    
+_cfg->mode(getString(node, "mode", _cfg->mode().c_str()));
+_cfg->width(getInt(node, "width", _cfg->width()));
+_cfg->height(getInt(node, "height", _cfg->height()));
+_cfg->imgFile(getString(node, "file", _cfg->imgFile()));
+_cfg->outType(getString(node, "outtype", _cfg->outType()));
+_cfg->dataFile(getString(node, "datafile", _cfg->dataFile()));
+_cfg->lyrOutMode(getBool(node, "layeroutmode", _cfg->lyrOutMode()));
+_cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
+_cfg->mapExtents(getExtents(node, "extents"));
 
-    _cfg->imgFile( validateOutfile(_cfg->imgFile()) );
-    /*
-    std::string path = UtlString::GetPath(_cfg->mapfile.c_str(), false);
-    if (!path.size())
-    {
-        path = UtlString::GetPath(_yamlfile.c_str(), true);
-        _cfg->mapfile = path + _cfg->mapfile;
-    }
-    */
+
+_cfg->imgFile(validateOutfile(_cfg->imgFile()));
+/*
+std::string path = UtlString::GetPath(_cfg->mapfile.c_str(), false);
+if (!path.size())
+{
+path = UtlString::GetPath(_yamlfile.c_str(), true);
+_cfg->mapfile = path + _cfg->mapfile;
+}
+*/
 }
 
 //============================================================================
 //============================================================================
 void MapYaml::loadStyles(const YAML::Node& node)
 {
-    for (std::size_t i=0;i<node.size();i++)
+    for (std::size_t i = 0; i < node.size(); i++)
     {
         PDrawAttr style = loadStyle(node[i]);
         if (style) _styleMap[style->_name] = style;
@@ -262,6 +264,8 @@ void MapYaml::loadStyles(const YAML::Node& node)
 //============================================================================
 PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
 {
+    const char *func = "MapYaml::loadStyle() -";
+
     PDrawAttr attr(new DrawAttr());
 
     attr->_name = getString(node, "name", "");
@@ -271,12 +275,12 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         const YAML::Node& an = node["polymask"];
 
         attr->_drawPolyMasked = getBool(an, "draw");
-        std::string maskstr  = getString(an, "masks");
+        std::string maskstr = getString(an, "masks");
 
         std::vector<std::string> vmasks;
         UtlString::explode(maskstr, std::string(","), &vmasks);
 
-        for (unsigned int i=0; i<vmasks.size(); i++)
+        for (unsigned int i = 0; i < vmasks.size(); i++)
         {
             PGlObj mask = getDataObj(vmasks[i]);
             if (mask)
@@ -303,6 +307,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_drawPolyOutline = getBool(an, "draw");
         attr->_colorPolyOutline = getColorRgbf(an, "color");
         attr->_colorRandPolyOutline = loadColorRand(an);
+        attr->_lineWidth = getDbl(an, "linewidth", 1.0f);
 
         // if (an["linewidth"])
     }
@@ -314,16 +319,63 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_drawLabels = getBool(an, "draw");
         attr->_colorLabels = getColorRgbf(an, "color");
         attr->_colorRandLabels = loadColorRand(an);
-        attr->_feature =  getString(an, "feature");
+        attr->_feature = getString(an, "feature");
 
-        // TODO: figure out how to configure fonts folder, and search path
-        int fontsize = getInt(an, "fontsize", 36);
-        attr->_font.initFontTexture("C:/Windows/Fonts/ARIAL.TTF", fontsize);
+        int fontsize = 36;
+        std::string fontfile;
+        bool haveFont = true;
+        if (!loadFont(an, &fontfile, &fontsize))
+        {
+            if (!findFont("Arial", &fontfile))
+            {
+                haveFont = false;
+            }
+        }
+        
+        if (haveFont)
+        {
+            attr->_font.initFontTexture(fontfile.c_str(), fontsize);
+        }
     }
 
     return attr;
 }
 
+//============================================================================
+//============================================================================
+bool MapYaml::loadFont(const YAML::Node& node, std::string *fontFile, int *fontSize)
+{
+    const char *func = "MapYaml::loadFont() -";
+
+    *fontSize = getInt(node, "fontsize", 36);
+    std::string fontname = getString(node, "font", "ARIAL.TTF");
+    return findFont(fontname.c_str(), fontFile);
+}
+
+//============================================================================
+//============================================================================
+bool MapYaml::findFont(const char *fontName, std::string *fontFile)
+{
+    const char *func = "MapYaml::findFont() -";
+
+    if (UtlQt::findFile(fontName, _searchPathFonts, fontFile))
+    {
+        return true;
+    }
+
+    LogError("%s Error: font file not found! File: %s", func, fontName);
+
+    std::string err = "  Looked in: ";
+    for (int i = 0; i < _searchPathFonts.size(); i++)
+    {
+        err += "    ";
+        err += _searchPathFonts[i];
+        err += "\n";
+    }
+    LogError("%s", err.c_str());
+
+    return false;
+}
 
 //============================================================================
 //============================================================================
@@ -1044,23 +1096,12 @@ bool MapYaml::fileExists(const char *path, std::string *pathresult)
 
     // TODO: could search config folders
 
-    if (!UtlQt::fileExists(path))
+    if (!UtlQt::findFile(path, _searchPath, pathresult))
     {
-        for (unsigned int i=0; i<_searchPath.size(); i++)
-        {
-            std::string pathcheck = _searchPath[i] + path;
-            if (UtlQt::fileExists(pathcheck.c_str()))
-            {
-                *pathresult = pathcheck;
-                return true;
-            }
-        }
-
         LogError("%s file doesn't exist: %s", func, path);
         return false;
     }
 
-    *pathresult = path;
     return true;
 }
 

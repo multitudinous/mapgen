@@ -48,6 +48,7 @@ styles:
     labels:
         draw: true
         fontsize: 32
+        font: COOPBL.TTF
         color: 0000FF
         
 colorramps:

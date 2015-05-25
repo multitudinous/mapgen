@@ -43,6 +43,8 @@ protected:
 
     void loadStyles(const YAML::Node& styles);
     PDrawAttr loadStyle(const YAML::Node& styles);
+    bool loadFont(const YAML::Node& node, std::string *fontFile, int *fontSize);
+    bool findFont(const char *fontName, std::string *fontFile);
 
     void loadColorRamps(const YAML::Node& styles);
     PColorRamp loadColorRamp(const YAML::Node& styles);
@@ -98,6 +100,7 @@ protected:
     GlObjList _mapObjs;
 
     std::vector<std::string> _searchPath;
+    std::vector<std::string> _searchPathFonts;
 
 };
 

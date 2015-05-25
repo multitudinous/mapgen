@@ -62,6 +62,75 @@ void UtlQt::findFiles(const QString &dirPath, const QString &search, std::list<Q
     UtlQt::findFilesT<IteratorBackInsertQStringList>(dirPath, search, it, checkSubDirs);
 }
 
+//============================================================================
+//============================================================================
+bool UtlQt::findFile(const char *file, const std::vector<std::string> &searchPaths, std::string *pathFound)
+{
+    if (fileExists(file))
+    {
+        *pathFound = file;
+        return true;
+    }
+
+    for (unsigned int i = 0; i<searchPaths.size(); i++)
+    {
+        std::string pathcheck = searchPaths[i] + file;
+        if (UtlQt::fileExists(pathcheck.c_str()))
+        {
+            *pathFound = pathcheck;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool UtlQt::findFile(const char *file, const std::vector<std::string> &searchPaths, const std::vector<std::string> &searchExts, std::string *pathFound)
+{
+    if (findFileFromExt(file, searchExts, pathFound)) return true;
+
+    for (unsigned int i = 0; i<searchPaths.size(); i++)
+    {
+        std::string pathcheck = searchPaths[i] + file;
+        if (UtlQt::fileExists(pathcheck.c_str()))
+        {
+            *pathFound = pathcheck;
+            return true;
+        }
+
+        if (findFileFromExt(pathcheck.c_str(), searchExts, pathFound))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool UtlQt::findFileFromExt(const char *file, const std::vector<std::string> &searchExt, std::string *pathFound)
+{
+    if (fileExists(file))
+    {
+        *pathFound = file;
+        return true;
+    }
+
+    for (unsigned int i = 0; i<searchExt.size(); i++)
+    {
+        std::string pathcheck = file + searchExt[i];
+        if (UtlQt::fileExists(pathcheck.c_str()))
+        {
+            *pathFound = pathcheck;
+            return true;
+        }
+    }
+
+    return false;
+}
 /*
 //============================================================================
 //============================================================================

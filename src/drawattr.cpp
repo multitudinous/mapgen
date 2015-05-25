@@ -25,6 +25,8 @@ DrawAttr::DrawAttr()
 
     _colorByFeaturePolyFill = false;
 
+    _lineWidth = 1;
+
     _overrideAlpha = false;
     _overrideDrawPolyFill = false;
     _overrideDrawPolyOutline = false;
@@ -34,6 +36,7 @@ DrawAttr::DrawAttr()
     _overrideColorPolyOutline = false;
     _overridePolyMask = false;
     _overrideColorLabels = false;
+    _overrideLineWidth = false;
     _overrideFeature = false;
     _overrideFont = false;
 }
@@ -214,6 +217,12 @@ const vector< shared_ptr<GlObj> >* DrawAttr::maskPoly(shared_ptr<DrawAttr> plyr,
 
 //============================================================================
 //============================================================================
+float  DrawAttr::lineWidth(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover)
+{
+    return DrawAttr::lineWidth(plyr.get(), pover.get());
+}
+//============================================================================
+//============================================================================
 GlText* DrawAttr::font(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover)
 {
     return DrawAttr::font(plyr.get(), pover.get());
@@ -314,6 +323,16 @@ const vector< shared_ptr<GlObj> >* DrawAttr::maskPoly(DrawAttr *plyr, DrawAttr *
     if (plyr) return &plyr->_maskPolyList;
 
     return NULL;
+}
+
+//============================================================================
+//============================================================================
+float DrawAttr::lineWidth(DrawAttr *plyr, DrawAttr *pover)
+{
+    if (pover && pover->_overrideLineWidth) return pover->_lineWidth;
+    if (plyr) return plyr->_lineWidth;
+
+    return 1.0f;
 }
 
 //============================================================================

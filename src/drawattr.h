@@ -47,6 +47,8 @@ public:
 
     static const vector< shared_ptr<GlObj> >* maskPoly(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
 
+    static float lineWidth(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+
     static GlText* font(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
     static std::string* feature(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
 
@@ -62,6 +64,8 @@ public:
     static Rgbf colorLabels(DrawAttr *plyr, DrawAttr *pover);
 
     static const vector< shared_ptr<GlObj> >* maskPoly(DrawAttr *plyr, DrawAttr *pover);
+
+    static float lineWidth(DrawAttr *plyr, DrawAttr *pover);
 
     static GlText* font(DrawAttr *plyr, DrawAttr *pover);
     static std::string* feature(DrawAttr *plyr, DrawAttr *pover);
@@ -94,6 +98,8 @@ public:
     bool _colorByFeaturePolyFill;
     std::map<std::string, Rgbf> _colorFeatureMap;
 
+    float _lineWidth;
+
     GlText _font;
 
     bool _overrideDrawLabels;
@@ -107,6 +113,8 @@ public:
     bool _overrideColorPolyOutline;
     bool _overridePolyMask;
     bool _overrideColorLabels;
+
+    bool _overrideLineWidth;
 
     bool _overrideFont;
     bool _overrideFeature;
