@@ -49,3 +49,30 @@ float UtlMath::saturate(float v)
 {
     return clamp<float>(v, 0, 1);
 }
+
+//======================================================
+//======================================================
+double UtlMath::mToFt(double m)
+{
+    return m * 3.28084;
+}
+
+//======================================================
+//======================================================
+double UtlMath::rndUp(double v, unsigned int decimals)
+{
+    long lMul = (long)pow(10.0, (double)decimals);
+    double d1 = (v*lMul) - (long)(v*lMul);
+    long l1 = (long)(d1 * 10);
+    double dAdd = 0;
+    if (l1 >= 5)
+    {
+        dAdd = 1.0 / (double)lMul;
+    }
+
+    double dValRnd = ((long)(v*lMul));
+    dValRnd /= lMul;
+    dValRnd += dAdd;
+
+    return dValRnd;
+}

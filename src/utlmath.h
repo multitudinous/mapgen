@@ -25,6 +25,9 @@ public:
     {
         return v < min ? min : (v > max ? max : v);
     }
+
+    static double mToFt(double m);
+    static double rndUp(double v, unsigned int decimals=2);
 };
 
 #endif

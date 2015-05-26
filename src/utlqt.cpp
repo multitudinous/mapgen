@@ -131,48 +131,107 @@ bool UtlQt::findFileFromExt(const char *file, const std::vector<std::string> &se
 
     return false;
 }
-/*
+
 //============================================================================
 //============================================================================
-void UtlQt::findFiles(const QString &dirPath, const QString &search, std::vector<QString> *plist, bool checkSubDirs)
+QRectF UtlQt::rectWithMargins(double left, double top, double width, double height, double ml, double mt, double mr, double mb)
 {
-    QDir dir(dirPath);
-    QStringList files = dir.entryList(QStringList(search));
-
-    if (files.size() > 0)
-    {
-        // add all files found
-        for (int i=0; i<mtFiles.size(); i++)
-        {
-            //item->folderName = dir.dirName();
-            //item->fileName = mtFiles[i];
-            plist->push_back(UtlQt::pathCombine(dir.absolutePath(), files[i]));
-        }
-    }
-
-    if (!checkSubDirs) return;
-
-    QString curDir = QDir::cleanPath(dirPath);
-
-    // find any sub directories and recurse
-    QFileInfoList subDirs = dir.entryInfoList(QDir::AllDirs);
-    for (int i=0; i<subDirs.size(); i++)
-    {
-        if (!subDirs[i].isDir()) continue;
-
-        QString name = subDirs[i].fileName();
-        if (name == "." || name == "..")
-        {
-            continue;
-        }
-
-        QString subDir = subDirs[i].absoluteFilePath();
-        if (QDir::cleanPath(subDir) == curDir)
-        {
-            continue;
-        }
-
-        findFiles(subDir, search, plist, true);
-    }
+    return QRectF(left + ml, top + mt, width - (ml + mr), height - (mt + mb));
 }
-*/
+
+//============================================================================
+//============================================================================
+QRect UtlQt::rectWithMargins(int left, int top, int width, int height, int ml, int mt, int mr, int mb)
+{
+    return QRect(left + ml, top + mt, width - (ml + mr), height - (mt + mb));
+}
+
+
+//============================================================================
+//============================================================================
+int UtlQt::textHeight(const QFont &font)
+{
+    QFontMetrics fm(font);
+    return fm.height();
+}
+
+//============================================================================
+//============================================================================
+QRect UtlQt::textSize(const QFont &font, const QString &text)
+{
+    QFontMetrics fm(font);
+    return QRect(0, 0, fm.width(text), fm.height());
+}
+
+//============================================================================
+//============================================================================
+QRect UtlQt::textRectVertTop(int left, int top, int txWidth, int txHeight)
+{
+    return QRect(left, top, txWidth, txHeight);
+}
+
+//============================================================================
+//============================================================================
+QRect UtlQt::textRectVertCtr(int left, int center, int txWidth, int txHeight)
+{
+    return QRect(left, center - txHeight / 2, txWidth, txHeight);
+}
+
+//============================================================================
+//============================================================================
+QRect UtlQt::textRectVertBtm(int left, int btm, int txWidth, int txHeight)
+{
+    return QRect(left, btm - txHeight, txWidth, txHeight);
+}
+
+//============================================================================
+//============================================================================
+PQLinearGradient UtlQt::gradientRamp(const QRect &rcBar, const QColor &minc, const QColor &midc, const QColor &maxc)
+{
+    // gradient color filler
+    PQLinearGradient gradient(new QLinearGradient(rcBar.topLeft(), rcBar.bottomRight()));
+    gradient->setColorAt(0.0, minc);
+    gradient->setColorAt(0.5, midc);
+    gradient->setColorAt(1.0, maxc);
+    return gradient;
+}
+
+
+//============================================================================
+//============================================================================
+PQImage UtlQt::gradientPicker(const QColor &minc, const QColor &midc, const QColor &maxc)
+{
+    QRect rc = QRect(0, 0, 10, 100);
+    PQImage picker(new QImage(rc.size(), QImage::Format_ARGB32));
+
+    picker->fill(QColor(0, 0, 0, 255));
+    PQLinearGradient grad = gradientRamp(rc, minc, midc, maxc);
+
+    QPainter painter(picker.get());
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.fillRect(rc, *grad);
+    painter.end();
+
+    //picker->save("picker.png")
+    return picker;
+}
+
+//============================================================================
+//============================================================================
+QColor UtlQt::gradientPick(const QImage &picker, float percent)
+{
+    int x = picker.width() / 2;
+    int y = int(float(picker.height()) * percent);
+
+    // clamp
+    if (y < 0)
+    {
+        y = 0;
+    }
+    if (y >= picker.height())
+    {
+        y = picker.height() - 1;
+    }
+
+    return QColor(picker.pixel(x, y));
+}
