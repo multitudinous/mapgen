@@ -14,10 +14,10 @@ public:
 
     static PTexture load(const QImage *img);
 
-    static PTexture loadHmap(const GdalFile *pfile, GradientPicker *pcolor=NULL);
+    static PTexture loadHmap(const GdalFile *pfile, GradientPicker *pcolor = NULL, Stats *statSettings = NULL);
 	static PTexture loadRgb(const GdalFile *pfile);
 
-    static PMemBuf hmapToRgb(const MemBuf *hmap, Stats stats, GradientPicker *pcolor=NULL);
+    static PMemBuf hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPicker *pcolor=NULL);
 };
 
 #endif

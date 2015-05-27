@@ -5,25 +5,9 @@
 #include "cpl_conv.h" // for CPLMalloc()
 #include "extents.h"
 #include <memory>
+#include "stats.h"
 
 class MemBuf;
-
-
-struct Stats
-{
-	double min;
-	double max;
-	double mean;
-	double stddev;
-
-	Stats()
-	{
-		min = 0;
-		max = 0;
-		mean = 0;
-		stddev = 0;
-	}
-};
 
 class GdalFile
 {
@@ -46,7 +30,7 @@ public:
 	bool GetHmap(MemBuf *pbuf, Stats *pstats=NULL) const;
 	bool ValidImage(int numChannels=0) const;
 
-	Stats GetStats() { return m_stats; }
+	const Stats& GetStats() { return m_stats; }
 	const Extents* GetExtents() { return &m_extents; }
     //void GetExtentsUtm(UtmPos *pTL, UtmPos *pTR, UtmPos *pBL, UtmPos *pBR);
     //void GetExtentsUtm(UtmPos *pTL, UtmPos *pBR);

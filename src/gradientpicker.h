@@ -14,7 +14,11 @@ public:
 
     void create(QColor min, QColor mid, QColor max);
     void create(QColor min, QColor max);
-    QColor pick(float percent);
+    QColor pick(float percent) const;
+
+    QColor getMin() const;
+    QColor getMid() const;
+    QColor getMax() const;
 
 protected:
     std::shared_ptr<QImage> _img;

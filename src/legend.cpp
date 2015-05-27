@@ -29,7 +29,7 @@ _bucketW(30),
 _bucketH(20),
 _width(190),
 _height(350),
-_file("svg"),
+_file("legend.svg"),
 _mTitleT(2),
 _mDraw(2),
 _mDataL(5),
@@ -37,7 +37,8 @@ _mDataT(5),
 _mDataR(10),
 _mDataB(5),
 _mBucketY(10),
-_scale(1.0)
+_scale(1.0),
+_validType(false)
 {
     _fontTitle.reset(new QFont("arial", int(14 * _scale)));
     _fontTitle->setWeight(QFont::Bold);
@@ -56,10 +57,11 @@ Legend::~Legend()
 
 //============================================================================
 //============================================================================
-bool Legend::createLegendType(const std::string &file, const std::string &legtype, const std::string &legformat, double min, double mid, double max, std::string units)
+bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, double min, double mid, double max, std::string units)
 {
-    const char *func = "Legend::createLegendType() -";
+    const char *func = "Legend::init() -"; 
 
+    _validType = false;
     _file = file;
     _legType = legtype;
     _legFrmt = legformat;
@@ -98,13 +100,46 @@ bool Legend::createLegendType(const std::string &file, const std::string &legtyp
         return false;
     }
 
+    _validType = true;
+    return true;
+}
+
+//============================================================================
+//============================================================================
+bool Legend::render()
+{
+    if (!_validType) return false;
+
     drawBegin();
     draw();
-    drawEnd();
+    if (!drawEnd())
+    {
+        return false;
+    }
 
     return true;
 }
 
+//============================================================================
+//============================================================================
+void Legend::setColorMin(const QColor &c)
+{
+    _colorMin = c;
+}
+
+//============================================================================
+//============================================================================
+void Legend::setColorMid(const QColor &c)
+{
+    _colorMid = c;
+}
+
+//============================================================================
+//============================================================================
+void Legend::setColorMax(const QColor &c)
+{
+    _colorMax = c;
+}
 
 //============================================================================
 //============================================================================
@@ -412,20 +447,31 @@ void Legend::drawBegin()
 
 //============================================================================
 //============================================================================
-void Legend::drawEnd()
+bool Legend::drawEnd()
 {
+    const char *func = "Legend::drawEnd() -";
     _painter->end();
 
-    if (_legFrmt == "png")
+    if (_legFrmt != "png")
     {
-        QImage *imgOut = dynamic_cast<QImage *>(_renderObj.get());
-        if (imgOut)
-        {
-            imgOut->save(QString(_file.c_str()), "png");
-        }
+        // svg automatically saves
+        return true;
     }
 
-    // svg automatically saves
+    QImage *imgOut = dynamic_cast<QImage *>(_renderObj.get());
+    if (!imgOut)
+    {
+        LogError("%s UnExpected Error: png legend type missing QImage", func);
+        return false;
+    }
+
+    if (!imgOut->save(QString(_file.c_str()), "png"))
+    {   
+        LogError("%s UnExpected Error: failed to save legend to file %s", func, _file.c_str());
+        return false;
+    }
+
+    return true;
 }
 
 //============================================================================

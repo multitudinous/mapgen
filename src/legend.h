@@ -9,7 +9,12 @@ public:
     Legend();
     virtual ~Legend();
 
-    bool createLegendType(const std::string &file, const std::string &legtype, const std::string &legformat, double min = 0, double mid = 0, double max = 0, std::string units = "m");
+    bool init(const std::string &file, const std::string &legtype, const std::string &legformat, double min = 0, double mid = 0, double max = 0, std::string units = "m");
+    bool render();
+
+    void setColorMin(const QColor &c);
+    void setColorMid(const QColor &c);
+    void setColorMax(const QColor &c);
 
     static QColor getColorEndGreen();
     static QColor getColorEndRed();
@@ -39,7 +44,7 @@ protected:
 
 
     void drawBegin();
-    void drawEnd();
+    bool drawEnd();
     void draw();
 
     void drawRamp(int left, int top, int width, int height, double min, double mid, double max, const QColor &minc, const QColor &midc, const QColor &maxc);
@@ -60,6 +65,9 @@ protected:
     double rndVal(double v);
     QString rndValToStr(double v);
     QString valToStr(double v);
+
+public:
+    std::string _name;
 
 protected:
     PQPainter _painter;
@@ -100,5 +108,9 @@ protected:
     int _mBucketY;  // space between buckets
 
     double _scale;
+
+    bool _validType;
 };
+
+typedef std::shared_ptr< Legend > PLegend;
 #endif

@@ -16,8 +16,8 @@ public:
 
     void init(PTexture tx, const Extents &ext) { _tx = tx; _ext = ext; }
 
-   protected:
-        void drawImg(float alpha=1.0f);
+protected:
+    void drawImg(float alpha=1.0f);
 
 protected:
     Extents _ext;

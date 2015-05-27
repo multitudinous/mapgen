@@ -6,7 +6,7 @@ class UtlMisc
 public:
     UtlMisc() {}
 
-    static bool doubleEquality(double d1, double d2, double dEpsilon=0.00001);
+    static bool equality(double d1, double d2, double dEpsilon=0.00001);
 };
 
 #endif

@@ -7,10 +7,11 @@
 #include "fbo.h"
 #include "globj.h"
 #include "batchcfg.h"
+#include "gradientpicker.h"
 
-class GradientPicker;
 class GeoAerial;
 class GeoLayer;
+class Stats;
 
 class GisSys : protected GlutSys
 {
@@ -75,7 +76,7 @@ public:
 
     virtual DrawData* dd() { return m_dd.get(); }
 
-    static PGlObj loadTiff(const char *file, GradientPicker *picker);
+    static PGlObj loadTiff(const char *file, PGradientPicker picker, Stats *stats);
     static PGlObj loadGeoJson(const char *file, const char *lyrname, const char *objname="");
     static PGlObj loadGeoJson(const char *file, int lyrnum, const char *objname="");
 

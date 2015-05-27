@@ -3,23 +3,31 @@
 #include <QLinearGradient>
 #include <QRect>
 
+//============================================================================
+//============================================================================
 GradientPicker::GradientPicker()
 {
     _img.reset(new QImage ( 10, 100, QImage::Format_ARGB32 ));
 }
 
+//============================================================================
+//============================================================================
 GradientPicker::GradientPicker(QColor min, QColor mid, QColor max)
 {
     _img.reset(new QImage ( 10, 100, QImage::Format_ARGB32 ));
     create(min, mid, max);
 }
 
+//============================================================================
+//============================================================================
 GradientPicker::GradientPicker(QColor min, QColor max)
 {
     _img.reset(new QImage ( 10, 100, QImage::Format_ARGB32 ));
     create(min, max);
 }
 
+//============================================================================
+//============================================================================
 void GradientPicker::create(QColor min, QColor mid, QColor max)
 {
     QRect rc(0,0,10, 100);
@@ -36,6 +44,8 @@ void GradientPicker::create(QColor min, QColor mid, QColor max)
     painter.end();
 }
 
+//============================================================================
+//============================================================================
 void GradientPicker::create(QColor min, QColor max)
 {
     QRect rc(0,0,10, 100);
@@ -51,7 +61,9 @@ void GradientPicker::create(QColor min, QColor max)
     painter.end();
 }
 
-QColor GradientPicker::pick(float percent)
+//============================================================================
+//============================================================================
+QColor GradientPicker::pick(float percent) const
 {
     float x = (int)(_img->width() / 2.0);
     float y = int (float(_img->height()) * percent);
@@ -62,8 +74,29 @@ QColor GradientPicker::pick(float percent)
     }
     if (y >= _img->height())
     {
-        y = _img->height() -1;
+        y = _img->height() - 1;
     }
 
     return QColor(_img->pixel(x,y));
+}
+
+//============================================================================
+//============================================================================
+QColor GradientPicker::getMin() const
+{
+    return pick(0);
+}
+
+//============================================================================
+//============================================================================
+QColor GradientPicker::getMid() const
+{
+    return pick(.5);
+}
+
+//============================================================================
+//============================================================================
+QColor GradientPicker::getMax() const
+{
+    return pick(1);
 }

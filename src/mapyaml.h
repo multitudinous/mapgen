@@ -10,6 +10,7 @@
 #include "gradientpicker.h"
 #include "rgbf.h"
 #include "define.h"
+#include "legend.h"
 
 #include <QColor>
 
@@ -36,6 +37,7 @@ protected:
 
     void initAerial(GisSys *pgis);
     void initCompute(GisSys *pgis);
+    void initLegends(GisSys *pgis);
 
     void clear();
 
@@ -51,8 +53,11 @@ protected:
 
     PColorRand loadColorRand(const YAML::Node& node, const char *name="crand");
 
-    void loadDataObjs(const YAML::Node& styles);
-    PGlObj loadDataObj(const YAML::Node& styles);
+    void loadDataObjs(const YAML::Node& node);
+    PGlObj loadDataObj(const YAML::Node& node);
+
+    void loadLegends(const YAML::Node& node);
+    PLegend loadLegend(const YAML::Node& node);
 
     void loadMapObjs(const YAML::Node& styles);
     PGlObj loadMapObj(const YAML::Node& styles);
@@ -96,6 +101,7 @@ protected:
     std::map<std::string, PDrawAttr> _styleMap;
     std::map<std::string, PColorRamp> _colorRampMap;
     std::map<std::string, PGlObj> _dataObjMap;
+    std::map<std::string, PLegend> _legendObjMap;
     std::map<std::string, PGeoCompute> _computeObjMap;
     GlObjList _mapObjs;
 

@@ -47,6 +47,9 @@ dataobjs:
     type: tiff
     file: StormOutput_SEG_SOIL_LOSS.tif
     colorramp: colordem
+    sdevs: 1.75 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
 
   - name: fielddata
     type: geojson
@@ -64,3 +67,15 @@ mapobjs: #note back to front order
      style: polymask
      children:
        - dataobj: fielddata
+       
+legends: #we could add these to the map rendering if needed, but for now they are only saved to disk
+    
+    - name: maplegend
+      type: legend
+      file: maplegend.png
+      legtype: yield
+      units: m
+      flipcolors: false
+      dataobj: stormimg
+      
+    

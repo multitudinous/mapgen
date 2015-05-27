@@ -6,6 +6,7 @@
 #include "bingimg.h"
 #include "gradientpicker.h"
 #include "geoimg.h"
+#include "GeoImgRaster.h"
 #include "geoaerial.h"
 #include "geojson.h"
 #include "geolayer.h"
@@ -21,7 +22,7 @@ GisSys::GisSys() :
 
 //============================================================================
 //============================================================================
-PGlObj GisSys::loadTiff(const char *file, GradientPicker *picker)
+PGlObj GisSys::loadTiff(const char *file, PGradientPicker picker, Stats *stats)
 {
     const char *func = "GisSys::loadTiff() - ";
     GdalFile tiff;
@@ -31,11 +32,11 @@ PGlObj GisSys::loadTiff(const char *file, GradientPicker *picker)
         return PGlObj();
     }
 
-    //GradientPicker picker(QColor("#55aa00"), QColor("#ffff00"), QColor("#ff0000"));
-    PTexture tx = UtlTxGeo::loadHmap(&tiff, picker);
+    PTexture tx = UtlTxGeo::loadHmap(&tiff, picker.get(), stats);
 
-    PGlObj img(new GeoImg());
-    ((GeoImg *)img.get())->init(tx, *tiff.GetExtents());
+    PGlObj img(new GeoImgRaster(tx, *tiff.GetExtents(), picker, *stats));
+    //((GeoImgRaster *)img.get())->init(tx, *tiff.GetExtents());
+
     return img;
 }
 

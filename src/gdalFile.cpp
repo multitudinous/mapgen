@@ -12,17 +12,22 @@
 
 #define TEMPFILE_BASEIMAGE "tempBaseImage.tif"
 
-
+//============================================================================
+//============================================================================
 GdalFile::GdalFile()
 {
 	m_pds = NULL;
 }
 
+//============================================================================
+//============================================================================
 GdalFile::~GdalFile()
 {
 	Close();
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::Load(const char *file)
 {
 	const char *func = "GdalFile::Load() - ";
@@ -70,6 +75,8 @@ bool GdalFile::Load(const char *file)
 
 #include "ogrsf_frmts.h"
 
+//============================================================================
+//============================================================================
 bool GdalFile::LoadBingWms(const Extents &ext)
 {
     //const char *func = "GdalFile::LoadBingWms() - ";
@@ -224,6 +231,8 @@ bool GdalFile::LoadBingWms(const Extents &ext)
 	*/
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::LoadBingTms(const Extents &ext, int tileLevel)
 {
 	Close();
@@ -318,6 +327,8 @@ bool GdalFile::LoadBingTms(const Extents &ext, int tileLevel)
 
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::WmsTest()
 {
     //std::string str = "<GDAL_WMS><Service name=\"WMS\"><Version>1.1.1</Version><ServerUrl>http://onearth.jpl.nasa.gov/wms.cgi?</ServerUrl><SRS>EPSG:4326</SRS><ImageFormat>image/jpeg</ImageFormat><Layers>modis,global_mosaic</Layers><Styles></Styles></Service><DataWindow><UpperLeftX>-180.0</UpperLeftX><UpperLeftY>90.0</UpperLeftY><LowerRightX>180.0</LowerRightX><LowerRightY>-90.0</LowerRightY><SizeX>2666666</SizeX><SizeY>1333333</SizeY></DataWindow><Projection>EPSG:4326</Projection><BandsCount>3</BandsCount></GDAL_WMS>";
@@ -358,6 +369,8 @@ bool GdalFile::WmsTest()
 
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::InitDataset()
 {
 	const char *func = "GdalFile::InitDataset() - ";
@@ -418,6 +431,8 @@ bool GdalFile::InitDataset()
 	return true;
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::GetChannelDataType(int channelid, GDALDataType *pType) const
 {
 	if (!ValidChannel(channelid)) return false;
@@ -432,6 +447,8 @@ bool GdalFile::GetChannelDataType(int channelid, GDALDataType *pType) const
 	return true;
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::GetChannelInfo(int channelid, std::string *pInfo) const
 {
 	GDALRasterBand  *pBand;
@@ -475,6 +492,8 @@ bool GdalFile::GetChannelInfo(int channelid, std::string *pInfo) const
 	return true;
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::ValidChannel(int channelid) const
 {
 	const char *func = "GdalFile::ValidChannel()";
@@ -499,6 +518,8 @@ bool GdalFile::ValidChannel(int channelid) const
 	return true;
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::saveToTiff(const char *path)
 {
 	const char *func = "GdalFile::saveToTiff() - ";
@@ -534,6 +555,9 @@ bool GdalFile::saveToTiff(const char *path)
         GDALClose( wmsDataset );
 	*/
 }
+
+//============================================================================
+//============================================================================
 bool GdalFile::GetRGB(MemBuf *pbuf, bool addAlpha) const
 {
 	const char *func = "GdalFile::GetRGB() - ";
@@ -588,6 +612,8 @@ bool GdalFile::GetRGB(MemBuf *pbuf, bool addAlpha) const
     //! Complex Float64                       GDT_CFloat64 = 11,
 }
 
+//============================================================================
+//============================================================================
 bool GdalFile::GetHmap(MemBuf *pbuf, Stats *pstats) const
 {
 	const char *func = "GdalFile::GetHmap() - ";
@@ -621,14 +647,15 @@ bool GdalFile::GetHmap(MemBuf *pbuf, Stats *pstats) const
 
 	if (pstats)
 	{
-		pBand->GetStatistics(1, 1, &pstats->min, &pstats->max, &pstats->mean, &pstats->stddev);
+		pBand->GetStatistics(1, 1, &pstats->_min, &pstats->_max, &pstats->_mean, &pstats->_sdev);
 		//pBand->GetStatistics(1, 1, &m_stats.min, &m_stats.max, &m_stats.mean, &m_stats.stddev);
 	}
 
 	return true;
 }
 
-
+//============================================================================
+//============================================================================
 bool GdalFile::ValidImage(int numChannels) const
 {
 	if (m_pds == NULL)
@@ -690,6 +717,8 @@ void GdalFile::GetExtentsUtm(UtmPos *pTL, UtmPos *pBR)
 }
 */
 
+//============================================================================
+//============================================================================
 void GdalFile::Msg(std::string *pMsg, const char *format, ...)
 {
 	/*if (pMsg == NULL) return;
@@ -704,6 +733,8 @@ void GdalFile::Msg(std::string *pMsg, const char *format, ...)
 	*pMsg += buffer;*/
 }
 
+//============================================================================
+//============================================================================
 void GdalFile::Close()
 {
 	if (m_pds)
@@ -715,6 +746,8 @@ void GdalFile::Close()
 	m_name = "";
 }
 
+//============================================================================
+//============================================================================
 void GdalFile::logError(const char *func, const char *msg) const
 {
 	LogError("%s %s file: %s", func, msg, m_name.c_str());

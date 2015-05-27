@@ -4,8 +4,10 @@
 #include "utlstring.h"
 #include "geolayer.h"
 #include "geoaerial.h"
+#include "GeoImgRaster.h"
 #include "geotext.h"
 #include "geowords.h"
+#include "stats.h"
 #include "utlqt.h"
 #include "platform.h"
 
@@ -131,6 +133,10 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
             loadDataObjs(doc["dataobjs"]);
         }
 
+        if (doc["legends"])
+        {
+            loadLegends(doc["legends"]);
+        }
 
         // load styles
         if (doc["styles"])
@@ -159,6 +165,7 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
 
     // init
     pgis->insert(&_mapObjs);
+    initLegends(pgis);
     initCompute(pgis);
     initAerial(pgis);
     pgis->setConfig(_cfg);
@@ -218,35 +225,45 @@ void MapYaml::initCompute(GisSys *pgis)
 
         pobj->compute();
     }
+}
 
+//============================================================================
+//============================================================================
+void MapYaml::initLegends(GisSys *pgis)
+{
+    const char *func = "MapYaml::initLegends() -";
+
+    // find an load any aerial
+    std::map<std::string, PLegend>::iterator it = _legendObjMap.begin();
+    while (it != _legendObjMap.end())
+    {
+        PLegend leg = it->second;
+        it++;
+
+        if (!leg->render())
+        {
+            LogError("%s Failed to render legend %s", func, leg->_name.c_str());
+        }
+    }
 }
 
 //============================================================================
 //============================================================================
 void MapYaml::loadOutput(const YAML::Node& node)
 {
-_cfg.reset(new Config());
+    _cfg.reset(new Config());
 
-_cfg->mode(getString(node, "mode", _cfg->mode().c_str()));
-_cfg->width(getInt(node, "width", _cfg->width()));
-_cfg->height(getInt(node, "height", _cfg->height()));
-_cfg->imgFile(getString(node, "file", _cfg->imgFile()));
-_cfg->outType(getString(node, "outtype", _cfg->outType()));
-_cfg->dataFile(getString(node, "datafile", _cfg->dataFile()));
-_cfg->lyrOutMode(getBool(node, "layeroutmode", _cfg->lyrOutMode()));
-_cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
-_cfg->mapExtents(getExtents(node, "extents"));
+    _cfg->mode(getString(node, "mode", _cfg->mode().c_str()));
+    _cfg->width(getInt(node, "width", _cfg->width()));
+    _cfg->height(getInt(node, "height", _cfg->height()));
+    _cfg->imgFile(getString(node, "file", _cfg->imgFile()));
+    _cfg->outType(getString(node, "outtype", _cfg->outType()));
+    _cfg->dataFile(getString(node, "datafile", _cfg->dataFile()));
+    _cfg->lyrOutMode(getBool(node, "layeroutmode", _cfg->lyrOutMode()));
+    _cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
+    _cfg->mapExtents(getExtents(node, "extents"));
 
-
-_cfg->imgFile(validateOutfile(_cfg->imgFile()));
-/*
-std::string path = UtlString::GetPath(_cfg->mapfile.c_str(), false);
-if (!path.size())
-{
-path = UtlString::GetPath(_yamlfile.c_str(), true);
-_cfg->mapfile = path + _cfg->mapfile;
-}
-*/
+    _cfg->imgFile(validateOutfile(_cfg->imgFile()));
 }
 
 //============================================================================
@@ -524,6 +541,7 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
             return PGlObj();
         }
 
+        // load the colorramp
         std::string color =  getString(node, "colorramp");
         PColorRamp ramp = getColorRamp(color);
         PGradientPicker picker;
@@ -539,8 +557,15 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
             picker = ramp->picker;
         }
 
+        // load stat settings (default will use the full range that is found in the tiff file)
+        Stats stats;
+        stats._forceSdevs = getDbl(node, "sdevs", Stats::SDEV_FULLRANGE);
+        stats._forceMin = getDbl(node, "minrv", Stats::FORCE_MINMAX_OFF);
+        stats._forceMax = getDbl(node, "maxrv", Stats::FORCE_MINMAX_OFF);
 
-        PGlObj tiff = GisSys::loadTiff(file.c_str(),  picker.get());
+
+
+        PGlObj tiff = GisSys::loadTiff(file.c_str(),  picker, &stats);
         if (!tiff)
         {
             LogError("%s Failed to load tiff: %s", func, name.c_str());
@@ -615,6 +640,114 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
 
     return PGlObj();
 }
+
+//============================================================================
+//============================================================================
+void MapYaml::loadLegends(const YAML::Node& node)
+{
+    for (std::size_t i = 0; i<node.size(); i++)
+    {
+        PLegend leg = loadLegend(node[i]);
+        if (leg) _legendObjMap[leg->_name] = leg;
+    }
+}
+
+//============================================================================
+//============================================================================
+PLegend MapYaml::loadLegend(const YAML::Node& node)
+{
+    const char *func = "MapYaml::loadLegend() -";
+
+    std::string name = getString(node, "name");
+    std::string type = getString(node, "type");
+
+    if (type != "legend")
+    {
+        return PLegend();
+    }
+
+    // get the values we need
+    std::string fileout = getString(node, "file");
+    std::string legtype = getString(node, "legtype");
+    std::string units = getString(node, "units", "m");
+    std::string dataobjName = getString(node, "dataobj", "");
+    //bool flipcolors = getBool(node, "flipcolors", false);
+
+    bool dynamic = false;
+
+    // TODO: only use dataobj if needed!
+    // note: dem, yield, soilloss, sedload are dyamic legends and can only be created with a dem input ti
+
+    GeoImgRaster *rimg = NULL;
+
+    // find the data obj
+    if (dataobjName.size() > 0)
+    {
+        PGlObj dataobj = getDataObj(dataobjName);
+        if (!dataobj)
+        {
+            LogError("%s Failed to find dataobj: %s", func, dataobjName.c_str());
+            return PLegend();
+        }
+
+        // must be a raster image to create legend from
+        rimg = dynamic_cast<GeoImgRaster *>(dataobj.get());
+        if (!rimg)
+        {
+            LogError("%s dataobj: %s not a Raster Image, unable to create legend", func, dataobjName.c_str());
+            return PLegend();
+        }
+    }
+
+    // validate the format
+    std::string format = UtlString::GetExtension(fileout.c_str());
+    format = UtlString::toLower(format);
+    if (format != "png" && format != "svg")
+    {
+        LogTrace("%s UnRecognized legend file format extension %s, defaulting to svg", func, format.c_str());
+        format = "svg";
+    }
+
+    // validate the out file
+    fileout = validateOutfile(fileout);
+
+    double min = 0;
+    double mid = 0;
+    double max = 0;
+    
+    // get dynamic values
+    if (rimg)
+    {
+        min = rimg->stats().getMin();
+        mid = rimg->stats().getMid();
+        max = rimg->stats().getMax();
+    }
+
+    PLegend leg(new Legend());
+    if (!leg->init(fileout, legtype, format, min, mid, max, units))
+    {
+        LogError("%s UnExpected Error: failed to init legend type %s", func, legtype.c_str());
+        return PLegend();
+    }
+
+    // set dynamic colors to match the raster
+    if (rimg)
+    { 
+        if (rimg->picker() == NULL)
+        {
+            LogTrace("%s Unable to get colors from raster image dataobj, so using legend defaults", func); 
+        }
+        else
+        {
+            leg->setColorMin(rimg->picker()->getMin());
+            leg->setColorMid(rimg->picker()->getMid());
+            leg->setColorMax(rimg->picker()->getMax());
+        }
+    }
+
+    return leg;
+}
+
 
 //============================================================================
 //============================================================================
@@ -1116,5 +1249,6 @@ void MapYaml::clear()
     _styleMap.clear();
     _colorRampMap.clear();
     _dataObjMap.clear();
+    _legendObjMap.clear();
     _mapObjs.clear();
 }

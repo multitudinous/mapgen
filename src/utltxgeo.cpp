@@ -40,16 +40,21 @@ PTexture UtlTxGeo::load(const QImage *img)
 
 //============================================================================
 //============================================================================
-PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, GradientPicker *pcolor)
+PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, GradientPicker *pcolor, Stats *statSettings)
 {
 	MemBuf hmap;
-	Stats s;
-	if (!pfile->GetHmap(&hmap, &s))
+    Stats stats;
+	Stats *s = &stats;
+    if (statSettings) s = statSettings;
+
+	if (!pfile->GetHmap(&hmap, s))
 	{
 		return PTexture();
 	}
 
-    PMemBuf rgb = hmapToRgb(&hmap, s, pcolor);
+    s->computeAdjusted();
+
+    PMemBuf rgb = hmapToRgb(&hmap, *s, pcolor);
 
 	PTexture tx(new Texture());
 	tx->Create(rgb, GL_CLAMP_TO_EDGE);
@@ -74,13 +79,13 @@ PTexture UtlTxGeo::loadRgb(const GdalFile *pfile)
 
 //============================================================================
 //============================================================================
-PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, Stats stats, GradientPicker *pcolor)
+PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPicker *pcolor)
 {
     PMemBuf rgb(new MemBuf(4, hmap->GetLenX(), hmap->GetLenY()));
 
 	const double *pbuf = (const double *)hmap->GetBufRead();
 	BYTE *prgb = (BYTE *)rgb->GetBuf();
-	double dis = stats.max - stats.min;
+    double dis = stats.getLen();
 
     BYTE rgbaOn[4];
     BYTE rgbaOf[4];
@@ -126,18 +131,25 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, Stats stats, GradientPicker *pco
                 prgb += 4;
                 continue;
             }
-			
-			// color between 2 std deviation
+		
+            // get the normalized position
+            double hn = stats.getPosNorm(d);
+
+		
+            /*
+            // color between 2 std deviation
 			double devs = 1.75;
 			double div = 2.0*devs*stats.stddev; // must multiple by 2 because its devs positive and devs negative away from mean
 			double tomean = d - stats.mean;
 			double tomeanpos = tomean + devs*stats.stddev;
 			double hn = tomeanpos / div;
+
 			//fprintf(fp, "d: %.2f, tomean: %.2f, tomeanpos: %.2f, divisor: %.2f, norm: %.2f\n", d, tomean, tomeanpos, div, hn);
 
 			if (hn < 0) hn = 0;
 			if (hn > 1) hn = 1;
 			//double hn = (d - stats.min) / dis;
+            */
 
             if (pcolor)
             {

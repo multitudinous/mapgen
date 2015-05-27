@@ -15,10 +15,10 @@ bool UtlLine2d::intersect(const SLineSeg &stSeg1, const SLineSeg &stSeg2, SInter
   dDen  = (stSeg1.pt2.dX - stSeg1.pt1.dX)*(stSeg2.pt2.dY - stSeg2.pt1.dY) - (stSeg1.pt2.dY - stSeg1.pt1.dY)*(stSeg2.pt2.dX - stSeg2.pt1.dX);
   dNum1 = (stSeg1.pt1.dY - stSeg2.pt1.dY)*(stSeg2.pt2.dX - stSeg2.pt1.dX) - (stSeg1.pt1.dX - stSeg2.pt1.dX)*(stSeg2.pt2.dY - stSeg2.pt1.dY);
   dNum2 = (stSeg1.pt1.dY - stSeg2.pt1.dY)*(stSeg1.pt2.dX - stSeg1.pt1.dX) - (stSeg1.pt1.dX - stSeg2.pt1.dX)*(stSeg1.pt2.dY - stSeg1.pt1.dY);
-  if (UtlMisc::doubleEquality(dDen, 0, .0001))
+  if (UtlMisc::equality(dDen, 0, .0001))
   {
     pstInter->parallel = true;
-    if (UtlMisc::doubleEquality(dNum1, 0, .0001))
+    if (UtlMisc::equality(dNum1, 0, .0001))
       pstInter->collinear = true;
     return false;
   }
