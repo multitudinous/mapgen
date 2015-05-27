@@ -119,6 +119,10 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
         {
            loadOutput(doc["output"]);
         }
+        else
+        {
+            _cfg.reset(new Config());
+        }
 
         // load colorramps (data objects depend on them)
         if (doc["colorramps"])
@@ -653,6 +657,7 @@ void MapYaml::loadLegends(const YAML::Node& node)
 }
 
 //============================================================================
+// toteros, winderos, watereros, sci, sciom, profit, soilloss, dem, yield
 //============================================================================
 PLegend MapYaml::loadLegend(const YAML::Node& node)
 {

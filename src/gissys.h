@@ -56,6 +56,8 @@ public:
     virtual bool init(QCoreApplication *app, int argc, const char** argv, int winWidth, int winHeight, PFilePaths pPaths);
     virtual void run();
 
+    bool haveData();
+
     bool setConfig(PConfig cfg);
     Config* getConfig();
 

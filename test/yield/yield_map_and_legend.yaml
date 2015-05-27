@@ -1,0 +1,77 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  file: map.png
+
+styles:
+
+  - name: polymask
+
+    polymask:
+        draw: true
+        masks: yieldimg #note: back to front order
+    polyoutline:
+        draw: true
+        linewidth: 2
+        color: 000000
+    labels:
+        draw: true
+        fontsize: 72
+        color: 000000
+        feature: name
+
+  
+colorramps:
+
+  - name: coloryield
+    min: 00ff00
+    mid: ffff00
+    max: ff0000
+
+
+dataobjs:
+
+  - name: aerialimg
+    type: aerial
+    extents:
+      usemap: true
+      extra: 250
+
+  - name: yieldimg
+    type: tiff
+    file: yield.tif
+    colorramp: coloryield
+    sdevs: 1.5 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+
+  - name: fielddata
+    type: geojson
+    file: field.geojson
+
+mapobjs: #note back to front order
+
+   - name: aerial
+     type: layer
+     children:
+       - dataobj: aerialimg 
+
+   - name: field
+     type: layer
+     style: polymask
+     children:
+       - dataobj: fielddata
+       
+legends: #we could add these to the map rendering if needed, but for now they are only saved to disk
+    
+    - name: maplegend
+      type: legend
+      file: legend.png
+      legtype: yield
+      units: m
+      flipcolors: false
+      dataobj: yieldimg
+      
+    

@@ -103,6 +103,12 @@ int run(QCoreApplication *a, PFilePaths filePaths, int argc, char *argv[])
         initYaml(argv[1], &sys);
     }
 
+    if (!sys.haveData())
+    {
+        LogTrace("No map data to render..."); // could be just a legend output
+        return 0;
+    }
+    
     sys.run();
 
     return 0;
