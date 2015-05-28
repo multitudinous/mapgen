@@ -15,41 +15,6 @@ class Stats;
 
 class GisSys : protected GlutSys
 {
-    /*
-public:
-    struct Config
-    {
-        std::string mode; // windowless, desktop
-
-        // output
-        bool mapToDisk;
-        int mapw;
-        int maph;
-        std::string mapfile;
-
-        std::string outtype;
-        std::string datafile;
-
-
-        Config()
-        {
-            mode = "desktop";
-            mapToDisk = true;
-            mapw = 1024;
-            maph = 1024;
-            mapfile = "map.png";
-            outtype = "";
-            datafile = "data.txt";
-        }
-
-        bool windowless()
-        {
-            if (mode == "windowless") return true;
-            return false;
-        }
-    };
-    typedef shared_ptr<Config> PConfig;
-*/
 public:
 	GisSys();
 

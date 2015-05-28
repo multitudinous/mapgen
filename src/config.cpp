@@ -3,7 +3,7 @@
 
 Config::Config()
 {
-    _mode = "desktop";
+    _mode = "window";
     _toDisk = true;
     _width = 1024;
     _height = 1024;

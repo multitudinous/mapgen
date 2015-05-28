@@ -295,8 +295,8 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
     {
         const YAML::Node& an = node["polymask"];
 
-        attr->_drawPolyMasked = getBool(an, "draw");
-        std::string maskstr = getString(an, "masks");
+        attr->_drawPolyMasked = getBool(an, "draw", true);
+        std::string maskstr = getString(an, "masks", "");
 
         std::vector<std::string> vmasks;
         UtlString::explode(maskstr, std::string(","), &vmasks);
@@ -315,7 +315,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
     {
         const YAML::Node& an = node["polyfill"];
 
-        attr->_drawPolyFill = getBool(an, "draw");
+        attr->_drawPolyFill = getBool(an, "draw", true);
         attr->_colorPolyFill = getColorRgbf(an, "color");
         attr->_colorRandPolyFill = loadColorRand(an);
         attr->_colorByFeaturePolyFill = getBool(an, "colorbyfeature", false);
@@ -325,7 +325,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
     {
         const YAML::Node& an = node["polyoutline"];
 
-        attr->_drawPolyOutline = getBool(an, "draw");
+        attr->_drawPolyOutline = getBool(an, "draw", true);
         attr->_colorPolyOutline = getColorRgbf(an, "color");
         attr->_colorRandPolyOutline = loadColorRand(an);
         attr->_lineWidth = getDbl(an, "linewidth", 1.0f);
@@ -337,7 +337,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
     {
         const YAML::Node& an = node["labels"];
 
-        attr->_drawLabels = getBool(an, "draw");
+        attr->_drawLabels = getBool(an, "draw", true);
         attr->_colorLabels = getColorRgbf(an, "color");
         attr->_colorRandLabels = loadColorRand(an);
         attr->_feature = getString(an, "feature");
