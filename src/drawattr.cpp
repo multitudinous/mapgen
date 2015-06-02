@@ -105,7 +105,7 @@ Rgbf DrawAttr::getColorPolyFill(const std::string& feature)
     if (!_colorRandPolyFill)
     {
         // must already have the color in the map
-        LogTrace("%s unexpected error trying to find feature color %s", func, feature);
+        //LogTrace("%s unexpected error trying to find feature color %s", func, feature);
         return Rgbf(0, 0, 0, 1);
     }
 
