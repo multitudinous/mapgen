@@ -35,5 +35,6 @@ target_link_libraries( ${TARGET_NAME}
 
 qt5_use_modules(${TARGET_NAME} Gui)
 qt5_use_modules(${TARGET_NAME} Network)
+qt5_use_modules(${TARGET_NAME} Svg)
 
 include( VESModuleInstall )
