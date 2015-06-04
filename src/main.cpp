@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
 
     GDALAllRegister();
     OGRRegisterAll();
-    GDALRegister_WMS();
 
     PFilePaths filePaths(new FilePaths());
     filePaths->Init(argv[0]);
