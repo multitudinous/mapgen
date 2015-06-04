@@ -6,7 +6,7 @@
 #include "bingimg.h"
 #include "gradientpicker.h"
 #include "geoimg.h"
-#include "GeoImgRaster.h"
+#include "geoimgraster.h"
 #include "geoaerial.h"
 #include "geojson.h"
 #include "geolayer.h"

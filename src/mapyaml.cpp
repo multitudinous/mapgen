@@ -4,7 +4,7 @@
 #include "utlstring.h"
 #include "geolayer.h"
 #include "geoaerial.h"
-#include "GeoImgRaster.h"
+#include "geoimgraster.h"
 #include "geotext.h"
 #include "geowords.h"
 #include "stats.h"

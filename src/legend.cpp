@@ -1,8 +1,8 @@
 #include "legend.h"
 #include "logger.h"
 #include "utlmath.h"
-#include <QtSvg>
-#include <QSvgGenerator>
+#include <QtSvg/QtSvg>
+#include <QtSvg/QSvgGenerator>
 
 //============================================================================
 //============================================================================

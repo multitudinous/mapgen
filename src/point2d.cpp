@@ -8,8 +8,7 @@
 // Includes
 #pragma warning(disable: 4100)
 #include "point2d.h"
-//#include "CToolsMisc.h"
-#include "Define.h"
+#include "define.h"
 #include <math.h>
 #pragma warning(error: 4100)
 
