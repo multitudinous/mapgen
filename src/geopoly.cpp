@@ -110,6 +110,8 @@ void GeoPoly::drawMask(DrawData *pdd)
 //============================================================================
 void GeoPoly::drawLabel(DrawData *pdd)
 {
+    if (!DrawAttr::drawLabels(pdd->_drawAttr, _drawAttr)) return;
+
    char str[64];
    if (!getDrawFeature(pdd, str)) return;
 
@@ -334,12 +336,12 @@ bool GeoPoly::getDrawFeature(DrawData *pdd, std::string *str)
 //============================================================================
 bool GeoPoly::getDrawFeature(DrawData *pdd, char *str)
 {
-    if (!DrawAttr::drawLabels(pdd->_drawAttr, _drawAttr)) return false;
+    //if (!DrawAttr::drawLabels(pdd->_drawAttr, _drawAttr)) return false;
     std::string *pfeature = DrawAttr::feature(pdd->_drawAttr, _drawAttr);
     if (!pfeature) return false;
 
-    GlText *pfont = DrawAttr::font(pdd->_drawAttr, _drawAttr);
-    if (!pfont) return false;
+    //GlText *pfont = DrawAttr::font(pdd->_drawAttr, _drawAttr);
+    //if (!pfont) return false;
 
     MapFieldsDbl::iterator itd = _fieldsDbl.find(*pfeature);
     if (itd != _fieldsDbl.end())

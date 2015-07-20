@@ -319,6 +319,8 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_colorPolyFill = getColorRgbf(an, "color");
         attr->_colorRandPolyFill = loadColorRand(an);
         attr->_colorByFeaturePolyFill = getBool(an, "colorbyfeature", false);
+        std::string feature = getString(an, "feature");
+        if (feature.size() > 0) attr->_feature = feature;
     }
 
     if (node["polyoutline"])
@@ -329,6 +331,8 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_colorPolyOutline = getColorRgbf(an, "color");
         attr->_colorRandPolyOutline = loadColorRand(an);
         attr->_lineWidth = getDbl(an, "linewidth", 1.0f);
+        std::string feature = getString(an, "feature");
+        if (feature.size() > 0) attr->_feature = feature;
 
         // if (an["linewidth"])
     }
@@ -340,7 +344,8 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_drawLabels = getBool(an, "draw", true);
         attr->_colorLabels = getColorRgbf(an, "color");
         attr->_colorRandLabels = loadColorRand(an);
-        attr->_feature = getString(an, "feature");
+        std::string feature = getString(an, "feature");
+        if (feature.size() > 0) attr->_feature = feature;
 
         int fontsize = 36;
         std::string fontfile;

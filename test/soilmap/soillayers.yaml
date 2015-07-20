@@ -23,6 +23,7 @@ styles:
             s: .55 # smaller the number the lighter
             v: 1 #smaller the number the darker
         colorbyfeature: true
+        feature: musym
         
   - name: outline
         
