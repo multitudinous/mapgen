@@ -94,9 +94,16 @@ int GeoJson::getGeometry(const char *lyrname, std::vector<PGlObj> *vpolys)
     OGRLayer *lyr =  _ds->GetLayerByName(lyrname);
     if (!lyr)
     {
-        LogError("layer named $s not found", lyrname);
+        LogError("layer named %s not found", lyrname);
         logLayerNames();
-        return 0;
+
+        // just try and get the first layer then
+        lyr = _ds->GetLayer(0);
+        if (!lyr)
+        {
+            LogError("failed to get layer 0");
+            return 0;
+        }
     }
 
     return getGeometry(lyr, vpolys);

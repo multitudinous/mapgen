@@ -15,6 +15,7 @@ public:
     virtual void initAttr(DrawData *pdd);
 
     virtual bool haveFeature(DrawData *pdd, std::string *value);
+    virtual bool getFeatureValue(const std::string &feature, double *value);
 
     virtual GlObj* clone() const;
 

@@ -2,6 +2,7 @@
 #define LEGEND_H
 
 #include "utlqt.h"
+#include "colorramp.h"
 
 class Legend
 {
@@ -9,7 +10,7 @@ public:
     Legend();
     virtual ~Legend();
 
-    bool init(const std::string &file, const std::string &legtype, const std::string &legformat, double min = 0, double mid = 0, double max = 0, std::string units = "m");
+    bool init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, double min = 0, double mid = 0, double max = 0, std::string units = "m");
     bool render();
 
     void setColorMin(const QColor &c);
@@ -41,6 +42,9 @@ protected:
     void initSettingsRUSLE22D();
     void initSettingsProfit();
     void initSettingsRR();
+
+    void initColorRamp(PColorRamp colorRamp);
+    bool isStandardBucketType();
 
 
     void drawBegin();

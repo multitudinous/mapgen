@@ -321,6 +321,9 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_colorByFeaturePolyFill = getBool(an, "colorbyfeature", false);
         std::string feature = getString(an, "feature");
         if (feature.size() > 0) attr->_feature = feature;
+
+        std::string colorRamp = getString(an, "colorramp");
+        attr->_colorRampPolyFill = getColorRamp(colorRamp);
     }
 
     if (node["polyoutline"])
@@ -410,17 +413,17 @@ void MapYaml::loadColorRamps(const YAML::Node& node)
     for (std::size_t i=0;i<node.size();i++)
     {
         PColorRamp ramp = loadColorRamp(node[i]);
-        if (ramp) _colorRampMap[ramp->name] = ramp;
+        if (ramp) _colorRampMap[ramp->_name] = ramp;
     }
 }
 
 //============================================================================
 //============================================================================
-MapYaml::PColorRamp MapYaml::loadColorRamp(const YAML::Node& node)
+PColorRamp MapYaml::loadColorRamp(const YAML::Node& node)
 {
     PColorRamp ramp(new ColorRamp());
 
-    ramp->name = getString(node, "name", "");
+    ramp->_name = getString(node, "name", "");
 
     std::string min, mid, max;
     if (node["min"]) min = node["min"].as<std::string>();
@@ -432,18 +435,21 @@ MapYaml::PColorRamp MapYaml::loadColorRamp(const YAML::Node& node)
         min = "#" + min;
         mid = "#" + mid;
         max = "#" + max;
-        ramp->picker.reset(new GradientPicker(QColor(min.c_str()), QColor(mid.c_str()), QColor(max.c_str())));
-        return ramp;
+        ramp->_picker.reset(new GradientPicker(QColor(min.c_str()), QColor(mid.c_str()), QColor(max.c_str())));
     }
     else if (min.size() && max.size())
     {
         min = "#" + min;
         max = "#" + max;
-        ramp->picker.reset(new GradientPicker(QColor(min.c_str()), QColor(max.c_str())));
-        return ramp;
+        ramp->_picker.reset(new GradientPicker(QColor(min.c_str()), QColor(max.c_str())));
     }
 
-    return PColorRamp();
+    // for bucket coloring
+    ramp->_buckets = getInt(node, "buckets",  0);
+    ramp->_minv = getDbl(node, "minv", 0.0);
+    ramp->_maxv = getDbl(node, "maxv", 0.0);
+
+    return ramp;
 
 }
 
@@ -563,7 +569,7 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
         }
         else
         {
-            picker = ramp->picker;
+            picker = ramp->_picker;
         }
 
         // load stat settings (default will use the full range that is found in the tiff file)
@@ -681,6 +687,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     std::string legtype = getString(node, "legtype");
     std::string units = getString(node, "units", "m");
     std::string dataobjName = getString(node, "dataobj", "");
+    std::string colorRampName = getString(node, "colorramp", "");
     //bool flipcolors = getBool(node, "flipcolors", false);
 
     bool dynamic = false;
@@ -709,6 +716,14 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
         }
     }
 
+    // find the color ramp
+    PColorRamp colorRamp;
+    if (colorRampName.size() > 0)
+    {
+        colorRamp = getColorRamp(colorRampName);
+    }
+    
+
     // validate the format
     std::string format = UtlString::GetExtension(fileout.c_str());
     format = UtlString::toLower(format);
@@ -734,7 +749,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     }
 
     PLegend leg(new Legend());
-    if (!leg->init(fileout, legtype, format, min, mid, max, units))
+    if (!leg->init(fileout, legtype, format, colorRamp, min, mid, max, units))
     {
         LogError("%s UnExpected Error: failed to init legend type %s", func, legtype.c_str());
         return PLegend();
@@ -1186,7 +1201,7 @@ PGlObj MapYaml::getComputeObj(const std::string &name)
 
 //============================================================================
 //============================================================================
-MapYaml::PColorRamp MapYaml::getColorRamp(const std::string &name)
+PColorRamp MapYaml::getColorRamp(const std::string &name)
 {
     std::map<std::string, PColorRamp>::iterator it = _colorRampMap.find(name);
     if (it == _colorRampMap.end())

@@ -1,0 +1,78 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  file: map.png
+  layeroutmode: true
+  bgcolor: 00FFFFFF
+
+styles:
+
+  - name: fill
+
+    polyfill:
+        draw: true
+        colorramp: toteros_color
+        colorbyfeature: true
+        feature: toteros
+        
+  - name: outline
+        
+    polyoutline:
+        draw: true
+        linewidth: 2
+        color: 000000
+
+  - name: labels
+
+    labels:
+        draw: true
+        fontsize: 32
+        color: 000000
+        feature: toteros
+        
+colorramps:
+
+  - name: toteros_color
+    min: 55aa00
+    mid: ffff00
+    max: ff0000
+    buckets: 11
+    minv: 0.0
+    maxv: 5.0
+
+dataobjs:
+
+  - name: fielddata
+    type: geojson
+    file: input.geojson
+
+mapobjs: #note back to front order
+
+   - name: field_fill
+     type: layer
+     style: fill
+     children:
+       - dataobj: fielddata
+       
+   - name: field_outline
+     type: layer
+     style: outline
+     children:
+       - dataobj: fielddata
+       
+   - name: field_labels
+     type: layer
+     style: labels
+     children:
+       - dataobj: fielddata
+       
+legends:
+    
+   - name: maplegend
+     type: legend
+     file: legend.png
+     legtype: toteros
+     units: m
+     colorramp: toteros_color

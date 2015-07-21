@@ -57,7 +57,7 @@ Legend::~Legend()
 
 //============================================================================
 //============================================================================
-bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, double min, double mid, double max, std::string units)
+bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, double min, double mid, double max, std::string units)
 {
     const char *func = "Legend::init() -"; 
 
@@ -100,10 +100,41 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
         return false;
     }
 
+    initColorRamp(colorRamp);
+
     _validType = true;
     return true;
 }
 
+//============================================================================
+//============================================================================
+void Legend::initColorRamp(PColorRamp colorRamp)
+{
+    if (!colorRamp) return;
+    if (!isStandardBucketType()) return;
+
+    _min = colorRamp->_minv;
+    _max = colorRamp->_maxv;
+    _buckets = colorRamp->_buckets;
+    _colorMin = colorRamp->_picker->getMin();
+    _colorMid = colorRamp->_picker->getMid();
+    _colorMax = colorRamp->_picker->getMax();
+    
+}
+
+//============================================================================
+//============================================================================
+bool Legend::isStandardBucketType()
+{
+    if (_legType == "toteros" || _legType == "winderos" || _legType == "watereros" ||
+        _legType == "sci" || _legType == "sciom" || _legType == "profit" ||
+        _legType == "rr" || _legType == "r2d2")
+    {
+        return true;
+    }
+
+    return false;
+}
 //============================================================================
 //============================================================================
 bool Legend::render()

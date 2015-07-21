@@ -29,6 +29,7 @@ public:
 
     bool getFeatureValue(const char *feature, std::string *value);
     bool getFeatureValue(const std::string &feature, std::string *value);
+    virtual bool getFeatureValue(const std::string &feature, double *value);
 
     int findIntersections(const Point2d &p1, const Point2d &p2, ListPt2d *plist, bool ptOnSeg=true, bool ptOnPoly=true);
 

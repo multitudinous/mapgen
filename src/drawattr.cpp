@@ -57,11 +57,44 @@ bool DrawAttr::haveColorByFeaturePolyFill()
 
 //============================================================================
 //============================================================================
+bool DrawAttr::haveRampColor()
+{
+    if (haveRampColorPolyFill() || haveRampColorPolyOutline() || haveRampColorLabels()) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveRampColorPolyFill()
+{
+    if (_colorRampPolyFill) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveRampColorPolyOutline()
+{
+    if (_colorRampPolyOutline) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool DrawAttr::haveRampColorLabels()
+{
+    if (_colorRampPolyOutline) return true;
+    return false;
+}
+
+//============================================================================
+//============================================================================
 bool DrawAttr::haveRandColor()
 {
     if (haveRandColorPolyFill() || haveRandColorPolyOutline() || haveRandColorLabels()) return true;
     return false;
 }
+
 
 //============================================================================
 //============================================================================
@@ -100,7 +133,6 @@ Rgbf DrawAttr::getColorPolyFill(const std::string& feature)
 
     std::map<std::string, Rgbf>::const_iterator it = _colorFeatureMap.find(feature);
     if (it != _colorFeatureMap.end()) return it->second;
-
     
     if (!_colorRandPolyFill)
     {

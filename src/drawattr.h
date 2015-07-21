@@ -3,6 +3,7 @@
 
 #include "gltext.h"
 #include "rgbf.h"
+#include "colorramp.h"
 #include "colorrand.h"
 
 class GlObj;
@@ -25,6 +26,10 @@ public:
 
     bool haveColorByFeature();
     bool haveColorByFeaturePolyFill();
+    bool haveRampColor();
+    bool haveRampColorPolyFill();
+    bool haveRampColorPolyOutline();
+    bool haveRampColorLabels();
     bool haveRandColor();
     bool haveRandColorPolyFill();
     bool haveRandColorPolyOutline();
@@ -90,6 +95,10 @@ public:
     Rgbf _colorPolyFill;
     Rgbf _colorPolyOutline;
     Rgbf _colorLabels;
+
+    PColorRamp _colorRampPolyFill;
+    PColorRamp _colorRampPolyOutline;
+    PColorRamp _colorRampLabels;
 
     PColorRand _colorRandPolyFill;
     PColorRand _colorRandPolyOutline;

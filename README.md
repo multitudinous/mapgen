@@ -10,7 +10,7 @@ The codehammer mapgen rendering tools
 
 Sections:
 ---------------------
-output, styles, colorramps, dataobjs, mapobjs, legends
+output, styles, colorramps, dataobjs, mapobjs, legends, bucket colorramp list
 
 
 =====================================================================================================================
@@ -61,6 +61,8 @@ crand:                      # this is for random color generation and you would 
     s: .55                  # smaller the number the lighter
     v: 1                    # smaller the number the darker
 colorbyfeature: true        # this will specify that each polygon with the same feature, and new random color will be generated from the crand settings
+feature: name               # name of the feature to use when color by feature is on
+colorramp: name             # name of the color ramp with bucket information to color the polygon based on the feature value
 
 polyoutline
 ---------------
@@ -134,6 +136,7 @@ Example (a total of 4 styles):
 * Colorramps Section
 =====================================================================================================================
 Tiff dataobjs depend on color ramps to color the data within them.
+Bucket fill type polygon region maps also need colorramp with buckets, minv, maxv values.
 
 colorramp properties:
 ---------------------
@@ -141,6 +144,9 @@ name: colordem
 min: 00ff00
 mid: ffff00
 max: ff0000
+buckets: 11
+minv: 0.0
+maxv: 0.0
 
 Example:
 ---------------------
@@ -268,6 +274,7 @@ legtype: dem | yield | soillos | sedload | brkevcom | brkevexp | toteros | winde
                                 # note: dem, yield, soilloss, sedload are dyamic legends and can only be created with a tiff dataobj, the rest can be generated without data
 units: m | ft                   # meter or feet units
 dataobj: yieldimg               # tiff dataobj to use when appropriate based on legend type
+colorramp: name                 # name of color ramp that specifies colors bucket count, minv, maxv
 
 Example:
 ---------------------
@@ -279,6 +286,52 @@ legends:
      legtype: yield
      units: m
      dataobj: yieldimg
+     
+     
+=====================================================================================================================
+* Bucket Color Ramp Section
+=====================================================================================================================
 
-
-
+toteros, winderos, watereros
+----------------------------------------------
+colorramps:
+  - name: toteros_color
+    min: 55aa00
+    mid: ffff00
+    max: ff0000
+    buckets: 11
+    minv: 0.0
+    maxv: 5.0
+    
+sci, sciom
+----------------------------------------------
+colorramps:
+  - name: sci_color
+    min: ff0000
+    mid: ffff00
+    max: 55aa00
+    buckets: 12
+    minv: -1.0
+    maxv: 1.0
+    
+rr
+----------------------------------------------
+colorramps:
+  - name: rr_color
+    min: ff0000
+    mid: ffff00
+    max: 55aa00
+    buckets: 11
+    minv: -100.0
+    maxv: 100.0
+    
+r2d2
+----------------------------------------------
+colorramps:
+  - name: rr_color
+    min: ff0000
+    mid: ffff00
+    max: 55aa00
+    buckets: 11
+    minv: -500.0
+    maxv: 500.0

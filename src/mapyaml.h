@@ -9,6 +9,7 @@
 #include "gissys.h"
 #include "gradientpicker.h"
 #include "rgbf.h"
+#include "colorramp.h"
 #include "define.h"
 #include "legend.h"
 
@@ -17,13 +18,15 @@
 class MapYaml
 {
 public:
+
+    /*
     struct ColorRamp
     {
        std::string name;
        PGradientPicker picker;
     };
     typedef shared_ptr<ColorRamp> PColorRamp;
-
+    */
 
 public:
     MapYaml();

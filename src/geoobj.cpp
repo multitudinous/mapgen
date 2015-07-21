@@ -32,16 +32,24 @@ void GeoObj::initAttr(DrawData *pdd)
         return;
     }
 
-    // create an override for random colors
+    // create an override for colorramp buckets or random colors
     if (pdd->_drawAttr->haveRandColor() || pdd->_drawAttr->haveColorByFeature())
     {
         PDrawAttr attr(new DrawAttr(*pdd->_drawAttr));
-        std::string feature = "";
+        std::string strFeatureValue = "";
 
         // get poly fill color by feature
-        if (pdd->_drawAttr->haveColorByFeaturePolyFill() && haveFeature(pdd, &feature))
+        if (pdd->_drawAttr->haveRampColorPolyFill()) // bucket ramp fill
         {
-            attr->_colorPolyFill = pdd->_drawAttr->getColorPolyFill(feature);
+            double dFeatureValue = 0;
+            getFeatureValue(pdd->_drawAttr->_feature, &dFeatureValue);
+
+            attr->_colorPolyFill = pdd->_drawAttr->_colorRampPolyFill->getFromVal(dFeatureValue);
+            attr->_overrideColorPolyFill = true;
+        }
+        else if (pdd->_drawAttr->haveColorByFeaturePolyFill() && haveFeature(pdd, &strFeatureValue))
+        {
+            attr->_colorPolyFill = pdd->_drawAttr->getColorPolyFill(strFeatureValue);
             attr->_overrideColorPolyFill = true;
         }
         else if (pdd->_drawAttr->haveRandColorPolyFill()) // get random fill color
@@ -71,6 +79,13 @@ void GeoObj::initAttr(DrawData *pdd)
 //============================================================================
 //============================================================================
 bool GeoObj::haveFeature(DrawData *pdd, std::string *value)
+{
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool GeoObj::getFeatureValue(const std::string &feature, double *value)
 {
     return false;
 }

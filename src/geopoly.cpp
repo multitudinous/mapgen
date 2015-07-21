@@ -323,6 +323,35 @@ bool GeoPoly::getFeatureValue(const std::string &feature, std::string *value)
 
 //============================================================================
 //============================================================================
+bool GeoPoly::getFeatureValue(const std::string &feature, double *value)
+{
+    char format[64];
+    MapFieldsDbl::iterator itd = _fieldsDbl.find(feature);
+    if (itd != _fieldsDbl.end())
+    {
+        *value = itd->second;
+        return true;
+    }
+
+    MapFieldsInt::iterator iti = _fieldsInt.find(feature);
+    if (iti != _fieldsInt.end())
+    {
+        *value = (double)iti->second;
+        return true;
+    }
+
+    MapFieldsStr::iterator its = _fieldsStr.find(feature);
+    if (its != _fieldsStr.end())
+    {
+        *value = atof(its->second.c_str());
+        return true;
+    }
+
+    return false;
+}
+
+//============================================================================
+//============================================================================
 bool GeoPoly::getDrawFeature(DrawData *pdd, std::string *str)
 {
     char s[256];
