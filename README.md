@@ -9,12 +9,13 @@ Linux Environment:
 
 Here are some of the libs I had to install to get things to build:
 
+```
 sudo apt-get install qtdeclarative5-dev
 sudo apt-get install freeglut3-dev
 sudo apt-get install libmesa-dev
 sudo apt-get install xorg-dev
 sudo apt-get install opengl-dev
-
+```
 The deps are:
 
 freetype-2.5.3
