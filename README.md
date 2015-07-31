@@ -3,6 +3,28 @@ mapgen
 
 The codehammer mapgen rendering tools
 
+* Building & Deps
+
+Linux Environment:
+
+Here are some of the libs I had to install to get things to build:
+
+```
+sudo apt-get install qtdeclarative5-dev
+sudo apt-get install freeglut3-dev
+sudo apt-get install libmesa-dev
+sudo apt-get install xorg-dev
+sudo apt-get install opengl-dev
+```
+The deps are:
+
+freetype-2.5.3
+ftgl-2.1.3-rc5
+freeglut-3.0.0-rc2
+glew-1.12.0
+yaml-cpp-0.5.1
+gdal-1-11-1
+QT5.4
 
 =====================================================================================================================
 * Yaml format
