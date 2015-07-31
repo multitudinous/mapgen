@@ -57,7 +57,7 @@ PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, GradientPicker *pcolor, Stats
     PMemBuf rgb = hmapToRgb(&hmap, *s, pcolor);
 
 	PTexture tx(new Texture());
-	tx->Create(rgb, GL_CLAMP_TO_EDGE);
+    tx->Create(rgb, GL_CLAMP_TO_EDGE, Texture::I_FILTER_NONE);
 
 	return tx;
 }
