@@ -1230,7 +1230,11 @@ PDrawAttr MapYaml::getStyle(const std::string &name)
 std::string MapYaml::validateOutfile(const std::string &file)
 {
     std::string path = UtlString::GetPath(file.c_str(), false);
-    if (path.size()) return file;
+    if (path.size())
+    {
+        // if we have a valid full path, use it
+        if (UtlQt::validateDir(path.c_str(), false)) return file;
+    }
 
     path = UtlString::GetPath(_yamlfile.c_str(), true);
     path = path + file;

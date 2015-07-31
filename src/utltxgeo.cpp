@@ -91,6 +91,12 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPick
     BYTE rgbaOf[4];
     bool useonof = false;
 
+    // used for on off coloring and also nodata values
+    rgbaOf[0] = 0;
+    rgbaOf[1] = 0;
+    rgbaOf[2] = 0;
+    rgbaOf[3] = 0;
+
     // on or off coloring
     if (fabs(dis) <= .0001)
     {
@@ -99,11 +105,6 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPick
         rgbaOn[1] = (BYTE)c.green();
         rgbaOn[2] = (BYTE)c.blue();
         rgbaOn[3] = 255;
-
-        rgbaOf[0] = 0;
-        rgbaOf[1] = 0;
-        rgbaOf[2] = 0;
-        rgbaOf[3] = 0;
 
         useonof = true;
     }
@@ -116,6 +117,14 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPick
 		{
 			double d = *pbuf;
 			pbuf++;
+
+            // is this a no data value
+            if (d == stats._nodataValue)
+            {
+                memcpy(prgb, rgbaOf, 4);
+                prgb += 4;
+                continue;
+            }
 
             if (useonof)
             {

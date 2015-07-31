@@ -41,6 +41,8 @@ public:
     double _forceSdevs;
     double _forceMin;
     double _forceMax;
+
+    double _nodataValue;
 };
 
 #endif

@@ -1,0 +1,39 @@
+---
+output:
+  mode: window
+  width: 630
+  height: 630
+  layeroutmode: false
+  file: report/prof.png
+styles:
+- name: profit
+  polymask:
+    draw: true
+    masks: profit_tif
+colorramps:
+- name: color_profit
+  min: ff0000
+  mid: d8d82e
+  max: 55aa00
+  buckets: 11
+  minv: -500.0
+  maxv: 500.0
+dataobjs:
+- name: profit_tif
+  type: tiff
+  file: report/1627_2264_cb.tif.3857
+  colorramp: color_profit
+  minrv: -500
+  maxrv: 500
+mapobjs:
+- name: profit_map
+  type: layer
+  style: profit
+  children:
+  - dataobj: profit_tif
+legends:
+- name: maplegend
+  type: legend
+  file: report/prof_legend.png
+  legtype: profit
+  colorramp: color_profit

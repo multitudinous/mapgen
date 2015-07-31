@@ -649,6 +649,8 @@ bool GdalFile::GetHmap(MemBuf *pbuf, Stats *pstats) const
 	{
 		pBand->GetStatistics(1, 1, &pstats->_min, &pstats->_max, &pstats->_mean, &pstats->_sdev);
 		//pBand->GetStatistics(1, 1, &m_stats.min, &m_stats.max, &m_stats.mean, &m_stats.stddev);
+
+        pstats->_nodataValue = pBand->GetNoDataValue();
 	}
 
 	return true;

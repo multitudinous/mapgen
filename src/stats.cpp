@@ -16,7 +16,8 @@ Stats::Stats() :
     _adjustedMax(0),
     _forceSdevs(SDEV_FULLRANGE),
     _forceMin(FORCE_MINMAX_OFF),
-    _forceMax(FORCE_MINMAX_OFF)
+    _forceMax(FORCE_MINMAX_OFF),
+    _nodataValue(9999)
 {
 
 }
@@ -32,7 +33,8 @@ Stats::Stats(const Stats &s) :
     _adjustedMax(s._adjustedMax),
     _forceSdevs(s._forceSdevs),
     _forceMin(s._forceMin),
-    _forceMax(s._forceMax)
+    _forceMax(s._forceMax),
+    _nodataValue(s._nodataValue)
 {
 
 }
