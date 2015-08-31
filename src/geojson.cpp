@@ -1,5 +1,6 @@
 #include "geojson.h"
 #include "ogrsf_frmts.h"
+#include "gdal_priv.h"
 
 //============================================================================
 //============================================================================
@@ -26,7 +27,8 @@ bool GeoJson::loadFile(const char *jsonfile)
     //OGRSFDriver  *poDriver = OGRSFDriverRegistrar::GetRegistrar()->GetDriverByName(pszDriverName );
     //_ds = poDriver->Open(jsonfile, 0);
 
-    _ds = OGRSFDriverRegistrar::Open(jsonfile);
+    _ds = (GDALDataset *) GDALOpenEx( 
+        jsonfile, GDAL_OF_VECTOR, nullptr, nullptr, nullptr );
     if (_ds == NULL )
     {
         LogError("%s failed to open jsonfile: %s", func, jsonfile);
@@ -269,7 +271,7 @@ bool GeoJson::convertGeometry(OGRGeometry *geom, OGRFeatureDefn *poFDefn, OGRFea
 //============================================================================
 void GeoJson::close()
 {
-    if (_ds) OGRDataSource::DestroyDataSource( _ds );
+    if (_ds) delete _ds;
     _ds = NULL;
 }
 

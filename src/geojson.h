@@ -9,6 +9,7 @@ class OGRPolygon;
 class OGRFeatureDefn;
 class OGRFeature;
 class OGRGeometry;
+class GDALDataset;
 
 class GeoJson
 {
@@ -63,7 +64,7 @@ protected:
     void logLayerNames();
 
 protected:
-    OGRDataSource *_ds;
+    GDALDataset *_ds;
     EpsgTrans _trans;
 };
 
