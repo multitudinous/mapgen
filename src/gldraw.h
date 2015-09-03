@@ -14,7 +14,11 @@ class Gldraw
 public:
 	Gldraw() {};
 
-    static void drawLineLoop(const ListPt2d &pts);
+    static void drawLine(double x1, double y1, double x2, double y2, //coordinates of the line
+                         float w, //width/thickness of the line in pixel
+                         float Cr, float Cg, float Cb); //RGB color components
+
+    static void drawLineLoop(const ListPt2d &pts, float w, float r, float g, float b);
 
     static void drawMask(DrawData *pdd, const GlObjList* maskList, const ListPt2d &regionPtList);
     static void drawMask(DrawData *pdd, GlObj *maskColoring, const ListPt2d &regionPtList);

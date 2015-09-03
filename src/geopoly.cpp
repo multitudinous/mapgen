@@ -65,9 +65,9 @@ void GeoPoly::drawOutline(DrawData *pdd)
     Rgbf color = DrawAttr::colorPolyOutline(pdd->_drawAttr, _drawAttr);
     float linew = DrawAttr::lineWidth(pdd->_drawAttr, _drawAttr);
 
-    glColor4fv(color.m_af);
-    glLineWidth(linew);
-    Gldraw::drawLineLoop(getPts());
+    //glColor4fv(color.m_af);
+    //glLineWidth(linew);
+    Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
 }
 
 //============================================================================
@@ -325,7 +325,7 @@ bool GeoPoly::getFeatureValue(const std::string &feature, std::string *value)
 //============================================================================
 bool GeoPoly::getFeatureValue(const std::string &feature, double *value)
 {
-    char format[64];
+    //char format[64];
     MapFieldsDbl::iterator itd = _fieldsDbl.find(feature);
     if (itd != _fieldsDbl.end())
     {

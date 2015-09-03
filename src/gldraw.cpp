@@ -73,6 +73,200 @@ void GlDraw::drawPolyConcaveVN(GLUtesselator *hTess, const std::vector<vec3d> &p
 
 //============================================================================
 //============================================================================
+void Gldraw::drawLine(double x1, double y1, double x2, double y2, //coordinates of the line
+    float w, //width/thickness of the line in pixel
+    float Cr, float Cg, float Cb) //RGB color components
+{
+    double t; double R; double f = w - static_cast<int>(w);
+    float A;
+
+    float Br=.5, Bg=1, Bb=1; // // THIS WAS A FUNCTION PARAM, // color of background when alphablend=false,
+    bool alphablend = true; // THIS WAS A FUNCTION PARAM, but we always want blending
+
+    if (alphablend)
+        A = Br;
+    else
+        A = 1.0f;
+
+    //determine parameters t,R
+    /*   */if (w >= 0.0 && w<1.0) {
+        t = 0.05; R = 0.48 + 0.32*f;
+        if (!alphablend) {
+            Cr += 0.88*(1 - f);
+            Cg += 0.88*(1 - f);
+            Cb += 0.88*(1 - f);
+            if (Cr>1.0) Cr = 1.0;
+            if (Cg>1.0) Cg = 1.0;
+            if (Cb>1.0) Cb = 1.0;
+        }
+        else {
+            A *= f;
+        }
+    }
+    else if (w >= 1.0 && w<2.0) {
+        t = 0.05 + f*0.33; R = 0.768 + 0.312*f;
+    }
+    else if (w >= 2.0 && w<3.0){
+        t = 0.38 + f*0.58; R = 1.08;
+    }
+    else if (w >= 3.0 && w<4.0){
+        t = 0.96 + f*0.48; R = 1.08;
+    }
+    else if (w >= 4.0 && w<5.0){
+        t = 1.44 + f*0.46; R = 1.08;
+    }
+    else if (w >= 5.0 && w<6.0){
+        t = 1.9 + f*0.6; R = 1.08;
+    }
+    else if (w >= 6.0){
+        double ff = w - 6.0;
+        t = 2.5 + ff*0.50; R = 1.08;
+    }
+    //printf( "w=%f, f=%f, C=%.4f\n", w,f,C);
+
+    //determine angle of the line to horizontal
+    double tx = 0, ty = 0; //core thinkness of a line
+    double Rx = 0, Ry = 0; //fading edge of a line
+    double cx = 0, cy = 0; //cap of a line
+    double ALW = 0.01;
+    double dx = x2 - x1;
+    double dy = y2 - y1;
+    if (abs(dx) < ALW) {
+        //vertical
+        tx = t; ty = 0;
+        Rx = R; Ry = 0;
+        if (w>0.0 && w<1.0)
+            tx *= 8;
+        else if (w == 1.0)
+            tx *= 10;
+    }
+    else if (abs(dy) < ALW) {
+        //horizontal
+        tx = 0; ty = t;
+        Rx = 0; Ry = R;
+        if (w>0.0 && w<1.0)
+            ty *= 8;
+        else if (w == 1.0)
+            ty *= 10;
+    }
+    else {
+        if (w < 3) { //approximate to make things even faster
+            double m = dy / dx;
+            //and calculate tx,ty,Rx,Ry
+            if (m>-0.4142 && m <= 0.4142) {
+                // -22.5< angle <= 22.5, approximate to 0 (degree)
+                tx = t*0.1; ty = t;
+                Rx = R*0.6; Ry = R;
+            }
+            else if (m>0.4142 && m <= 2.4142) {
+                // 22.5< angle <= 67.5, approximate to 45 (degree)
+                tx = t*-0.7071; ty = t*0.7071;
+                Rx = R*-0.7071; Ry = R*0.7071;
+            }
+            else if (m>2.4142 || m <= -2.4142) {
+                // 67.5 < angle <=112.5, approximate to 90 (degree)
+                tx = t; ty = t*0.1;
+                Rx = R; Ry = R*0.6;
+            }
+            else if (m>-2.4142 && m<-0.4142) {
+                // 112.5 < angle < 157.5, approximate to 135 (degree)
+                tx = t*0.7071; ty = t*0.7071;
+                Rx = R*0.7071; Ry = R*0.7071;
+            }
+            else {
+                // error in determining angle
+                //printf( "error in determining angle: m=%.4f\n",m);
+            }
+        }
+        else { //calculate to exact
+            dx = y1 - y2;
+            dy = x2 - x1;
+            double L = sqrt(dx*dx + dy*dy);
+            dx /= L;
+            dy /= L;
+            cx = -0.6*dy; cy = 0.6*dx;
+            tx = t*dx; ty = t*dy;
+            Rx = R*dx; Ry = R*dy;
+        }
+    }
+
+    //draw the line by triangle strip
+    glBegin(GL_TRIANGLE_STRIP);
+    if (!alphablend) { glColor3f(Br, Bg, Bb); }
+    else { glColor4f(Cr, Cg, Cb, 0); }
+    glVertex2f(x1 - tx - Rx, y1 - ty - Ry); //fading edge
+    glVertex2f(x2 - tx - Rx, y2 - ty - Ry);
+
+    if (!alphablend) { glColor3f(Cr, Cg, Cb); }
+    else { glColor4f(Cr, Cg, Cb, A); }
+    glVertex2f(x1 - tx, y1 - ty); //core
+    glVertex2f(x2 - tx, y2 - ty);
+    glVertex2f(x1 + tx, y1 + ty);
+    glVertex2f(x2 + tx, y2 + ty);
+
+    if ((abs(dx) < ALW || abs(dy) < ALW) && w <= 1.0) {
+        //printf("skipped one fading edge\n");
+    }
+    else {
+        if (!alphablend) { glColor3f(Br, Bg, Bb); }
+        else { glColor4f(Cr, Cg, Cb, 0); }
+        glVertex2f(x1 + tx + Rx, y1 + ty + Ry); //fading edge
+        glVertex2f(x2 + tx + Rx, y2 + ty + Ry);
+    }
+    glEnd();
+
+    //cap
+    if (w < 3) {
+        //do not draw cap
+    }
+    else {
+        //draw cap
+        glBegin(GL_TRIANGLE_STRIP);
+        if (!alphablend) { glColor3f(Br, Bg, Bb); }
+        else { glColor4f(Cr, Cg, Cb, 0); }
+        glVertex2f(x1 - Rx + cx, y1 - Ry + cy);
+        glVertex2f(x1 + Rx + cx, y1 + Ry + cy);
+        glColor3f(Cr, Cg, Cb);
+        glVertex2f(x1 - tx - Rx, y1 - ty - Ry);
+        glVertex2f(x1 + tx + Rx, y1 + ty + Ry);
+        glEnd();
+        glBegin(GL_TRIANGLE_STRIP);
+        if (!alphablend) { glColor3f(Br, Bg, Bb); }
+        else { glColor4f(Cr, Cg, Cb, 0); }
+        glVertex2f(x2 - Rx - cx, y2 - Ry - cy);
+        glVertex2f(x2 + Rx - cx, y2 + Ry - cy);
+        glColor3f(Cr, Cg, Cb);
+        glVertex2f(x2 - tx - Rx, y2 - ty - Ry);
+        glVertex2f(x2 + tx + Rx, y2 + ty + Ry);
+        glEnd();
+    }
+}
+
+//============================================================================
+//============================================================================
+void Gldraw::drawLineLoop(const ListPt2d &pts, float w, float r, float g, float b)
+{
+    const Point2d *pt1=NULL, *pt2=NULL;
+    for (int i = 0; i<pts.size(); i++)
+    {
+        pt2 = &pts.at(i);
+        if (pt1 == NULL)
+        {
+            pt1 = pt2;
+            continue;
+        }
+
+        drawLine(pt1->dX, pt1->dY, pt2->dX, pt2->dY, w, r, g, b);
+        pt1 = pt2;
+    }
+
+    if (pts.size() <= 2) return;
+
+    pt2 = &pts.at(0); // first point
+    drawLine(pt1->dX, pt1->dY, pt2->dX, pt2->dY, w, r, g, b); // draw last point to first point line
+
+}
+/*
 void Gldraw::drawLineLoop(const ListPt2d &pts)
 {
     glBegin(GL_LINE_LOOP);
@@ -85,6 +279,7 @@ void Gldraw::drawLineLoop(const ListPt2d &pts)
 
     glEnd();
 }
+*/
 
 //============================================================================
 //============================================================================

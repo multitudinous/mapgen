@@ -402,7 +402,8 @@ void GlutSys::onMotion(int x, int y)
     dx = x - m_mouseOldX;
     dy = y - m_mouseOldY;
 
-    if (m_mouseBtns & GlutSys::MOUSE_MBTN_DOWN)
+    // MBTN Down not being recognized
+    if (m_mouseBtns & GlutSys::MOUSE_MBTN_DOWN || m_mouseBtns & GlutSys::MOUSE_LBTN_DOWN)
     {
         // pan
         m_moveSys->m_camera->panByPixel(-dx, dy);

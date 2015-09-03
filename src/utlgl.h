@@ -9,6 +9,8 @@ public:
 	static string GetTextureInfo(GLuint id);
 	static string GetRenderbufferInfo(GLuint id);
 	static string ConvertGLFormatToString(GLenum format);
+
+    static string getLog(GLhandleARB handle);
 };
 
 #endif

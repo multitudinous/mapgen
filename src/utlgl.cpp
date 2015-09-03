@@ -173,3 +173,19 @@ string UtlGL::ConvertGLFormatToString(GLenum format)
 
     return formatName;
 }
+
+//=======================================================================
+//=======================================================================
+string UtlGL::getLog(GLhandleARB handle)
+{
+    int blen = 0, slen = 0;
+    std::vector<GLcharARB> log;
+    glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &blen);
+
+    if (blen <= 1) return string("");
+    
+    log.resize(blen + 1);
+    log[blen] = 0;
+    glGetInfoLogARB(handle, blen, &slen, &log[0]);
+    return std::string(&log[0]);
+}
