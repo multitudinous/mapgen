@@ -23,7 +23,7 @@ styles:
         
     polyoutline:
         draw: true
-        lineaa: false
+        lineaa: true
         linewidth: 3
         color: 000000
 
