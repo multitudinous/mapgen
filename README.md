@@ -49,6 +49,8 @@ file: "somefile.png"        # file to output to, if no path is given it will sav
 layeroutmode: true | false  # if true, each layer will be output to its own png file with a transparent background, using the "name of the layer.png", the path will be the same path as the output file
 bgcolor: #FFFFFF            # optional if you want to set the background color, default is white, for layer output it won't matter
 extents: l,r,t,b            # optional if you want to force the extents of the map you can here, otherwise map will automatically zoom to extents of the data
+msaa: true                  # enable or disable multisample rendering here (this affects each layer output and is the default for all layers, you can enable or disable this per layer.. see map object below)
+msamples: 16                # number of samples used for multisample rendering
 
 Example:
 ---------------------
@@ -92,6 +94,7 @@ draw: true | false
 color: 000000
 crand:                      # see polyfill for details
 linewidth: 1.0              # width of the line
+lineaa: true                # enable or disable enhanced line antialiasing rendering
 
 
 labels
@@ -243,6 +246,7 @@ mapobj properties:
 name: layername                     # name used for output, layername.png when in layerout mode
 type: layer                         # layer is the only valid type
 style: stylename                    # style to apply to the layer
+msaa: false                         # optional to overide output properties - enable or disable multisample rendered output override here      
 children:
     - dataobj: dataobjname          # currently only dataobjects are supported, you can add multiple objects by seperating them by ,
        
