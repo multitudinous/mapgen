@@ -419,6 +419,25 @@ void GisSys::displayLyrOutMode()
         lyrnum++;
     }
 
+    // render a composite, only once
+    if (_fboToDisk)
+    {
+        std::string fullpath = m_dd->_cfg->imgFolder() + std::string("composite.png");
+        _fbo->getDrawParams()->pathScreenShot = fullpath;
+        _fbo->drawStart();
+
+        it = lyrList.begin();
+        while (it != lyrList.end())
+        {
+            GeoLayer *lyr = dynamic_cast<GeoLayer *>(it->get());
+            it++;
+            if (!lyr) continue;
+
+            lyr->draw(m_dd.get());
+        }
+        _fbo->drawEnd();
+    }
+
     _fboToDisk = false;
 }
 
@@ -438,7 +457,7 @@ void GisSys::displayLyrOut(GeoLayer *lyr, int lyrnum)
     std::string fullpath = m_dd->_cfg->imgFolder() + name;
 
     _fbo->getDrawParams()->pathScreenShot = fullpath;
-    _fbo->drawStart();
+    _fbo->drawStart(lyr->msaaOn());
     lyr->draw(m_dd.get());
     _fbo->drawEnd();
 }
@@ -482,8 +501,8 @@ bool GisSys::initFbo()
     PCamera camera(new Camera(Camera::Ortho));
     camera->onResize(m_dd->_cfg->width(), m_dd->_cfg->height());
 
-    _fbo.reset(new Fbo());
-    if (!_fbo->create(camera, m_dd->_cfg->width(), m_dd->_cfg->height()))
+    _fbo.reset(new FboRender());
+    if (!_fbo->create(camera, m_dd->_cfg->width(), m_dd->_cfg->height(), m_dd->_cfg->msaaSamples()))
     {
         LogError("%s fbo creation failed", func);
         return false;

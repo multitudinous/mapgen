@@ -104,6 +104,18 @@ bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
 	return true;
 }
 
+bool Texture::CreateMultisamp(GLuint width, GLuint height, GLsizei samples)
+{
+    Destroy();
+
+    glGenTextures(1, &m_glid);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_glid);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGBA, width, height, GL_TRUE);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+
+    return true;
+}
+
 void Texture::Destroy()
 {
 	if (m_glid)

@@ -86,7 +86,7 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
 
     // initialize GLUT 
     glutInit(&argc, (char**)argv);
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL | GLUT_DOUBLE );
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL | GLUT_DOUBLE | GLUT_MULTISAMPLE);
     glutInitWindowPosition (glutGet(GLUT_SCREEN_WIDTH)/2 - m_winW/2, glutGet(GLUT_SCREEN_HEIGHT)/2 - m_winH/2);
     glutInitWindowSize(m_winW, m_winH);
     m_hanWin = glutCreateWindow("GIS Render");
@@ -114,6 +114,8 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
     glClearColor(1.0, 1.0, 1.0, 1.0);
 	//glEnable(GL_DEPTH_TEST);
     glDisable(GL_DEPTH_TEST);
+
+    glEnable(GL_MULTISAMPLE);
 
 	// for smooth lines
 	glEnable(GL_BLEND);
@@ -153,7 +155,8 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
 	*/
 
 	glewInit();
-	//wglewInit();
+
+    m_dd->init();
 
 #ifdef _WIN32
 	if (wglSwapIntervalEXT)

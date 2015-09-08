@@ -266,6 +266,8 @@ void MapYaml::loadOutput(const YAML::Node& node)
     _cfg->lyrOutMode(getBool(node, "layeroutmode", _cfg->lyrOutMode()));
     _cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
     _cfg->mapExtents(getExtents(node, "extents"));
+    _cfg->msaaOn(getBool(node, "msaa", _cfg->msaaOn()));
+    _cfg->msaaSamples(getInt(node, "msamples", _cfg->msaaSamples()));
 
     _cfg->imgFile(validateOutfile(_cfg->imgFile()));
 }
@@ -334,6 +336,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         attr->_colorPolyOutline = getColorRgbf(an, "color");
         attr->_colorRandPolyOutline = loadColorRand(an);
         attr->_lineWidth = getDbl(an, "linewidth", 1.0f);
+        attr->_lineAA = getBool(an, "lineaa", true);
         std::string feature = getString(an, "feature");
         if (feature.size() > 0) attr->_feature = feature;
 
@@ -811,6 +814,7 @@ PGlObj MapYaml::loadLayer(const YAML::Node& node)
     PGlObj lyr(plyr);
 
     plyr->_name = getString(node, "name");
+    plyr->msaaOn(getBool(node, "msaa", _cfg->msaaOn()));
 
     std::string style = getString(node, "style");
     if (style.size())

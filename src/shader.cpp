@@ -50,17 +50,27 @@ void Shader::load(const char *strfile)
     file.read(&src[0], size);
     file.close();
 
-    load(&src[0], (GLint)src.size());
+    loadStr(&src[0], (GLint)src.size());
 }
 
 //=======================================================================
 // throws runtime_error on failure
 //=======================================================================
-void Shader::load(const GLcharARB *pacShdrSrc, GLint iLen)
+void Shader::loadStr(const GLcharARB *pacShdrSrc, GLint iLen)
 {
     if (_eType == 0)
     {
         throw std::runtime_error("Shader type is invalid!");
+    }
+
+    if (!pacShdrSrc)
+    {
+        throw std::runtime_error("Shader string is null!");
+    }
+
+    if (iLen == 0)
+    {
+        iLen = strlen(pacShdrSrc);
     }
 
     if (iLen <= 0)

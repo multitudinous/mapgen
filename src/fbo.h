@@ -7,7 +7,7 @@
 
 class Fbo
 {
-protected:
+public:
     struct SDrawPrev
     {
         //GLfloat matPers[16];
@@ -16,6 +16,7 @@ protected:
         GLint vp[4];
         bool saveStates;
         bool drawSuccess;
+        bool aaOn;
     };
 
     struct SDrawParams
@@ -55,15 +56,16 @@ public:
     Fbo();
     virtual ~Fbo();
 
-    void setDrawParams(SDrawParams params) { m_drawParams = params; }
+    void setDrawParams(const SDrawParams &params) { m_drawParams = params; }
     SDrawParams* getDrawParams() { return &m_drawParams; }
-    bool drawStart(bool saveStates=true, bool clearColor=true, bool clearDepth=true);
-    void drawEnd();
+    bool drawStart(bool saveStates = true, bool clearColor = true, bool clearDepth = true);
+    void drawEnd(Fbo *fboResult = NULL);
 
-    bool create(PCamera camera, GLuint width, GLuint height);
-    bool create(PCamera camera, GLuint width, GLuint height, GLuint txid);
+    bool create(PCamera camera, GLuint width, GLuint height, bool aaOn=true, GLsizei msamples=16);
+    bool create(PCamera camera, GLuint width, GLuint height, GLuint txid, bool aaOn = true, GLsizei msamples = 16);
     void destroy(bool destroyTx=true);
 
+    GLuint getFboId() { return m_fboid; }
     GLuint getTxId() { return m_txid; }
 
     Camera* camera() { return _camera.get(); }
@@ -78,11 +80,14 @@ protected:
 
 protected:
     GLuint m_fboid;
-    GLuint m_rboid;
+    GLuint m_cboid;
+    GLuint m_dboid;
     GLuint m_txid;
     GLuint m_w;
     GLuint m_h;
     PTexture m_tx;
+    bool _aaOn;
+    GLsizei _samples;
 
     SDrawParams m_drawParams;
     SDrawPrev m_drawPrev;

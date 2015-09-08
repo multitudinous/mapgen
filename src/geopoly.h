@@ -3,6 +3,7 @@
 
 #include "geoobj.h"
 #include "point2d.h"
+#include "vbo.h"
 
 class GeoPoly : public GeoObj
 {
@@ -64,6 +65,8 @@ protected:
     MapFieldsStr _fieldsStr;
 
     Point2d _labelPt;
+
+    PVbo _vboOutline;
 
      // TODO: need to refactor to support 1 outter ring, and 0.. n inner rings
 };

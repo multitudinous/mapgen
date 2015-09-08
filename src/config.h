@@ -45,6 +45,11 @@ public:
     void mapExtents(const Extents &e) { _mapExtents = e; }
     bool mapExentsValid() const { return (fabs(_mapExtents.area()) > 0.0001); }
 
+    bool msaaOn() const { return _msaaOn;  }
+    void  msaaOn(bool on) { _msaaOn = on; }
+    int msaaSamples() const { return _samples;  }
+    void msaaSamples(int samples) { _samples = samples; }
+
 protected:
     std::string _mode; // windowless, desktop
 
@@ -61,6 +66,9 @@ protected:
     std::string _datafile;
 
     Extents _mapExtents;
+
+    bool _msaaOn;
+    int _samples;
 };
 
 typedef std::shared_ptr<Config> PConfig;

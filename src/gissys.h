@@ -4,7 +4,7 @@
 #include "sysdefs.h"
 #include "glutsys.h"
 #include "textures.h"
-#include "fbo.h"
+#include "fborender.h"
 #include "globj.h"
 #include "batchcfg.h"
 #include "gradientpicker.h"
@@ -70,7 +70,7 @@ protected:
 protected:
     PBatchCfg _batchCfg;
     PGlObj _rootNode;
-    PFbo _fbo;
+    PFboRender _fbo;
     bool _fboToDisk;
 
     //PConfig _cfg;

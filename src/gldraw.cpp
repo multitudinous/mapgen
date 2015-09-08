@@ -244,6 +244,27 @@ void Gldraw::drawLine(double x1, double y1, double x2, double y2, //coordinates 
 
 //============================================================================
 //============================================================================
+void Gldraw::drawLine(const Point2d &pt1, const Point2d &pt2, float w, float r, float g, float b, float a)
+{
+    float afColrCur[4];
+    glGetFloatv(GL_CURRENT_COLOR, afColrCur);
+    // get the current point size
+    float fLineWidthCur;
+    glGetFloatv(GL_LINE_WIDTH, &fLineWidthCur);
+
+    glColor4f(r, g, b, a);
+    // set the point size
+    glLineWidth(w);
+
+
+    glBegin(GL_LINES);
+        glVertex2d(pt1.x(), pt1.y());
+        glVertex2d(pt2.x(), pt2.y());
+    glEnd();
+}
+
+//============================================================================
+//============================================================================
 void Gldraw::drawLineLoop(const ListPt2d &pts, float w, float r, float g, float b)
 {
     const Point2d *pt1=NULL, *pt2=NULL;
@@ -266,9 +287,22 @@ void Gldraw::drawLineLoop(const ListPt2d &pts, float w, float r, float g, float 
     drawLine(pt1->dX, pt1->dY, pt2->dX, pt2->dY, w, r, g, b); // draw last point to first point line
 
 }
-/*
-void Gldraw::drawLineLoop(const ListPt2d &pts)
+
+//============================================================================
+//============================================================================
+void Gldraw::drawLineLoopBasic(const ListPt2d &pts, float w, float r, float g, float b, float a)
 {
+    float afColrCur[4];
+    glGetFloatv(GL_CURRENT_COLOR, afColrCur);
+    // get the current point size
+    float fLineWidthCur;
+    glGetFloatv(GL_LINE_WIDTH, &fLineWidthCur);
+
+    glColor4f(r, g, b, a);
+    // set the point size
+    glLineWidth(w);
+
+
     glBegin(GL_LINE_LOOP);
 
     for (int i = 0; i<pts.size(); i++)
@@ -278,8 +312,11 @@ void Gldraw::drawLineLoop(const ListPt2d &pts)
     }
 
     glEnd();
+
+    // restore
+    glColor4fv(afColrCur);
+    glLineWidth(fLineWidthCur);
 }
-*/
 
 //============================================================================
 //============================================================================

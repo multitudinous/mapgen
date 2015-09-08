@@ -189,3 +189,49 @@ string UtlGL::getLog(GLhandleARB handle)
     glGetInfoLogARB(handle, blen, &slen, &log[0]);
     return std::string(&log[0]);
 }
+
+//=======================================================================
+//=======================================================================
+void UtlGL::logErrorCheck(const char *msg)
+{
+    GLenum e = glGetError();
+    if (e == GL_NO_ERROR) return;
+
+    logError(e, msg);
+}
+
+//=======================================================================
+//=======================================================================
+void UtlGL::logError(GLenum e, const char *msg)
+{
+    switch (e)
+    {
+    case GL_NO_ERROR:
+        break;
+    case GL_INVALID_ENUM:
+        LogError("%s - GL error: 0x%X - Invalid Enum", msg, e);
+        break;
+    case GL_INVALID_VALUE:
+        LogError("%s - GL error: 0x%X - Invalid Value", msg, e);
+        break;
+    case GL_INVALID_OPERATION:
+        LogError("%s - GL error: 0x%X - Invalid Operation", msg, e);
+        break;
+    case GL_INVALID_FRAMEBUFFER_OPERATION:
+        LogError("%s - GL error: 0x%X - Invalid Fbo Operation", msg, e);
+        break;
+    case GL_OUT_OF_MEMORY:
+        LogError("%s - GL error: 0x%X - Out of Memory", msg, e);
+        break;
+    case GL_STACK_UNDERFLOW:
+        LogError("%s - GL error: 0x%X - Stack Underflow", msg, e);
+        break;
+    case GL_STACK_OVERFLOW:
+        LogError("%s - GL error: 0x%X - Stack Overflow", msg, e);
+        break;
+    default:
+        LogError("%s - GL error: 0x%X - UnKnown Error", msg, e);
+        break;
+
+    }
+}

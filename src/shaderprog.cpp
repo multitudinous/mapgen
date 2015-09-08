@@ -54,27 +54,41 @@ void ShaderProg::loadFrag(const char *pacFile)
 //============================================================================
 // throws runtime exception on error
 //============================================================================
-void ShaderProg::loadVert(const GLcharARB *pacShdrSrc, GLint iLen)
+void ShaderProg::loadVertStr(const GLcharARB *pacShdrSrc)
 {
     if (!_shdrVert) _shdrVert.reset(new Shader(GL_VERTEX_SHADER_ARB));
-    load(pacShdrSrc, iLen, _shdrVert.get());
+    loadStr(pacShdrSrc, _shdrVert.get());
 }
 
 //============================================================================
 // throws runtime exception on error
 //============================================================================
-void ShaderProg::loadFrag(const GLcharARB *pacShdrSrc, GLint iLen)
+void ShaderProg::loadFragStr(const GLcharARB *pacShdrSrc)
 {
     if (!_shdrFrag) _shdrFrag.reset(new Shader(GL_FRAGMENT_SHADER_ARB));
-    load(pacShdrSrc, iLen, _shdrFrag.get());
+    loadStr(pacShdrSrc, _shdrFrag.get());
 }
 
 //============================================================================
 //============================================================================
 void ShaderProg::setTextureLoc(const GLcharARB *acSamplerName, GLint iTexLoc)
 {
+    if (!_hProg) return;
+
     GLint loc = glGetUniformLocationARB(_hProg, acSamplerName);
-    glUniform1iARB(loc, iTexLoc);
+    if (loc != -1)
+    {
+        glUniform1iARB(loc, iTexLoc);
+    }
+}
+
+//============================================================================
+//============================================================================
+GLint ShaderProg::getUniformLoc(const GLcharARB *name)
+{
+    if (!_hProg) return -1;
+
+     return glGetUniformLocationARB(_hProg, name);
 }
 
 //============================================================================
@@ -117,10 +131,10 @@ void ShaderProg::load(LPCTSTR pacFile, Shader *shdr)
 //============================================================================
 // throws runtime exception on error
 //============================================================================
-void ShaderProg::load(const GLcharARB *pacShdrSrc, GLint iLen, Shader *shdr)
+void ShaderProg::loadStr(const GLcharARB *pacShdrSrc, Shader *shdr)
 {
     remove(shdr);
-    shdr->load(pacShdrSrc, iLen);
+    shdr->loadStr(pacShdrSrc);
     attach(shdr);
 }
 //============================================================================

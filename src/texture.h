@@ -23,6 +23,7 @@ public:
 
 	bool Create(GLuint width, GLuint height, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR);
 	bool Create(std::shared_ptr<MemBuf> pImg, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR);
+    bool CreateMultisamp(GLuint width, GLuint height, GLsizei samples);
 	bool ReCreate();
 	void Destroy();
 

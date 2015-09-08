@@ -10,7 +10,7 @@ public:
     virtual ~Shader();
 
     virtual void load(const char *file);
-    virtual void load(const GLcharARB *pacShdrSrc, GLint iLen);
+    virtual void loadStr(const GLcharARB *pacShdrSrc, GLint iLen=0);
     virtual void handle(GLhandleARB hShdr) { _hShdr = hShdr; }
     virtual GLhandleARB handle() { return _hShdr; }
 

@@ -37,6 +37,15 @@ class Point2d
     void vGet(double ad2[2]);
     void vSet(double ad2[2]);
 
+    double x() const { return dX; }
+    double y() const { return dY; }
+    float xf() const { return (float)dX; }
+    float yf() const { return (float)dY; }
+
+    static Point2d tangent(const Point2d &p1, const Point2d &p2);
+    static Point2d ortho(const Point2d &p1, const Point2d &p2);
+    static int intersection(const Point2d &P1, const Point2d &P2, const Point2d &P3, const Point2d &P4, Point2d *I);
+
         Point2d& operator= (const Point2d &clPt);
     //Point2d& operator= (const CPoint &clPt);
     Point2d& operator- ();

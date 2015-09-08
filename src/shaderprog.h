@@ -15,10 +15,11 @@ public:
 
     void loadVert(const char *pacFile);
     void loadFrag(const char *pacFile);
-    void loadVert(const GLcharARB *pacShdrSrc, GLint iLen); // must be null terminated if iLen == 0
-    void loadFrag(const GLcharARB *pacShdrSrc, GLint iLen); // must be null terminated if iLen == 0
+    void loadVertStr(const GLcharARB *pacShdrSrc);
+    void loadFragStr(const GLcharARB *pacShdrSrc);
 
     void setTextureLoc(const GLcharARB *acSamplerName, GLint iTexLoc = 0);
+    GLint getUniformLoc(const GLcharARB *name);
 
     virtual bool valid();
     virtual void destroy();
@@ -27,7 +28,7 @@ public:
 
 protected:
     void load(LPCTSTR pacFile, Shader *shdr);
-    void load(const GLcharARB *pacShdrSrc, GLint iLen, Shader *shdr);
+    void loadStr(const GLcharARB *pacShdrSrc, Shader *shdr);
     void attach(Shader *shdr);
     void remove(Shader *shdr);
 

@@ -1,6 +1,7 @@
 #include "geopoly.h"
 #include "gldraw.h"
 #include "utlline2d.h"
+#include "utlglline.h"
 #include <cstring> 
 
 //============================================================================
@@ -64,10 +65,40 @@ void GeoPoly::drawOutline(DrawData *pdd)
     if (!DrawAttr::drawPolyOutline(pdd->_drawAttr, _drawAttr)) return;
     Rgbf color = DrawAttr::colorPolyOutline(pdd->_drawAttr, _drawAttr);
     float linew = DrawAttr::lineWidth(pdd->_drawAttr, _drawAttr);
+    bool lineAA = DrawAttr::lineAA(pdd->_drawAttr, _drawAttr);
 
-    //glColor4fv(color.m_af);
-    //glLineWidth(linew);
     Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
+
+    // todo: need a flag if points or linew changes need to recreate the vbo
+    bool drawVbo = false;
+    if (pdd->m_shadersOn && pdd->_progSmoothLine)
+    {
+        if (!_vboOutline)
+        {
+            _vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::round_join, UtlGlLine::square_cap);
+        }
+
+        if (_vboOutline) drawVbo = true;
+    }
+
+    // draw the line with the correct configured algorithm
+    if (drawVbo && lineAA)
+    {
+        pdd->_progSmoothLine->enable();
+        GLuint uidColr = pdd->_progSmoothLine->getUniformLoc("ucolor");
+        if (uidColr != -1) 
+        { 
+            glUniform4fv(uidColr, 1, color.GetColor()); 
+        }
+        
+        _vboOutline->draw();
+        pdd->_progSmoothLine->disable();
+    }
+    else
+    {
+        //Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
+        Gldraw::drawLineLoopBasic(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
+    }
 }
 
 //============================================================================

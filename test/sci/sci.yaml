@@ -6,6 +6,8 @@ output:
   file: map.png
   layeroutmode: true
   bgcolor: 00FFFFFF
+  msaa: true
+  msamples: 16
 
 styles:
 
@@ -21,7 +23,8 @@ styles:
         
     polyoutline:
         draw: true
-        linewidth: 2
+        lineaa: false
+        linewidth: 3
         color: 000000
 
   - name: labels
@@ -54,6 +57,7 @@ mapobjs: #note back to front order
    - name: field_fill
      type: layer
      style: fill
+     msaa: true
      children:
        - dataobj: fielddata
        

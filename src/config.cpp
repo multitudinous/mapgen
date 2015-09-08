@@ -11,7 +11,9 @@ Config::Config()
     _outtype = "";
     _datafile = "data.txt";
     _lyrOutMode = true;
-    _colrClear.SetColor(1, 1, 1, 0); // alpha 0 for output, but will be set to 1 for onscreen rendering
+    _colrClear.SetColor(1, 1, 1, 0); // alpha 0 for output, but will be set to 1 for onscreen rendering,
+    _msaaOn = true;
+    _samples = 16;
 }
 
 bool Config::windowless()

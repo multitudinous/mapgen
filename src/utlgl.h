@@ -11,6 +11,9 @@ public:
 	static string ConvertGLFormatToString(GLenum format);
 
     static string getLog(GLhandleARB handle);
+
+    static void logErrorCheck(const char *msg);
+    static void logError(GLenum e, const char *msg = "Error");
 };
 
 #endif

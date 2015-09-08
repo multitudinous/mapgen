@@ -17,8 +17,10 @@ public:
     static void drawLine(double x1, double y1, double x2, double y2, //coordinates of the line
                          float w, //width/thickness of the line in pixel
                          float Cr, float Cg, float Cb); //RGB color components
+    static void drawLine(const Point2d &pt1, const Point2d &pt2, float w, float r, float g, float b, float a=1);
 
     static void drawLineLoop(const ListPt2d &pts, float w, float r, float g, float b);
+    static void drawLineLoopBasic(const ListPt2d &pts, float w, float r, float g, float b, float a=1);
 
     static void drawMask(DrawData *pdd, const GlObjList* maskList, const ListPt2d &regionPtList);
     static void drawMask(DrawData *pdd, GlObj *maskColoring, const ListPt2d &regionPtList);
@@ -34,6 +36,8 @@ public:
 protected:
 	static void gluCallbackTessalateVertVN3F(void *pvVertInfoVN3);
 	static void gluCallbackBeginPoly(GLenum eWhich);
+
+    static PShaderProg _progSmoothLine;
 };
 
 #endif

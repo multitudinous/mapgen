@@ -3,16 +3,20 @@
 
 #include "config.h"
 #include "drawattr.h"
+#include "shaderprog.h"
 
 class DrawData
 {
 public:
 	DrawData();
 
+    bool init();
+
 public:
 
     PConfig _cfg;
     PDrawAttr _drawAttr;
+    PShaderProg _progSmoothLine;
 
 	bool m_shadersOn;
 	bool m_wireframe;

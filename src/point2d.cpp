@@ -221,6 +221,77 @@ void Point2d::vCarToWin(double dH)
   dY = dH - dY;
 }
 
+
+Point2d Point2d::tangent(const Point2d &p1, const Point2d &p2)
+{
+    Point2d T(p2.x() - p1.x(), p2.y() - p1.y());
+
+    // TODO: this should just be a normalize ?
+    double norm = sqrt(T.x() * T.x() + T.y() * T.y());
+    if (norm > 0)
+    {
+        T.dX /= norm;
+        T.dY /= norm;
+    }
+    return T;
+}
+
+
+Point2d Point2d::ortho(const Point2d &p1, const Point2d &p2)
+{
+    Point2d T = tangent(p1, p2);
+    return Point2d( -T.y(), T.x() );
+}
+
+int Point2d::intersection(const Point2d &P1, const Point2d &P2, const Point2d &P3, const Point2d &P4, Point2d *I)
+{
+    double epsilon = 1e-9;
+    double mua, mub;
+    double denom, numera, numerb;
+
+    double x1 = P1.x(), y1 = P1.y();
+    double x2 = P2.x(), y2 = P2.y();
+    double x3 = P3.x(), y3 = P3.y();
+    double x4 = P4.x(), y4 = P4.y();
+    double *x = &(I->dX), *y = &(I->dY);
+
+    denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+    numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+    numerb = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+
+    /* Are the line coincident? */
+    if ((fabs(numera) < epsilon) &&
+        (fabs(numerb) < epsilon) &&
+        (fabs(denom)  < epsilon))
+    {
+        *x = (x1 + x2) / 2;
+        *y = (y1 + y2) / 2;
+        // Segments intersect
+        return 2;
+    }
+
+    /* Are the line parallel */
+    if (fabs(denom) < epsilon)
+    {
+        *x = 0;
+        *y = 0;
+        return 0;
+    }
+
+    /* Is the intersection along the the segments */
+    mua = numera / denom;
+    mub = numerb / denom;
+    *x = x1 + mua * (x2 - x1);
+    *y = y1 + mua * (y2 - y1);
+    if (mua < 0 || mua > 1 || mub < 0 || mub > 1)
+    {
+        // Lines intersect but no segments
+        return 1;
+    }
+    // Segments intersect
+    return 2;
+}
+
 // +
 // *****************************************************************************
 // *****************************************************************************
