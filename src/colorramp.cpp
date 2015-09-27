@@ -1,4 +1,5 @@
 #include "colorramp.h"
+#include "colorpickergradient.h"
 
 //============================================================================
 //============================================================================
@@ -7,9 +8,7 @@ ColorRamp::ColorRamp() :
     _minv(0),
     _maxv(0)
 {
-
 }
-
 
 //============================================================================
 //============================================================================
@@ -17,7 +16,7 @@ Rgbf ColorRamp::getFromPer(float per)
 {
     validate();
 
-    return getRgb(_picker->pick(per));
+    return getRgb(_picker->pickByPercent(per));
 }
 
 //============================================================================
@@ -27,17 +26,23 @@ Rgbf ColorRamp::getFromVal(double v)
     validate();
 
     // get the correct bucket
-    double dist = _maxv - _minv;
-    double disa = v - _minv;
-    double perd = disa / dist;
+    if (hasBuckets())
+    {
+        double dist = _maxv - _minv;
+        double disa = v - _minv;
+        double perd = disa / dist;
 
-    double bucketd = (double)_buckets * perd;
-    int bucket = (int)bucketd; // truncate it
+        double bucketd = (double)_buckets * perd;
+        int bucket = (int)bucketd; // truncate it
 
-    float perb = (float)bucket / (float)_buckets; // get the same color everytime for every bucket
+        float perb = (float)bucket / (float)_buckets; // get the same color everytime for every bucket
 
 
-    return getRgb(_picker->pick(perb));
+        return getRgb(_picker->pickByPercent(perb));
+    }
+    
+    
+    return getRgb(_picker->pickByValue(v));
 }
 
 //============================================================================
@@ -55,8 +60,8 @@ void ColorRamp::validate()
 {
     if (!_picker)
     {
-        LogError("ColorRamp::validate - gradientpicker not created, creating a default one.");
-        _picker.reset(new GradientPicker(QColor("#55aa00"), QColor("#ffff00"), QColor("#ff0000")));
+        LogError("ColorRamp::validate - colorpicker not created, creating a default gradient one.");
+        _picker.reset(new ColorPickerGradient(QColor("#55aa00"), QColor("#ffff00"), QColor("#ff0000")));
     }
 }
 

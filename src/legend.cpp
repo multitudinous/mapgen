@@ -57,7 +57,7 @@ Legend::~Legend()
 
 //============================================================================
 //============================================================================
-bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, double min, double mid, double max, std::string units)
+bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, std::string units)
 {
     const char *func = "Legend::init() -"; 
 
@@ -65,6 +65,7 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
     _file = file;
     _legType = legtype;
     _legFrmt = legformat;
+    _catColors.reset();
 
     if (legtype == "dem")
         initDem(min, mid, max, units);
@@ -90,6 +91,13 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
         initSciom();
     else if (legtype == "profit")
         initProfit();
+    else if (legtype == "cdl")
+    {
+        if (!initCdl(colorRamp, dataObjName))
+        {
+            return false;
+        }
+    }
     else if (legtype == "rr")
         initRR();
     else if (legtype == "r2d2")
@@ -240,6 +248,39 @@ void Legend::initProfit()
 
     _title = "Profit ($/ac)";
     initSettingsProfit();
+}
+
+//============================================================================
+//============================================================================
+bool Legend::initCdl(PColorRamp colorRamp, const std::string &dataObjName)
+{
+    LogTrace("creating cdl legend ...");
+
+    _title = "CDL";
+
+    if (!colorRamp)
+    {
+        LogError("Legend::initCdl - must have a color ramp");
+        return false;
+    }
+
+    ColorPickerCat *picker = dynamic_cast<ColorPickerCat *>(colorRamp->getPicker().get());
+    if (picker == NULL)
+    {
+        LogError("Legend::initCdl - must have a ColorPickerCat type for the color ramp");
+        return false;
+    }
+
+    _catColors = picker->getColorUsed(dataObjName.c_str());
+    if (!_catColors)
+    {
+        LogError("Legend::initCdl - failed to find categories used for dataobj: %s", dataObjName.c_str());
+        return false;
+    }
+
+    // todo: need to adjust width and height based on how many buckets vertically, and largest category name horizontally
+
+    return true;
 }
 
 //============================================================================

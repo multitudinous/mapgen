@@ -1,0 +1,36 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  layeroutmode: false
+  file: cdl.png
+styles:
+- name: cdl_style
+  polymask:
+    draw: true
+    masks: cdl_tif
+    
+colorramps:
+- name: color_cdl
+  filecat: cdl_category_colors.txt
+  
+dataobjs:
+- name: cdl_tif
+  type: tiff
+  file: raster_4326.tif
+  colorramp: color_cdl
+  
+mapobjs:
+- name: cdl_map
+  type: layer
+  style: cdl_style
+  children:
+  - dataobj: cdl_tif
+  
+legends:
+- name: maplegend
+  type: legend
+  file: legend.png
+  legtype: cdl
+  colorramp: color_cdl

@@ -17,7 +17,7 @@ GeoImg(tx, ext)
 
 //============================================================================
 //============================================================================
-GeoImgRaster::GeoImgRaster(PTexture tx, const Extents &ext, PGradientPicker picker, const Stats &stats) :
+GeoImgRaster::GeoImgRaster(PTexture tx, const Extents &ext, PColorPicker picker, const Stats &stats) :
 GeoImg(tx, ext),
 _picker(picker),
 _stats(stats)

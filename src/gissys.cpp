@@ -4,7 +4,7 @@
 #include "gldraw.h"
 #include "utltxgeo.h"
 #include "bingimg.h"
-#include "gradientpicker.h"
+#include "colorpickergradient.h"
 #include "geoimg.h"
 #include "geoimgraster.h"
 #include "geoaerial.h"
@@ -22,7 +22,7 @@ GisSys::GisSys() :
 
 //============================================================================
 //============================================================================
-PGlObj GisSys::loadTiff(const char *file, PGradientPicker picker, Stats *stats)
+PGlObj GisSys::loadTiff(const char *file, PColorPicker picker, Stats *stats, const char *id)
 {
     const char *func = "GisSys::loadTiff() - ";
     GdalFile tiff;
@@ -32,7 +32,17 @@ PGlObj GisSys::loadTiff(const char *file, PGradientPicker picker, Stats *stats)
         return PGlObj();
     }
 
+    if (picker)
+    {
+        picker->begin(id);
+    }
+
     PTexture tx = UtlTxGeo::loadHmap(&tiff, picker.get(), stats);
+
+    if (picker)
+    {
+        picker->end();
+    }
 
     PGlObj img(new GeoImgRaster(tx, *tiff.GetExtents(), picker, *stats));
     //((GeoImgRaster *)img.get())->init(tx, *tiff.GetExtents());
@@ -92,7 +102,7 @@ PGlObj GisSys::loadDem(const char *file)
         return PGlObj();
     }
 
-    GradientPicker picker(QColor("#55aa00"), QColor("#ffff00"), QColor("#ff0000"));
+    ColorPickerGradient picker(QColor("#55aa00"), QColor("#ffff00"), QColor("#ff0000"));
     PTexture txDemColored = UtlTxGeo::loadHmap(&dem, &picker);
 
     PGlObj img(new GeoImg());
@@ -112,7 +122,7 @@ PGlObj GisSys::loadChan(const char *file)
         return PGlObj();
     }
 
-    GradientPicker picker(QColor("#ffffff"), QColor("#0000ff"));
+    ColorPickerGradient picker(QColor("#ffffff"), QColor("#0000ff"));
     PTexture txDemColored = UtlTxGeo::loadHmap(&dem, &picker);
 
     PGlObj img(new GeoImg());

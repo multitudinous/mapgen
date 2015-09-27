@@ -2,7 +2,7 @@
 #define COLORRAMP_H
 
 #include "rgbf.h"
-#include "gradientpicker.h"
+#include "colorpicker.h"
 
 class ColorRamp
 {
@@ -16,12 +16,14 @@ public:
 
     static Rgbf getRgb(const QColor &c);
 
+    PColorPicker getPicker() { return _picker;  }
+
 protected:
     void validate();
 
 public:
     std::string _name;
-    PGradientPicker _picker;
+    PColorPicker _picker;
 
     int _buckets;
     double _minv; // bucket range min

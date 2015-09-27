@@ -1,5 +1,5 @@
 #include "utltxgeo.h"
-#include "gradientpicker.h"
+#include "colorpicker.h"
 #include <QImage>
 
 //============================================================================
@@ -40,7 +40,7 @@ PTexture UtlTxGeo::load(const QImage *img)
 
 //============================================================================
 //============================================================================
-PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, GradientPicker *pcolor, Stats *statSettings)
+PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, ColorPicker *pcolor, Stats *statSettings)
 {
 	MemBuf hmap;
     Stats stats;
@@ -79,7 +79,7 @@ PTexture UtlTxGeo::loadRgb(const GdalFile *pfile)
 
 //============================================================================
 //============================================================================
-PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPicker *pcolor)
+PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker *pcolor)
 {
     PMemBuf rgb(new MemBuf(4, hmap->GetLenX(), hmap->GetLenY()));
 
@@ -100,7 +100,7 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPick
     // on or off coloring
     if (fabs(dis) <= .0001)
     {
-        QColor c = pcolor->pick(1);
+        QColor c = pcolor->pickByPercent(1);
         rgbaOn[0] = (BYTE)c.red();
         rgbaOn[1] = (BYTE)c.green();
         rgbaOn[2] = (BYTE)c.blue();
@@ -162,7 +162,7 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPick
 
             if (pcolor)
             {
-                QColor c = pcolor->pick(hn);
+                QColor c = pcolor->pickPrefered(hn, d);
                 prgb[0] = (BYTE)c.red();
                 prgb[1] = (BYTE)c.green();
                 prgb[2] = (BYTE)c.blue();

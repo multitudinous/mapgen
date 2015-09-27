@@ -5,7 +5,7 @@
 #include "gdalFile.h"
 
 class QImage;
-class GradientPicker;
+class ColorPicker;
 
 class UtlTxGeo
 {
@@ -14,10 +14,10 @@ public:
 
     static PTexture load(const QImage *img);
 
-    static PTexture loadHmap(const GdalFile *pfile, GradientPicker *pcolor = NULL, Stats *statSettings = NULL);
+    static PTexture loadHmap(const GdalFile *pfile, ColorPicker *pcolor = NULL, Stats *statSettings = NULL);
 	static PTexture loadRgb(const GdalFile *pfile);
 
-    static PMemBuf hmapToRgb(const MemBuf *hmap, const Stats &stats, GradientPicker *pcolor=NULL);
+    static PMemBuf hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker *pcolor=NULL);
 };
 
 #endif

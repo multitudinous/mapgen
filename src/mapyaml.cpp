@@ -10,6 +10,8 @@
 #include "stats.h"
 #include "utlqt.h"
 #include "platform.h"
+#include "colorpickercat.h"
+#include "colorpickergradient.h"
 
 //============================================================================
 //============================================================================
@@ -428,24 +430,51 @@ PColorRamp MapYaml::loadColorRamp(const YAML::Node& node)
 
     ramp->_name = getString(node, "name", "");
 
-    std::string min, mid, max;
+    std::string min, mid, max, filecat;
     if (node["min"]) min = node["min"].as<std::string>();
     if (node["mid"]) mid = node["mid"].as<std::string>();
     if (node["max"]) max = node["max"].as<std::string>();
+    if (node["filecat"]) filecat = node["filecat"].as<std::string>();
 
-    if (min.size() && mid.size() && max.size())
+    // init color picker type
+    if (filecat.size())
+    {
+        // initialize a color by category value picker
+        while (true)
+        {
+            std::string fullpath;
+            if (!fileExists(filecat.c_str(), &fullpath))
+            {
+                LogError("MapYaml::loadColorRamp - failed to find colorcat file: %s", filecat.c_str());
+                break;
+            }
+
+            ColorPickerCat *picker = new ColorPickerCat();
+            if (!picker->initFromFile(fullpath.c_str()))
+            {
+                delete picker;
+                LogError("MapYaml::loadColorRamp - failed to initialize color picker from colorcat file: %s", filecat.c_str());
+                break;
+            }
+
+            ramp->_picker.reset(picker);
+            break;
+        }
+    }
+    else if (min.size() && mid.size() && max.size())
     {
         min = "#" + min;
         mid = "#" + mid;
         max = "#" + max;
-        ramp->_picker.reset(new GradientPicker(QColor(min.c_str()), QColor(mid.c_str()), QColor(max.c_str())));
+        ramp->_picker.reset(new ColorPickerGradient(QColor(min.c_str()), QColor(mid.c_str()), QColor(max.c_str())));
     }
     else if (min.size() && max.size())
     {
         min = "#" + min;
         max = "#" + max;
-        ramp->_picker.reset(new GradientPicker(QColor(min.c_str()), QColor(max.c_str())));
+        ramp->_picker.reset(new ColorPickerGradient(QColor(min.c_str()), QColor(max.c_str())));
     }
+    
 
     // for bucket coloring
     ramp->_buckets = getInt(node, "buckets",  0);
@@ -562,13 +591,13 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
         // load the colorramp
         std::string color =  getString(node, "colorramp");
         PColorRamp ramp = getColorRamp(color);
-        PGradientPicker picker;
+        PColorPicker picker;
         if (!ramp)
         {
             LogError("%s - unable to find color ramp %s", func, color.c_str());
 
 
-            picker.reset(new GradientPicker(QColor("#55aa00"), QColor("#ffff00"), QColor("#ff0000")));
+            picker.reset(new ColorPickerGradient(QColor("#55aa00"), QColor("#ffff00"), QColor("#ff0000")));
         }
         else
         {
@@ -583,7 +612,7 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
 
 
 
-        PGlObj tiff = GisSys::loadTiff(file.c_str(),  picker, &stats);
+        PGlObj tiff = GisSys::loadTiff(file.c_str(),  picker, &stats, name.c_str());
         if (!tiff)
         {
             LogError("%s Failed to load tiff: %s", func, name.c_str());
@@ -752,7 +781,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     }
 
     PLegend leg(new Legend());
-    if (!leg->init(fileout, legtype, format, colorRamp, min, mid, max, units))
+    if (!leg->init(fileout, legtype, format, colorRamp, dataobjName, min, mid, max, units))
     {
         LogError("%s UnExpected Error: failed to init legend type %s", func, legtype.c_str());
         return PLegend();
