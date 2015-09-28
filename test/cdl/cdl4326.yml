@@ -4,7 +4,7 @@ output:
   width: 1024
   height: 1024
   layeroutmode: false
-  file: cdl.png
+  file: cdl4326.png
 styles:
 - name: cdl_style
   polymask:
@@ -31,6 +31,7 @@ mapobjs:
 legends:
 - name: maplegend
   type: legend
-  file: legend.png
+  file: legend4326.png
   legtype: cdl
   colorramp: color_cdl
+  dataobj: cdl_tif

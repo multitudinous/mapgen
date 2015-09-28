@@ -256,7 +256,7 @@ bool Legend::initCdl(PColorRamp colorRamp, const std::string &dataObjName)
 {
     LogTrace("creating cdl legend ...");
 
-    _title = "CDL";
+    _title = "Crops";
 
     if (!colorRamp)
     {
@@ -271,7 +271,7 @@ bool Legend::initCdl(PColorRamp colorRamp, const std::string &dataObjName)
         return false;
     }
 
-    _catColors = picker->getColorUsed(dataObjName.c_str());
+    _catColors = picker->getColorUsedVec(dataObjName.c_str());
     if (!_catColors)
     {
         LogError("Legend::initCdl - failed to find categories used for dataobj: %s", dataObjName.c_str());
@@ -279,6 +279,20 @@ bool Legend::initCdl(PColorRamp colorRamp, const std::string &dataObjName)
     }
 
     // todo: need to adjust width and height based on how many buckets vertically, and largest category name horizontally
+    std::string legFrmtPrev = _legFrmt;
+    _legFrmt == "png";
+
+    _width = 1024;
+    _height = 1024;
+    box2i box;
+    box.update(0, 0);
+    drawBegin();
+    drawBuckets(true, &box);
+    
+    _width = box.width() + _mDraw*2 + 4; // add margins, its coming up a bit short for some reason, so adding  on a bit extra
+    _height = box.height() + _mDraw * 2 + 4; // add margins, its coming up a bit short for some reason, so adding on a bit extra
+    _legFrmt = legFrmtPrev;
+
 
     return true;
 }
@@ -495,6 +509,9 @@ void Legend::initSettingsRR()
 //============================================================================
 void Legend::drawBegin()
 {
+    _painter.reset();
+    _renderObj.reset();
+
     if (_legFrmt == "png")
     {
         QImage *img(new QImage(QSize(getW(), getH()), QImage::Format_ARGB32));
@@ -657,7 +674,7 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
     LogTrace("min %f, mid %f, max %f", min, mid, max);
 
     // compute title text height
-    QRect rcDraw = UtlQt::rectWithMargins(left, top, width, height, 2, 2, 2, 2);
+    QRect rcDraw = UtlQt::rectWithMargins(left, top, width, height, _mDraw, _mDraw, _mDraw, _mDraw);
     QRect rcTitle = getRcTitle(rcDraw); 
     int barl = rcDraw.left() + sint(_mDataL);
     int bart = rcTitle.bottom() + sint(_mDataT);
@@ -708,6 +725,226 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
     _painter->drawText(rcTxMax, Qt::AlignLeft | Qt::AlignBottom, sbtm);
 }
 
+//============================================================================
+//============================================================================
+void Legend::drawBuckets(bool measure, box2i *box)
+{
+    LogTrace("drawing buckets legend ...");
+
+    int txH = UtlQt::textHeight(*_fontValue);
+
+    // compute title text height
+    QRect rcDraw = UtlQt::rectWithMargins(0, 0, getW(), getH(), _mDraw, _mDraw, _mDraw, _mDraw);
+    QRect rcTitle = getRcTitle(rcDraw);
+
+    // draw title
+    _painter->setFont(*_fontTitle);
+    drawText(rcTitle, QString(_title.c_str()), Qt::AlignLeft | Qt::AlignTop, !measure, measure, box);
+
+    // set up buckets
+    _painter->setFont(*_fontValue);
+    int bulft = rcDraw.left() + sint(_mDataL);
+    int butop = rcTitle.bottom() + sint(_mDataT);
+
+    if (_catColors)
+    {
+        drawBucketsCat(rcDraw, rcTitle, txH, measure , box);
+        return;
+    }
+
+    // set up first value inc amount and first color
+    double vcur = rndVal(_max);
+    double inc = -1 * _incAmt;
+    QColor cb = _colorMax;
+    QColor ce = _colorMin;
+    PQImage gradient;
+    if (_minTop)
+    {
+        vcur = rndVal(_min);
+        inc = _incAmt;
+        cb = _colorMin;
+        ce = _colorMax;
+    }
+
+    // set up a gradient picker
+    gradient = UtlQt::gradientPicker(cb, _colorMid, ce);
+
+    // draw buckets and text
+    int num = 1;
+    while (true)
+    {
+        bool incvalue = true;
+        bool showRange = _showRange;
+        QString strout = valToStr(vcur);
+
+        // first item
+        if (num == 1)
+        {
+            if (_minTop)
+            {
+                if (_useLess)
+                {
+                    strout = QString("< ") + strout;
+                    showRange = false;
+                    incvalue = false;
+                }
+            }
+            else
+            {
+                if (_useGreater)
+                {
+                    strout = QString("> ") + strout;
+                    showRange = false;
+                    incvalue = false;
+                }
+                else if (_useMaxPlus)
+                {
+                    strout = QString("+ ") + strout;
+                    showRange = false;
+                    incvalue = false;
+                }
+            }
+        }
+
+        // last item
+        if (num == _buckets)
+        {
+            if (_minTop)
+            {
+                if (_useGreater)
+                {
+                    strout = QString("> ") + strout;
+                    showRange = false;
+                }
+                else if (_useMaxPlus)
+                {
+                    strout = QString("+ ") + strout;
+                    showRange = false;
+                }
+            }
+            else
+            {
+                if (_useLess)
+                {
+                    strout = QString("< ") + strout;
+                    showRange = false;
+                }
+            }
+        }
+
+
+        if (incvalue)
+        {
+            vcur = vcur + inc; // get next value
+            vcur = rndVal(vcur);
+        }
+
+
+        if (showRange)
+        {
+            strout = strout + QString("  -  ") + valToStr(vcur);
+        }
+
+        // get the color
+        float perColor = float(num) / float(_buckets);
+        QColor color = UtlQt::gradientPick(*gradient, perColor);
+
+        // draw the bucket
+        int bubtm = drawBucket(rcDraw, bulft, butop, color, strout, txH, measure, box);
+
+
+        // jump to top of next bucket
+        butop = bubtm + sint(_mBucketY);
+
+        num = num + 1;
+        if (num > _buckets)
+        {
+            break;
+        }
+    }
+}
+
+//============================================================================
+//============================================================================
+void Legend::drawBucketsCat(QRect rcDraw, QRect rcTitle, int txH, bool measure, box2i *box)
+{
+    int bulft = rcDraw.left() + sint(_mDataL);
+    int butop = rcTitle.bottom() + sint(_mDataT);
+
+    for (size_t i = 0; i < _catColors->size(); i++)
+    {
+        ColorPickerCat::PCat cat = _catColors->at(i);
+        QColor color = cat->c;
+        QString name = QString::fromStdString(cat->name);
+
+        // draw the bucket
+        int bubtm = drawBucket(rcDraw, bulft, butop, color, name, txH, measure, box);
+
+        // jump to top of next bucket
+        butop = bubtm + sint(_mBucketY);
+    }
+}
+
+//============================================================================
+//============================================================================
+int Legend::drawBucket(const QRect &rcDraw, int bleft, int btop, const QColor &bcolor, const QString &text, int txh, bool measure, box2i *box)
+{
+    QRect rcBucket = QRect(bleft, btop, int(_bucketW * _scale), int(_bucketH * _scale));
+
+    int txleft = rcBucket.right() + int(_mDataR * _scale);
+    int txcy = rcBucket.center().y() + 1;
+    int txwidth = rcDraw.right() - txleft;
+
+    // need to account for the pen outline
+    QRect rcText = QRect(txleft, rcBucket.top() - 1, txwidth, rcBucket.height() + 2);
+
+    // draw the rect filled with color and black outline
+    if (measure)
+    {
+        box->update(rcBucket.left(), rcBucket.top());
+        box->update(rcBucket.right(), rcBucket.bottom());
+        drawText(rcText, text, Qt::AlignLeft | Qt::AlignVCenter, false, true, box);
+    }
+    else
+    {
+
+        QBrush br(bcolor);
+        _painter->setBrush(br);
+        QPen pen(QColor(0, 0, 0));
+        pen.setStyle(Qt::SolidLine);
+        pen.setWidth(sint(2));
+        _painter->setPen(pen);
+        _painter->drawRect(rcBucket);
+        _painter->drawText(rcText, Qt::AlignLeft | Qt::AlignVCenter, text);
+    }
+
+    // draw text box
+    //_painter->drawLine(rcText.topLeft(), rcText.bottomLeft());
+    // _painter->drawLine(rcText.bottomLeft(), rcText.bottomRight());
+    // _painter->drawLine(rcText.bottomRight(), rcText.topRight());
+    // _painter->drawLine(rcText.topRight(), rcText.topLeft());
+
+    return rcBucket.bottom();
+}
+
+//============================================================================
+//============================================================================
+void Legend::drawText(const QRect &rcText, const QString &text, int flags, bool draw, bool measure, box2i *box)
+{
+    if (draw)
+    {
+        _painter->drawText(rcText, flags, text);
+    }
+
+    if (measure && box)
+    {
+        QRect rc = _painter->boundingRect(rcText, flags, text);
+        box->update(rc.left(), rc.top());
+        box->update(rc.right(), rc.bottom());
+    }
+}
+
+/*
 //============================================================================
 //============================================================================
 void Legend::drawBuckets()
@@ -871,7 +1108,7 @@ int Legend::drawBucket(const QRect &rcDraw, int bleft, int btop, const QColor &b
 
     return rcBucket.bottom();
 }
-
+*/
 //============================================================================
 //============================================================================
 QColor Legend::getColorEndGreen()

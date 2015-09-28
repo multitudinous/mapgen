@@ -22,6 +22,8 @@ public:
     typedef std::shared_ptr<SCat> PCat;
     typedef std::map<int, PCat> ColorMap;
     typedef std::shared_ptr<ColorMap> PColorMap;
+    typedef std::vector<PCat> ColorVec;
+    typedef std::shared_ptr<ColorVec> PColorVec;
 
 public:
     ColorPickerCat();
@@ -42,6 +44,7 @@ public:
     virtual void end();
 
     PColorMap getColorUsed(const char *id);
+    PColorVec getColorUsedVec(const char *id);
 
     bool initFromFile(const char *file);
 

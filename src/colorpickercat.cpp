@@ -65,6 +65,28 @@ ColorPickerCat::PColorMap ColorPickerCat::getColorUsed(const char *id)
 
 //============================================================================
 //============================================================================
+ColorPickerCat::PColorVec ColorPickerCat::getColorUsedVec(const char *id)
+{
+    PColorMap map = getColorUsed(id);
+    if (!map)
+    {
+        return PColorVec();
+    }
+
+    PColorVec vec(new ColorVec());
+    ColorMap::const_iterator it = map->begin();
+    while (it != map->end())
+    {
+        vec->push_back(it->second);
+        it++;
+    }
+
+    return vec;
+
+}
+
+//============================================================================
+//============================================================================
 QColor ColorPickerCat::pickPrefered(float percent, double value) const
 {
     return pickByValue(value);

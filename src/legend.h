@@ -4,6 +4,7 @@
 #include "utlqt.h"
 #include "colorramp.h"
 #include "colorpickercat.h"
+#include "box2.h"
 
 class Legend
 {
@@ -55,9 +56,10 @@ protected:
     void draw();
 
     void drawRamp(int left, int top, int width, int height, double min, double mid, double max, const QColor &minc, const QColor &midc, const QColor &maxc);
-    void drawBuckets();
-    int drawBucket(const QRect &rcDraw, int bleft, int btop, const QColor &bcolor, const QString &text, int txh);
-
+    void drawBuckets(bool measure=false, box2i *box=NULL);
+    void drawBucketsCat(QRect rcDraw, QRect rcTitle, int txH, bool measure = false, box2i *box = NULL);
+    int drawBucket(const QRect &rcDraw, int bleft, int btop, const QColor &bcolor, const QString &text, int txh, bool measure = false, box2i *box = NULL);
+    void drawText(const QRect &rcT, const QString &text, int flags, bool draw=true, bool measure=false, box2i *box = NULL);
     void initPaint(QPaintDevice *pd);
 
     bool isRampType();
@@ -118,7 +120,7 @@ protected:
 
     bool _validType;
 
-    ColorPickerCat::PColorMap _catColors;
+    ColorPickerCat::PColorVec _catColors;
 };
 
 typedef std::shared_ptr< Legend > PLegend;
