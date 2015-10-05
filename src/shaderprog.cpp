@@ -122,7 +122,7 @@ GLhandleARB ShaderProg::progHndl()
 //============================================================================
 // throws runtime exception on error
 //============================================================================
-void ShaderProg::load(LPCTSTR pacFile, Shader *shdr)
+void ShaderProg::load(const char* pacFile, Shader *shdr)
 {
     remove(shdr);
     shdr->load(pacFile);
