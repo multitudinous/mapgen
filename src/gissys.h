@@ -43,7 +43,7 @@ public:
 
     virtual DrawData* dd() { return m_dd.get(); }
 
-    static PGlObj loadTiff(const char *file, PColorPicker picker, Stats *stats, const char *id="id");
+    static PGlObj loadTiff(const char *file, PColorPicker picker, Stats *stats, const char *id = "id", bool validation=false);
     static PGlObj loadGeoJson(const char *file, const char *lyrname, const char *objname="");
     static PGlObj loadGeoJson(const char *file, int lyrnum, const char *objname="");
 

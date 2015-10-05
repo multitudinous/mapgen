@@ -610,9 +610,7 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
         stats._forceMin = getDbl(node, "minrv", Stats::FORCE_MINMAX_OFF);
         stats._forceMax = getDbl(node, "maxrv", Stats::FORCE_MINMAX_OFF);
 
-
-
-        PGlObj tiff = GisSys::loadTiff(file.c_str(),  picker, &stats, name.c_str());
+        PGlObj tiff = GisSys::loadTiff(file.c_str(),  picker, &stats, name.c_str(), true);
         if (!tiff)
         {
             LogError("%s Failed to load tiff: %s", func, name.c_str());
@@ -621,6 +619,20 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
         {
             tiff->_name = name;
         }
+
+
+#ifdef _DEBUG
+        if (picker && picker->hasImg())
+        {
+            std::string path = UtlString::GetPath(_yamlfile.c_str());
+            std::string pathPic = path + "colorpicker.png";
+            std::string pathVal = path + "colorpickerval.png";
+            picker->saveImg(pathPic.c_str());
+            picker->saveImgVal(pathVal.c_str());
+
+        }
+
+#endif
 
         return tiff;
     }

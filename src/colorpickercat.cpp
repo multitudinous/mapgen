@@ -87,6 +87,14 @@ ColorPickerCat::PColorVec ColorPickerCat::getColorUsedVec(const char *id)
 
 //============================================================================
 //============================================================================
+QColor ColorPickerCat::pickPrefered(float percent, double value, bool validation)
+{
+    // currently don't have validation for this
+    return pickPrefered(percent, value);
+}
+
+//============================================================================
+//============================================================================
 QColor ColorPickerCat::pickPrefered(float percent, double value) const
 {
     return pickByValue(value);

@@ -40,7 +40,7 @@ PTexture UtlTxGeo::load(const QImage *img)
 
 //============================================================================
 //============================================================================
-PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, ColorPicker *pcolor, Stats *statSettings)
+PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, ColorPicker *pcolor, Stats *statSettings, bool validation)
 {
 	MemBuf hmap;
     Stats stats;
@@ -54,7 +54,7 @@ PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, ColorPicker *pcolor, Stats *s
 
     s->computeAdjusted();
 
-    PMemBuf rgb = hmapToRgb(&hmap, *s, pcolor);
+    PMemBuf rgb = hmapToRgb(&hmap, *s, pcolor, validation);
 
 	PTexture tx(new Texture());
     tx->Create(rgb, GL_CLAMP_TO_EDGE, Texture::I_FILTER_NONE);
@@ -79,7 +79,7 @@ PTexture UtlTxGeo::loadRgb(const GdalFile *pfile)
 
 //============================================================================
 //============================================================================
-PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker *pcolor)
+PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker *pcolor, bool validation)
 {
     PMemBuf rgb(new MemBuf(4, hmap->GetLenX(), hmap->GetLenY()));
 
@@ -162,7 +162,7 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker 
 
             if (pcolor)
             {
-                QColor c = pcolor->pickPrefered(hn, d);
+                QColor c = pcolor->pickPrefered(hn, d, validation);
                 prgb[0] = (BYTE)c.red();
                 prgb[1] = (BYTE)c.green();
                 prgb[2] = (BYTE)c.blue();

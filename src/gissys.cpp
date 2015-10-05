@@ -22,7 +22,7 @@ GisSys::GisSys() :
 
 //============================================================================
 //============================================================================
-PGlObj GisSys::loadTiff(const char *file, PColorPicker picker, Stats *stats, const char *id)
+PGlObj GisSys::loadTiff(const char *file, PColorPicker picker, Stats *stats, const char *id, bool validation)
 {
     const char *func = "GisSys::loadTiff() - ";
     GdalFile tiff;
@@ -37,7 +37,7 @@ PGlObj GisSys::loadTiff(const char *file, PColorPicker picker, Stats *stats, con
         picker->begin(id);
     }
 
-    PTexture tx = UtlTxGeo::loadHmap(&tiff, picker.get(), stats);
+    PTexture tx = UtlTxGeo::loadHmap(&tiff, picker.get(), stats, validation);
 
     if (picker)
     {

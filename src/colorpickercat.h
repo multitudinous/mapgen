@@ -28,6 +28,7 @@ public:
 public:
     ColorPickerCat();
 
+    virtual QColor pickPrefered(float percent, double value, bool validation);
     virtual QColor pickPrefered(float percent, double value) const;
     virtual QColor pickByPercent(float percent) const;
     virtual QColor pickByValue(double value) const;

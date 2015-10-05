@@ -5,9 +5,10 @@
 
 //============================================================================
 //============================================================================
-ColorPickerGradient::ColorPickerGradient()
+ColorPickerGradient::ColorPickerGradient() :
+    _img(new QImage(10, 100, QImage::Format_ARGB32))
 {
-    _img.reset(new QImage(10, 100, QImage::Format_ARGB32));
+    
 }
 
 //============================================================================
@@ -63,6 +64,18 @@ void ColorPickerGradient::create(QColor min, QColor max)
 
 //============================================================================
 //============================================================================
+QColor ColorPickerGradient::pickPrefered(float percent, double value, bool validation)
+{
+    if (validation)
+    {
+        logPercent(percent);
+    }
+
+    return pickPrefered(percent, value);
+}
+
+//============================================================================
+//============================================================================
 QColor ColorPickerGradient::pickPrefered(float percent, double value) const
 {
     return pickByPercent(percent);
@@ -114,4 +127,68 @@ QColor ColorPickerGradient::getMid() const
 QColor ColorPickerGradient::getMax() const
 {
     return pickByPercent(1);
+}
+
+//============================================================================
+//============================================================================
+bool ColorPickerGradient::saveImg(const char *path)
+{
+    if (!_img) return false;
+    return _img->save(path);
+}
+
+//============================================================================
+//============================================================================
+bool ColorPickerGradient::saveImgVal(const char *path)
+{
+    if (!_img) return false;
+
+    int w = _img->width();
+    int h = _img->height();
+
+    QImage img(w, h, QImage::Format_ARGB32);
+
+    img.fill(QColor(0, 0, 0));
+
+    int countTotal = 0;
+    std::map<int, int>::iterator it = _percentMap.begin();
+    while (it != _percentMap.end())
+    {
+        countTotal += it->second;
+        it++;
+    }
+
+    it = _percentMap.begin();
+    while (it != _percentMap.end())
+    {
+        int yloc = it->first;
+        float per = (float)it->second / (float)countTotal;
+        int c = (int)(per * 255.0f);
+        it++;
+
+        for (int x = 0; x < img.width(); x++)
+        {
+            img.setPixel(x, yloc, QColor(c, c, c).rgb());
+        }
+    }
+
+
+    return img.save(path);
+}
+
+//============================================================================
+//============================================================================
+void ColorPickerGradient::logPercent(double per)
+{
+    int value = (int)(100 * per);
+
+    std::map<int,int>::iterator it = _percentMap.find(value);
+    if (it == _percentMap.end())
+    {
+        _percentMap[value] = 1;
+    }
+    else
+    {
+        _percentMap[value] = _percentMap[value] + 1;
+    }
 }
