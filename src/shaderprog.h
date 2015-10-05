@@ -27,7 +27,7 @@ public:
     GLhandleARB progHndl();
 
 protected:
-    void load(LPCTSTR pacFile, Shader *shdr);
+    void load(const char *pacFile, Shader *shdr);
     void loadStr(const GLcharARB *pacShdrSrc, Shader *shdr);
     void attach(Shader *shdr);
     void remove(Shader *shdr);

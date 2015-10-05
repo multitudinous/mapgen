@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include "utlgl.h"
+#include <cstring>
 
 //============================================================================
 //============================================================================
@@ -70,7 +71,7 @@ void Shader::loadStr(const GLcharARB *pacShdrSrc, GLint iLen)
 
     if (iLen == 0)
     {
-        iLen = strlen(pacShdrSrc);
+        iLen = std::strlen(pacShdrSrc);
     }
 
     if (iLen <= 0)
