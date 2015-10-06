@@ -70,12 +70,15 @@ void FboRender::drawEnd()
 
 //============================================================================
 //============================================================================
-bool FboRender::create(PCamera camera, GLuint width, GLuint height, GLsizei msamples)
+bool FboRender::create(PCamera camera, GLuint width, GLuint height, bool aaOn, GLsizei msamples)
 {
     destroy();
 
-    _fboa.reset(new Fbo());
-    if (!_fboa->create(camera, width, height, true, msamples)) return false;
+    if (aaOn)
+    {
+        _fboa.reset(new Fbo());
+        if (!_fboa->create(camera, width, height, true, msamples)) return false;
+    }
 
     _fboc.reset(new Fbo());
     if (!_fboc->create(camera, width, height, false)) return false;

@@ -512,7 +512,7 @@ bool GisSys::initFbo()
     camera->onResize(m_dd->_cfg->width(), m_dd->_cfg->height());
 
     _fbo.reset(new FboRender());
-    if (!_fbo->create(camera, m_dd->_cfg->width(), m_dd->_cfg->height(), m_dd->_cfg->msaaSamples()))
+    if (!_fbo->create(camera, m_dd->_cfg->width(), m_dd->_cfg->height(), m_dd->_cfg->msaaOn(), m_dd->_cfg->msaaSamples()))
     {
         LogError("%s fbo creation failed", func);
         return false;

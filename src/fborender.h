@@ -17,7 +17,7 @@ public:
     bool drawStart(bool msaaOn=true, bool saveStates = true, bool clearColor = true, bool clearDepth = true);
     void drawEnd();
 
-    bool create(PCamera camera, GLuint width, GLuint height, GLsizei msamples);
+    bool create(PCamera camera, GLuint width, GLuint height, bool aaOn, GLsizei msamples);
     //bool create(PCamera camera, GLuint width, GLuint height, bool aaOn = true);
     void destroy();
 

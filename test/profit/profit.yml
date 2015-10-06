@@ -5,6 +5,7 @@ output:
   height: 630
   layeroutmode: false
   file: report/prof.png
+  
 styles:
 - name: profit
   polymask:
