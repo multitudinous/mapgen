@@ -16,7 +16,8 @@ using namespace std;
 #include <gl/gl.h>
 #include <gl/glu.h>
 //#include "D:/d/freeglut_12/include/GL/glut.h"
-#include <GL/glut.h>
+//#include <GL/glut.h>
+#include <GL/freeglut.h>
 #elif __APPLE__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>

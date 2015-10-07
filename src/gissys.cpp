@@ -484,9 +484,11 @@ void GisSys::setCamera()
 //============================================================================
 void GisSys::destroy()
 {
-    GlutSys::destroy();
-
     _fbo.reset();
+    _batchCfg.reset();
+    _rootNode.reset();
+
+    GlutSys::destroy();
 }
 
 //============================================================================

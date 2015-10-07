@@ -67,6 +67,7 @@ protected:
 	int m_winW;
 	int m_winH;
 	bool m_globalInit;
+    bool _exit;
 
 	// mouse controls
 	int m_mouseOldX;

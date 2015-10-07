@@ -15,6 +15,7 @@ GlutSys::GlutSys()
 	m_rotX = 0.0;
 	m_rotY = 0.0;
 	m_transZ = -3.0;
+    _exit = false;
 
 	if (g_pSys != NULL)
 	{
@@ -66,12 +67,17 @@ string GlutSys::getGLInfo()
 }
 
 //============================================================================
+// TODO: this should only be called once, if it needs to be called more than once, then destroy needs to be called and refactored to work, but really this init should only happen once.
 //============================================================================
 bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWidth, int winHeight, PFilePaths pFilePaths)
 {
 	if (!m_globalInit) return false;
 
-    destroy();
+    //destroy();
+
+    m_moveSys.reset(new MoveSys(20.0f));
+    //m_moveSys.reset(new MoveSys(0.1f));
+    m_dd.reset(new DrawData());
 
     m_app = app;
 
@@ -89,6 +95,7 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL | GLUT_DOUBLE | GLUT_MULTISAMPLE);
     glutInitWindowPosition (glutGet(GLUT_SCREEN_WIDTH)/2 - m_winW/2, glutGet(GLUT_SCREEN_HEIGHT)/2 - m_winH/2);
     glutInitWindowSize(m_winW, m_winH);
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION); // for glutLeaveMainLoop to return executation to the caller and not exit the application.
     m_hanWin = glutCreateWindow("GIS Render");
 
     //glutHideWindow();
@@ -196,9 +203,11 @@ void GlutSys::run()
 //============================================================================
 void GlutSys::exit()
 {
-    destroy();
+    //destroy();
     LogTrace("exiting...");
-    ::exit(0);
+    //glutLeaveMainLoop();
+    //::exit(0);
+    _exit = true;
 }
 
 //============================================================================
@@ -208,6 +217,7 @@ void GlutSys::destroy()
 	if (m_hanWin)
 	{
 		glutDestroyWindow(m_hanWin);
+        m_hanWin = 0;
 	}
 
 	m_winW = 0;
@@ -219,6 +229,9 @@ void GlutSys::destroy()
 	m_rotX = 0.0;
 	m_rotY = 0.0;
 	m_transZ = -3.0;
+
+    m_moveSys.reset();
+    m_dd.reset();
 }
 
 //============================================================================
@@ -267,6 +280,13 @@ void GlutSys::onDisplay()
 
     // flip backbuffer to screen
     glutSwapBuffers();
+
+    if (_exit)
+    {
+        destroy();
+        glutLeaveMainLoop();
+        return;
+    }
     glutPostRedisplay();
 }
 
