@@ -50,6 +50,20 @@ public:
     int msaaSamples() const { return _samples;  }
     void msaaSamples(int samples) { _samples = samples; }
 
+    bool ssaaOn() { return _ssaaOn;  }
+    void ssaaOn(bool on) { _ssaaOn = on; }
+    int ssaaMul() { return _ssaaMul; }
+    void ssaaMul(int mul) { _ssaaMul = mul; }
+
+    bool jtaaOn() const { return _jtaaOn; }
+    void  jtaaOn(bool on) { _jtaaOn = on; }
+    int jtaaSamples() const { return _jtaaSamp; }
+    void jtaaSamples(int samples) { _jtaaSamp = samples; }
+    double jtaaOffset() { return _jtaaoffset; }
+    void jtaaOffset(double offset) { _jtaaoffset = offset;  }
+
+    int getRenderFlags();
+
 protected:
     std::string _mode; // windowless, desktop
 
@@ -69,6 +83,13 @@ protected:
 
     bool _msaaOn;
     int _samples;
+
+    bool _ssaaOn;
+    int _ssaaMul;
+
+    bool _jtaaOn;
+    int _jtaaSamp;
+    double _jtaaoffset;
 };
 
 typedef std::shared_ptr<Config> PConfig;

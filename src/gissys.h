@@ -71,6 +71,7 @@ protected:
     PBatchCfg _batchCfg;
     PGlObj _rootNode;
     PFboRender _fbo;
+    PFboRender _fboComp;
     bool _fboToDisk;
 
     //PConfig _cfg;

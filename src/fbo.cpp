@@ -1,5 +1,7 @@
 #include "fbo.h"
 #include "utlgl.h"
+#include "GlStates.h"
+#include "UtlGeom2d.h"
 
 #ifdef GDIPLUS
     #include "utlgdiplus.h"
@@ -41,25 +43,25 @@ Fbo::~Fbo()
 bool Fbo::create(PCamera camera, GLuint width, GLuint height, bool aaOn, GLsizei msamples)
 {
     // create the texture
-    if ( !m_tx || (m_tx->GetWidth() != width) || (m_tx->GetHeight() != height) )
+    if ( !m_tx || (m_tx->getWidth() != width) || (m_tx->getHeight() != height) )
     {
         m_tx.reset(new Texture());
         bool txresult = false;
 
         if (aaOn)
         {
-            txresult = m_tx->CreateMultisamp(width, height, msamples);
+            txresult = m_tx->createMultisamp(width, height, msamples);
         }
         else
         {
-            txresult = m_tx->Create(width, height, Texture::I_FILTER_NONE);
+            txresult = m_tx->create(width, height, GL_CLAMP_TO_EDGE, Texture::I_FILTER_TRILINEAR, true);
         }
 
         if (!txresult) return false;
             
     }
 
-    return create(camera, width, height, m_tx->GetId(), aaOn, msamples);
+    return create(camera, width, height, m_tx->getId(), aaOn, msamples);
 }
 
 //============================================================================
@@ -75,7 +77,7 @@ bool Fbo::create(PCamera camera, GLuint width, GLuint height, GLuint txid, bool 
     m_w = width;
     m_h = height;
     m_txid = txid;
-    if ( m_tx && (m_tx->GetId() != txid) ) m_tx.reset();
+    if ( m_tx && (m_tx->getId() != txid) ) m_tx.reset();
 
     _aaOn = aaOn;
     _samples = msamples;
@@ -169,6 +171,7 @@ bool Fbo::drawStart(bool saveStates, bool clearColor, bool clearDepth)
         //glGetFloatv(GL_PROJECTION_MATRIX, m_drawPrev.matPers);
         //glGetFloatv(GL_MODELVIEW_MATRIX, m_drawPrev.matModl);
         glGetFloatv(GL_COLOR_CLEAR_VALUE, m_drawPrev.colrClear);
+        glGetFloatv(GL_BLEND_COLOR, m_drawPrev.colrBlend);
 
         m_drawPrev.aaOn = glIsEnabled(GL_MULTISAMPLE);
 
@@ -178,12 +181,6 @@ bool Fbo::drawStart(bool saveStates, bool clearColor, bool clearDepth)
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
     }
-
-    if (_camera)
-    {
-        _camera->refresh();
-    }
-
     /*
     glViewport(0, 0, m_w, m_h);
 
@@ -198,6 +195,12 @@ bool Fbo::drawStart(bool saveStates, bool clearColor, bool clearDepth)
     */
 
     glBindFramebuffer(GL_FRAMEBUFFER, m_fboid);
+
+    if (_camera)
+    {
+        _camera->refresh();
+    }
+
 
     if (_aaOn)
     {
@@ -267,15 +270,15 @@ void Fbo::drawEnd(Fbo *fboResult)
         //glReadBuffer(GL_COLOR_ATTACHMENT0);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboResult->getFboId());
         //glDrawBuffer(GL_COLOR_ATTACHMENT0);
-        //glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-        glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, fboResult->getW(), fboResult->getH(), GL_COLOR_BUFFER_BIT, GL_LINEAR); // with a multisample readbuffer and draw buffer that is not the same size, this doesn't work.
+        //glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, m_w, m_h, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
         UtlGL::logErrorCheck("Fbo::drawEnd - failed to blit the framebuffer");
     }
 
     if (m_drawParams.saveFrame)
     {
-        if (_aaOn && fboResult)
+        if (fboResult)
         {
             fboResult->saveFrame(m_drawParams.saveFrameBuf, m_drawParams.saveFrameStride, m_drawParams.saveFrameFlip);
         }
@@ -289,7 +292,7 @@ void Fbo::drawEnd(Fbo *fboResult)
 
     if (m_drawParams.saveScreenShot)
     {
-        if (_aaOn && fboResult)
+        if (fboResult)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             glBindFramebuffer(GL_FRAMEBUFFER, fboResult->getFboId());
@@ -303,9 +306,132 @@ void Fbo::drawEnd(Fbo *fboResult)
         UtlGL::logErrorCheck("Fbo::drawEnd - error after save screen shot");
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+   
     if (!m_drawPrev.saveStates) return;
+
+    restoreStates();
+}
+
+//============================================================================
+//============================================================================
+void Fbo::blit(Fbo *fboDst)
+{
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboid);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst->getFboId());
+    glBlitFramebuffer(0, 0, m_w, m_h, 0, 0, fboDst->getW(), fboDst->getH(), GL_COLOR_BUFFER_BIT, GL_LINEAR); // with a multisample readbuffer and draw buffer that is not the same size, this doesn't work.
+    UtlGL::logErrorCheck("Fbo::drawEnd - failed to blit the framebuffer");
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+//============================================================================
+// a blit won't blend but a render will, fboDst = 0 for screen
+//============================================================================
+void Fbo::renderThis(const Rect2d &rcDstTot, int fboDst)
+{
+    Rect2d rcDst;
+    UtlGeom2d::fit(getW(), getH(), rcDstTot, &rcDst);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fboDst);
+    glUseProgramObjectARB(NULL);
+
+    Rect2d bounds(-1, 1, 1, -1);
+    rcDst.normalize(rcDstTot, bounds);
+
+    GlStates states;
+    states.push(GL_DEPTH_TEST, false);
+    states.push(GL_MULTISAMPLE, false);
+    states.push(GL_TEXTURE_2D, true);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    // draw a full screen quad
+    glBindTexture(GL_TEXTURE_2D, getTxId());
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    // create a texture from the fbo texture
+    // TODO: figure out why just rendering with the fbo texture there is a gray overlay
+    // shouldn't have to perform this copy ( needed mipmaps )
+
+    /*
+    PMemBuf memimg(new MemBuf(4, _fbocb->getW(), _fbocb->getH()));
+    GLubyte *bytesSrc = (GLubyte *)memimg->getBuf();
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytesSrc);
+
+    if (!_tx || _tx->getWidth() != _fbocb->getW() || _tx->getHeight() != _fbocb->getH())
+    {
+    _tx.reset(new Texture());
+    _tx->create(memimg, GL_CLAMP, Texture::I_FILTER_TRILINEAR);
+    glBindTexture(GL_TEXTURE_2D, _tx->getId());
+    }
+    else
+    {
+    glBindTexture(GL_TEXTURE_2D, _tx->getId());
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _tx->getWidth(), _tx->getHeight(), GL_RGBA, GL_UNSIGNED_BYTE, memimg->getBuf());
+    }
+    */
+
+    /*
+    #ifdef QT
+    //GLubyte *bytesSrc = (GLubyte *)memimg->GetBuf();
+
+    QImage img(_fbocb->getW(), _fbocb->getH(), QImage::Format_ARGB32);
+    GLubyte *bytesDst = (GLubyte *)img.bits();
+
+    for (int y = 0; y < _fbocb->getH(); y++)
+    {
+    int ofsSrc = y * _fbocb->getW() * 4;
+    int ofsDst = y * img.bytesPerLine();
+    memcpy(bytesDst + ofsDst, bytesSrc + ofsSrc, _fbocb->getW() * 4);
+    }
+
+    std::string path = dd->_cfg->imgFolder() + "debug_blit.png";
+    if (!img.save(path.c_str()))
+    {
+    LogError("FboRender::blitToScreen - failed to save frame to: %s", path.c_str());
+
+    }
+    #endif
+    */
+
+
+
+    glColor4f(1, 1, 1, 1);
+    glBegin(GL_QUADS);
+    glTexCoord2i(0, 0);
+    glVertex3f(rcDst.l(), rcDst.b(), 1);
+    glTexCoord2i(1, 0);
+    glVertex3f(rcDst.r(), rcDst.b(), 1);
+    glTexCoord2i(1, 1);
+    glVertex3f(rcDst.r(), rcDst.t(), 1);
+    glTexCoord2i(0, 1);
+    glVertex3f(rcDst.l(), rcDst.t(), 1);
+    glEnd();
+
+    // restore
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    states.popAll();
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    UtlGL::logErrorCheck("Fbo::renderThis - failed to render fbo texture to destination texture");
+}
+
+//============================================================================
+//============================================================================
+void Fbo::restoreStates()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glViewport(m_drawPrev.vp[0], m_drawPrev.vp[1], m_drawPrev.vp[2], m_drawPrev.vp[3]);
 
@@ -315,6 +441,7 @@ void Fbo::drawEnd(Fbo *fboResult)
     glPopMatrix();
 
     glClearColor(m_drawPrev.colrClear[0], m_drawPrev.colrClear[1], m_drawPrev.colrClear[2], m_drawPrev.colrClear[3]);
+    glBlendColor(m_drawPrev.colrBlend[0], m_drawPrev.colrBlend[1], m_drawPrev.colrBlend[2], m_drawPrev.colrBlend[3]);
 
     if (m_drawPrev.aaOn)
     {
@@ -324,6 +451,19 @@ void Fbo::drawEnd(Fbo *fboResult)
     {
         glDisable(GL_MULTISAMPLE);
     }
+
+    // start of gis
+    glDisable(GL_DEPTH_TEST);
+
+    // for smooth lines
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // also hits for smooth lines and polys
+    glEnable(GL_LINE_SMOOTH);
+
+    glAlphaFunc(GL_GREATER, 0);
+    glEnable(GL_ALPHA_TEST);
 
     m_drawPrev.drawSuccess = false;
 }
@@ -366,6 +506,9 @@ bool Fbo::saveFrame(BYTE *pBuf, int stride, bool flip)
 bool Fbo::saveFrame(const char *path, bool flip)
 {
     const char *func = "Fbo::SaveFrame() - ";
+
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fboid);
+
 #ifdef GDIPLUS
 
     shared_ptr<Gdiplus::Bitmap> img = UtlGdiPlus::CreateImage(m_w, m_h, false);
@@ -568,3 +711,43 @@ void Fbo::logFboInfo()
         }
     }
 }
+
+
+/*
+m_TexWidth = 1024;
+m_TexHeight = 1024;
+
+m_TextureTotal = 2;
+m_Texture = new GLuint[m_TextureTotal];
+glGenTextures(m_TextureTotal, m_Texture);
+
+glGenFramebuffers(1, &m_Target);
+glBindFramebuffer(GL_FRAMEBUFFER, m_Target);
+
+// color
+
+glBindTexture(GL_TEXTURE_2D, m_Texture[0]);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_TexWidth, m_TexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture[0], 0);
+
+// depth
+
+glBindTexture(GL_TEXTURE_2D, m_Texture[1]);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_TexWidth, m_TexHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_Texture[1], 0);
+
+GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+if (status != GL_FRAMEBUFFER_COMPLETE)
+{
+LOG_FATAL("Could not validate framebuffer");
+}
+glBindFramebuffer(GL_FRAMEBUFFER, 0);
+*/

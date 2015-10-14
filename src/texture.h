@@ -21,15 +21,15 @@ public:
 	Texture();
 	virtual ~Texture();
 
-	bool Create(GLuint width, GLuint height, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR);
-	bool Create(std::shared_ptr<MemBuf> pImg, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR);
-    bool CreateMultisamp(GLuint width, GLuint height, GLsizei samples);
-	bool ReCreate();
-	void Destroy();
+	bool create(GLuint width, GLuint height, GLint wrap=GL_REPEAT, int filter=I_FILTER_TRILINEAR, bool genMipMap = true);
+    bool create(std::shared_ptr<MemBuf> pImg, GLint wrap = GL_REPEAT, int filter = I_FILTER_TRILINEAR, bool genMipMap = true);
+    bool createMultisamp(GLuint width, GLuint height, GLsizei samples);
+	bool reCreate();
+	void destroy();
 
-	GLuint GetId();
-	GLuint GetWidth();
-	GLuint GetHeight();
+	GLuint getId();
+	GLuint getWidth();
+	GLuint getHeight();
 
 protected:
 	GLuint m_glid;

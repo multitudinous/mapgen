@@ -13,8 +13,8 @@ PTexture UtlTxGeo::load(const QImage *img)
     }
 
     PMemBuf rgb(new MemBuf());
-    rgb->SetSize(bytesPerPix, img->width(), img->height());
-    unsigned char *dst = (unsigned char *)rgb->GetBuf();
+    rgb->setSize(bytesPerPix, img->width(), img->height());
+    unsigned char *dst = (unsigned char *)rgb->getBuf();
 
     const unsigned char *bytes = img->bits();
     for (int y=0; y<img->height(); y++)
@@ -33,7 +33,7 @@ PTexture UtlTxGeo::load(const QImage *img)
 
 
     PTexture tx(new Texture());
-    tx->Create(rgb, GL_CLAMP_TO_EDGE);
+    tx->create(rgb, GL_CLAMP_TO_EDGE);
 
     return tx;
 }
@@ -57,7 +57,7 @@ PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, ColorPicker *pcolor, Stats *s
     PMemBuf rgb = hmapToRgb(&hmap, *s, pcolor, validation);
 
 	PTexture tx(new Texture());
-    tx->Create(rgb, GL_CLAMP_TO_EDGE, Texture::I_FILTER_NONE);
+    tx->create(rgb, GL_CLAMP_TO_EDGE, Texture::I_FILTER_NONE);
 
 	return tx;
 }
@@ -73,7 +73,7 @@ PTexture UtlTxGeo::loadRgb(const GdalFile *pfile)
 	}
 
 	PTexture tx(new Texture());
-	tx->Create(rgb, GL_CLAMP_TO_EDGE);
+	tx->create(rgb, GL_CLAMP_TO_EDGE);
 	return tx;
 }
 
@@ -81,10 +81,10 @@ PTexture UtlTxGeo::loadRgb(const GdalFile *pfile)
 //============================================================================
 PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker *pcolor, bool validation)
 {
-    PMemBuf rgb(new MemBuf(4, hmap->GetLenX(), hmap->GetLenY()));
+    PMemBuf rgb(new MemBuf(4, hmap->getLenX(), hmap->getLenY()));
 
-	const double *pbuf = (const double *)hmap->GetBufRead();
-	BYTE *prgb = (BYTE *)rgb->GetBuf();
+	const double *pbuf = (const double *)hmap->getBufRead();
+	BYTE *prgb = (BYTE *)rgb->getBuf();
     double dis = stats.getLen();
 
     BYTE rgbaOn[4];
@@ -111,9 +111,9 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker 
 
 	//FILE *fp = fopen("debug.txt", "w");
 	//fprintf(fp, "min: %.2f, max: %.2f, mean: %.2f, stddev: %.2f\n", stats.min, stats.max, stats.mean, stats.stddev);
-	for (int y=0; y<hmap->GetLenY(); y++)
+	for (int y=0; y<hmap->getLenY(); y++)
 	{
-		for (int x=0; x<hmap->GetLenX(); x++)
+		for (int x=0; x<hmap->getLenX(); x++)
 		{
 			double d = *pbuf;
 			pbuf++;

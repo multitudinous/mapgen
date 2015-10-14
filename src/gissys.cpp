@@ -298,7 +298,12 @@ void GisSys::zoomExtents(const Extents &ext)
 
     if (_fbo)
     {
-        _fbo->camera()->setExtents2d(ext, false);
+        _fbo->setCameraExtents2d(ext, false);
+    }
+
+    if (_fboComp)
+    {
+        _fboComp->setCameraExtents2d(ext, false);
     }
 }
 
@@ -402,9 +407,12 @@ void GisSys::displayStandard()
 
     if (_fboToDisk && _fbo)
     {
+        _fbo->draw(_rootNode.get(), m_dd.get());
+        /*
         _fbo->drawStart();
         _rootNode->draw(m_dd.get());
         _fbo->drawEnd();
+        */
         _fboToDisk = false;
     }
 }
@@ -415,38 +423,71 @@ void GisSys::displayLyrOutMode()
 {
     if (!_rootNode) return;
 
-    GlObjList &lyrList = _rootNode->childList();
-    GlObjList::iterator it = lyrList.begin();
+    GlObjList lyrList;
+    GlObjList &objList = _rootNode->childList();
+    GlObjList::iterator it = objList.begin();
+
+    /*
+    if (_fboComp)
+    {
+        _fboComp->updateDrawParams();
+        _fboComp->getFboCb()->drawStart(true, true, true);
+    }
+    */
 
     int lyrnum = 0;
-    while (it != lyrList.end())
+    while (it != objList.end())
     {
-        GeoLayer *lyr = dynamic_cast<GeoLayer *>(it->get());
+        PGlObj obj = *it;
         it++;
 
+        GeoLayer *lyr = dynamic_cast<GeoLayer *>(obj.get());
         if (!lyr) continue;
+
         displayLyrOut(lyr, lyrnum);
         lyrnum++;
+        lyrList.push_back(obj);
     }
 
-    // render a composite, only once
-    if (_fboToDisk)
+    /*
+    if (_fboComp)
     {
-        std::string fullpath = m_dd->_cfg->imgFolder() + std::string("composite.png");
-        _fbo->getDrawParams()->pathScreenShot = fullpath;
-        _fbo->drawStart();
+        // this layer by layer composite doesn't look as good and a rendered composite
+        _fboComp->getFboCb()->getDrawParams()->saveFrame = false;
+        _fboComp->getFboCb()->getDrawParams()->saveScreenShot = false;
+        _fboComp->getFboCb()->drawEnd();
 
-        it = lyrList.begin();
-        while (it != lyrList.end())
+        // render a composite
+        if (_fboToDisk)
         {
-            GeoLayer *lyr = dynamic_cast<GeoLayer *>(it->get());
-            it++;
-            if (!lyr) continue;
-
-            lyr->draw(m_dd.get());
+            std::string fullpath = m_dd->_cfg->imgFolder() + std::string("composite.png");
+            _fboComp->getFboCb()->saveFrame(fullpath.c_str());
         }
-        _fbo->drawEnd();
+
+        _fboComp->blitToScreen(m_dd.get());
     }
+    */
+    
+    if (_fbo)
+    {
+        _fbo->getDrawParams()->saveScreenShot = _fboToDisk;
+        if (_fboToDisk)
+        {
+            std::string fullpath = m_dd->_cfg->imgFolder() + std::string("composite.png");
+            _fbo->getDrawParams()->pathScreenShot = fullpath;
+        }
+
+
+        GlObj robj;
+        robj.childList().insert(robj.childList().end(), lyrList.begin(), lyrList.end());
+
+        float alphaPrev = _fbo->getDrawParams()->colr[3];
+        _fbo->getDrawParams()->colr[3] = 1; // turn off alpha background for the composite;
+        _fbo->draw(&robj, m_dd.get(), FboRender::E_RF_OVERRIDE_NONE, true);
+        _fbo->getDrawParams()->colr[3] = alphaPrev;
+    }
+    
+
 
     _fboToDisk = false;
 }
@@ -455,21 +496,36 @@ void GisSys::displayLyrOutMode()
 //============================================================================
 void GisSys::displayLyrOut(GeoLayer *lyr, int lyrnum)
 {
-    lyr->draw(m_dd.get());
+    // lyr->draw(m_dd.get());
 
-    if (!_fboToDisk || !_fbo) return;
+    if (!_fbo) return;
+    //if (!_fboToDisk || !_fbo) return;
     
-    std::string name = lyr->getName();
-    
-    if (name.size() <= 0) name = to_string(lyrnum);
-    name += ".png";
+    if (_fboToDisk)
+    {
+        std::string name = lyr->getName();
 
-    std::string fullpath = m_dd->_cfg->imgFolder() + name;
+        if (name.size() <= 0) name = to_string(lyrnum);
+        name += ".png";
 
-    _fbo->getDrawParams()->pathScreenShot = fullpath;
-    _fbo->drawStart(lyr->msaaOn());
-    lyr->draw(m_dd.get());
-    _fbo->drawEnd();
+        std::string fullpath = m_dd->_cfg->imgFolder() + name;
+
+        _fbo->getDrawParams()->pathScreenShot = fullpath;
+    }
+    else
+    {
+        _fbo->getDrawParams()->saveScreenShot = false;
+    }
+
+    _fbo->draw(lyr, m_dd.get(), lyr->renderFlags());
+
+    /*
+    if (_fboComp)
+    {
+        Rect2d rcDstTot(0, _fboComp->getFboCb()->getW(), _fboComp->getFboCb()->getH(), 0);
+        _fbo->getFboCb()->renderThis(rcDstTot, _fboComp->getFboCb()->getFboId());
+    }
+    */
 }
 
 //============================================================================
@@ -513,13 +569,38 @@ bool GisSys::initFbo()
     PCamera camera(new Camera(Camera::Ortho));
     camera->onResize(m_dd->_cfg->width(), m_dd->_cfg->height());
 
+    uint32_t renderFlags = FboRender::E_RF_NONE;
+    GLsizei msaaSamps = m_dd->_cfg->msaaSamples();
+    GLsizei jtaaSamps = m_dd->_cfg->jtaaSamples();
+    double jtaaOfsPixels = m_dd->_cfg->jtaaOffset();
+    GLsizei ssaaMul = m_dd->_cfg->ssaaMul();
+
+    if (m_dd->_cfg->ssaaOn())
+    {
+        renderFlags |= FboRender::E_RF_SUPERSAMPLE;
+    }
+    if (m_dd->_cfg->jtaaOn())
+    {
+        renderFlags |= FboRender::E_RF_JITTER;
+    }
+    if (m_dd->_cfg->msaaOn())
+    {
+        renderFlags |= FboRender::E_RF_MULTISAMPLE;
+    }
+
     _fbo.reset(new FboRender());
-    if (!_fbo->create(camera, m_dd->_cfg->width(), m_dd->_cfg->height(), m_dd->_cfg->msaaOn(), m_dd->_cfg->msaaSamples()))
+    if (!_fbo->create(camera, m_dd->_cfg->width(), m_dd->_cfg->height(), renderFlags, msaaSamps, ssaaMul, jtaaSamps, jtaaOfsPixels))
     {
         LogError("%s fbo creation failed", func);
         return false;
     }
 
+    _fboComp.reset(new FboRender());
+    if (!_fboComp->create(camera, m_dd->_cfg->width(), m_dd->_cfg->height(), FboRender::E_RF_NONE))
+    {
+        LogError("%s fbo composite creation failed", func);
+        return false;
+    }
 
     const Rgbf& c = m_dd->_cfg->colrClear();
     _fbo->getDrawParams()->saveFrame = false;
@@ -530,6 +611,13 @@ bool GisSys::initFbo()
     _fbo->getDrawParams()->colr[2] = c.GetB();
     _fbo->getDrawParams()->colr[3] = c.GetA();
 
+    _fboComp->getDrawParams()->saveFrame = false;
+    _fboComp->getDrawParams()->saveScreenShot = m_dd->_cfg->toDisk();
+    _fboComp->getDrawParams()->pathScreenShot = m_dd->_cfg->imgFile(); //m_filePaths->m_pathImgOut + "map.png";
+    _fboComp->getDrawParams()->colr[0] = c.GetR();
+    _fboComp->getDrawParams()->colr[1] = c.GetG();
+    _fboComp->getDrawParams()->colr[2] = c.GetB();
+    _fboComp->getDrawParams()->colr[3] = c.GetA();
     //m_fbo->getDrawParams()->znr = m_pXmlGeo->ZNear();
     //m_fbo->getDrawParams()->zfr = m_pXmlGeo->ZFar();
     return true;

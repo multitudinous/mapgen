@@ -18,6 +18,24 @@ Camera::Camera(ECameraMode mode) :
 
 //============================================================================
 //============================================================================
+Camera::Camera(const Camera &c) :
+_mode(c._mode),
+_winRect(c._winRect),
+_zoom(c._zoom),
+_pos(c._pos),
+_rot(c._rot),
+_pan(c._pan),
+_extOrig(c._extOrig),
+_ext(c._ext),
+_extMod(c._extMod),
+_zmin(c._zmin),
+_zmax(c._zmax)
+{
+
+}
+
+//============================================================================
+//============================================================================
 double Camera::pixelSizeToWorld(double pixelCount)
 {
     double worldAmount = pixelCount * _extMod.width() / _winRect.width();

@@ -6,8 +6,6 @@ static GlutSys *g_pSys = NULL;
 //============================================================================
 GlutSys::GlutSys()
 {
-	m_winW = 0;
-	m_winH = 0;
 	m_hanWin = 0;
 	m_mouseOldX = 0;
 	m_mouseOldY = 0;
@@ -81,8 +79,8 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
 
     m_app = app;
 
-	m_winW = winWidth;
-	m_winH = winHeight;
+    m_dd->_winW = winWidth;
+    m_dd->_winH = winHeight;
 	m_filePaths = pFilePaths;
     if (m_filePaths.get() == NULL)
     {
@@ -93,8 +91,8 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
     // initialize GLUT 
     glutInit(&argc, (char**)argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL | GLUT_DOUBLE | GLUT_MULTISAMPLE);
-    glutInitWindowPosition (glutGet(GLUT_SCREEN_WIDTH)/2 - m_winW/2, glutGet(GLUT_SCREEN_HEIGHT)/2 - m_winH/2);
-    glutInitWindowSize(m_winW, m_winH);
+    glutInitWindowPosition(glutGet(GLUT_SCREEN_WIDTH) / 2 - m_dd->_winW / 2, glutGet(GLUT_SCREEN_HEIGHT) / 2 - m_dd->_winH / 2);
+    glutInitWindowSize(m_dd->_winW, m_dd->_winH);
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION); // for glutLeaveMainLoop to return executation to the caller and not exit the application.
     m_hanWin = glutCreateWindow("GIS Render");
 
@@ -216,12 +214,10 @@ void GlutSys::destroy()
 {
 	if (m_hanWin)
 	{
-		glutDestroyWindow(m_hanWin);
+		//glutDestroyWindow(m_hanWin); // this crashes when shutting down the window with the gui, but doesn't if forcing a shutdown such as windowless mode.
         m_hanWin = 0;
 	}
 
-	m_winW = 0;
-	m_winH = 0;
 	m_hanWin = 0;
 	m_mouseOldX = 0;
 	m_mouseOldY = 0;
@@ -255,9 +251,16 @@ void GlutSys::setCamera()
 //============================================================================
 void GlutSys::onResizeWindow(int width, int height)
 {
-   m_winW = width;
-   m_winH = height;
-   m_moveSys->m_camera->onResize(width, height);
+    if (m_dd)
+    {
+        m_dd->_winW = width;
+        m_dd->_winH = height;
+    }
+
+    if (m_moveSys)
+    {
+        m_moveSys->m_camera->onResize(width, height);
+    }
 }
 
 //============================================================================

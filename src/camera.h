@@ -16,6 +16,7 @@ public:
 
 public:
     Camera(ECameraMode mode = Perspective);
+    Camera(const Camera &c);
 
     void refresh();
     void onResize(int winx, int winy, int left=0, int bottom=0);

@@ -566,7 +566,7 @@ bool GdalFile::GetRGB(MemBuf *pbuf, bool addAlpha) const
 	int bytesPerPix = 3;
 	if (addAlpha) bytesPerPix = 4;
 
-	pbuf->SetSize(bytesPerPix, m_w, m_h);
+	pbuf->setSize(bytesPerPix, m_w, m_h);
 
 	LogTrace("", func);
 	LogTrace("", func);
@@ -588,7 +588,7 @@ bool GdalFile::GetRGB(MemBuf *pbuf, bool addAlpha) const
 			return false;
 		}
 
-		BYTE *buf = (BYTE *)pbuf->GetBuf();
+		BYTE *buf = (BYTE *)pbuf->getBuf();
 		buf = &buf[i-1];
 		if (pBand->RasterIO(GF_Read, 0, 0, w, h, buf, w, h, GDT_Byte, bytesPerPix, 0) == CE_Failure)
 		{
@@ -620,7 +620,7 @@ bool GdalFile::GetHmap(MemBuf *pbuf, Stats *pstats) const
 
 	if (!ValidImage(1)) return false;
 
-	pbuf->SetSize(sizeof(double), m_w, m_h);
+	pbuf->setSize(sizeof(double), m_w, m_h);
 
 
 	GDALRasterBand *pBand = m_pds->GetRasterBand(1);
@@ -638,7 +638,7 @@ bool GdalFile::GetHmap(MemBuf *pbuf, Stats *pstats) const
 		return false;
 	}
 
-	double *buf = (double *)pbuf->GetBuf();
+	double *buf = (double *)pbuf->getBuf();
 	if (pBand->RasterIO(GF_Read, 0, 0, w, h, buf, w, h, GDT_Float64, 0, 0) == CE_Failure)
 	{
 		logError(func, "RasterIO failed.");

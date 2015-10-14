@@ -36,7 +36,7 @@ void GeoImg::drawImg(float alpha)
     glDisable(GL_DEPTH_TEST);   // Turn Depth Testing Off
 
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, _tx->GetId());
+    glBindTexture(GL_TEXTURE_2D, _tx->getId());
     glColor4f(1, 1, 1, alpha);
     glBegin(GL_QUADS);
 

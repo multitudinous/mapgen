@@ -51,6 +51,12 @@ bgcolor: #FFFFFF            # optional if you want to set the background color, 
 extents: l,r,t,b            # optional if you want to force the extents of the map you can here, otherwise map will automatically zoom to extents of the data
 msaa: true                  # enable or disable multisample rendering here (this affects each layer output and is the default for all layers, you can enable or disable this per layer.. see map object below)
 msamples: 16                # number of samples used for multisample rendering
+ssaa: true                  # enable or disable super sample antialiasing rendering
+ssaamul: 2                  # super sample multiplier, so 2 would be render at width * 2 and height * 2, then filter the final result down to width, height
+jtaa: true                  # enable or disable jitter antialiasing 
+jtaasamples: 16             # number of samples to render
+jtaaoffset: 1.0             # each samples offset in pixels
+                            # note: antialiasing is now per layer, by default it is off, to turn it on you must enable it on the layer.. see below
 
 Example:
 ---------------------
@@ -246,7 +252,7 @@ mapobj properties:
 name: layername                     # name used for output, layername.png when in layerout mode
 type: layer                         # layer is the only valid type
 style: stylename                    # style to apply to the layer
-msaa: false                         # optional to overide output properties - enable or disable multisample rendered output override here      
+aa: on                              # optional to turn on antialiasing that is configured above, by default it is set to off
 children:
     - dataobj: dataobjname          # currently only dataobjects are supported, you can add multiple objects by seperating them by ,
        

@@ -1,27 +1,35 @@
 #include "texture.h"
 
+//============================================================================
+//============================================================================
 Texture::Texture()
 {
 	m_glid = 0;
 	m_filter = I_FILTER_TRILINEAR;
 }
 
+//============================================================================
+//============================================================================
 Texture::~Texture()
 {
-	Destroy();
+	destroy();
 }
 
-bool Texture::Create(GLuint width, GLuint height, GLint wrap, int filter)
+//============================================================================
+//============================================================================
+bool Texture::create(GLuint width, GLuint height, GLint wrap, int filter, bool genMipMap)
 {
 	shared_ptr<MemBuf> pImg(new MemBuf(4, width, height));
-	return Create(pImg, wrap, filter);
+	return create(pImg, wrap, filter, genMipMap);
 }
 
-bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
+//============================================================================
+//============================================================================
+bool Texture::create(shared_ptr<MemBuf> pImg, GLint wrap, int filter, bool genMipMap)
 {
 	const char *func = "Texture::CreateTexture() -";
 
-	Destroy();
+	destroy();
 
 	m_filter = filter;
 	if (pImg.get() == NULL)
@@ -30,14 +38,14 @@ bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
 		return false;
 	}
 
-	if (pImg->GetSize() != 3 && pImg->GetSize() != 4)
+	if (pImg->getSize() != 3 && pImg->getSize() != 4)
 	{
-		LogError("%s Image pixel size is unsupported: %d", func, pImg->GetSize());
+		LogError("%s Image pixel size is unsupported: %d", func, pImg->getSize());
 		return false;
 	}
-	if (pImg->GetLenX() <= 0 || pImg->GetLenY() <= 0)
+	if (pImg->getLenX() <= 0 || pImg->getLenY() <= 0)
 	{
-		LogError("%s Image width or height is zero (%d, %d)", func, pImg->GetLenX(), pImg->GetLenY());
+		LogError("%s Image width or height is zero (%d, %d)", func, pImg->getLenX(), pImg->getLenY());
 		return false;
 	}
 
@@ -47,7 +55,7 @@ bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
 
     // get the format
     GLenum eFormat = GL_RGB;
-    if (m_pImg->GetSize() == 4) eFormat = GL_RGBA;
+    if (m_pImg->getSize() == 4) eFormat = GL_RGBA;
 
     // create the mipmaps
 	/*
@@ -64,10 +72,6 @@ bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
 		glTexImage2D(GL_TEXTURE_2D, 0, m_pImg->GetSize(), m_pImg->GetLenX(), m_pImg->GetLenY(), 0, eFormat, GL_UNSIGNED_BYTE, m_pImg->GetBuf());
 	}
 	*/
-
-	glTexImage2D(GL_TEXTURE_2D, 0, m_pImg->GetSize(), m_pImg->GetLenX(), m_pImg->GetLenY(), 0, eFormat, GL_UNSIGNED_BYTE, m_pImg->GetBuf());
-	if (m_filter != I_FILTER_NONE) glGenerateMipmapEXT(GL_TEXTURE_2D);
-
 
 
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -101,12 +105,20 @@ bool Texture::Create(shared_ptr<MemBuf> pImg, GLint wrap, int filter)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
 
+    glTexImage2D(GL_TEXTURE_2D, 0, m_pImg->getSize(), m_pImg->getLenX(), m_pImg->getLenY(), 0, eFormat, GL_UNSIGNED_BYTE, m_pImg->getBuf());
+    if (m_filter != I_FILTER_NONE && genMipMap)
+    {
+        glGenerateMipmapEXT(GL_TEXTURE_2D);
+    }
+
 	return true;
 }
 
-bool Texture::CreateMultisamp(GLuint width, GLuint height, GLsizei samples)
+//============================================================================
+//============================================================================
+bool Texture::createMultisamp(GLuint width, GLuint height, GLsizei samples)
 {
-    Destroy();
+    destroy();
 
     glGenTextures(1, &m_glid);
     glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, m_glid);
@@ -116,7 +128,9 @@ bool Texture::CreateMultisamp(GLuint width, GLuint height, GLsizei samples)
     return true;
 }
 
-void Texture::Destroy()
+//============================================================================
+//============================================================================
+void Texture::destroy()
 {
 	if (m_glid)
 	{
@@ -127,21 +141,27 @@ void Texture::Destroy()
 	m_pImg.reset();
 }
 
-GLuint Texture::GetId()
+//============================================================================
+//============================================================================
+GLuint Texture::getId()
 {
 	return m_glid;
 }
 
-GLuint Texture::GetWidth()
+//============================================================================
+//============================================================================
+GLuint Texture::getWidth()
 {
 	if (!m_pImg) return 0;
 
-	return m_pImg->GetLenX();
+	return m_pImg->getLenX();
 }
 
-GLuint Texture::GetHeight()
+//============================================================================
+//============================================================================
+GLuint Texture::getHeight()
 {
 	if (!m_pImg) return 0;
 
-	return m_pImg->GetLenY();
+	return m_pImg->getLenY();
 }

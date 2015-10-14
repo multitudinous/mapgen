@@ -64,8 +64,8 @@ protected:
 
 protected:
 	int m_hanWin;
-	int m_winW;
-	int m_winH;
+	//int m_winW;
+	//int m_winH;
 	bool m_globalInit;
     bool _exit;
 

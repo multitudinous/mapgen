@@ -13,11 +13,11 @@ public:
     virtual void initAttr(DrawData *pdd);
     virtual void initLabels(DrawData *pdd);
 
-    bool msaaOn() const { return _msaaOn; }
-    void  msaaOn(bool on) { _msaaOn = on; }
+    int renderFlags() const { return _renderFlags; }
+    void  renderFlags(int flags) { _renderFlags = flags; }
 
 protected:
-    bool _msaaOn;
+    int _renderFlags;
 };
 
 #endif

@@ -4,6 +4,9 @@
 #else
 #include <malloc.h>
 #endif
+
+//============================================================================
+//============================================================================
 MemBuf::MemBuf()
 {
 	m_pbuf = NULL;
@@ -12,23 +15,29 @@ MemBuf::MemBuf()
 	m_lenY = 0;
 }
 
+//============================================================================
+//============================================================================
 MemBuf::MemBuf(int size, int lengthX, int lengthY)
 {
 	m_pbuf = NULL;
 	m_size = 0;
 	m_lenX = 0;
 
-	SetSize(size, lengthX, lengthY);
+	setSize(size, lengthX, lengthY);
 }
 
+//============================================================================
+//============================================================================
 MemBuf::~MemBuf()
 {
-	Destroy(); // TODO: WHY WAS THIS NOT HERE BEFORE
+	destroy(); // TODO: WHY WAS THIS NOT HERE BEFORE
 }
 
-void MemBuf::SetSize(int size, int lengthX, int lengthY)
+//============================================================================
+//============================================================================
+void MemBuf::setSize(int size, int lengthX, int lengthY)
 {
-	Destroy();
+	destroy();
 
 	if (size < 0 || lengthX < 0 || lengthY < 0) return;
 
@@ -38,7 +47,9 @@ void MemBuf::SetSize(int size, int lengthX, int lengthY)
 	m_pbuf = malloc(m_size*m_lenX*m_lenY);
 }
 
-void MemBuf::Destroy()
+//============================================================================
+//============================================================================
+void MemBuf::destroy()
 {
 	if (m_pbuf)
 	{

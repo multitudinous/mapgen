@@ -4,6 +4,7 @@
 #include "sysdefs.h"
 #include "camera.h"
 #include "texture.h"
+#include "rect2d.h"
 
 class Fbo
 {
@@ -13,6 +14,7 @@ public:
         //GLfloat matPers[16];
         //GLfloat matModl[16];
         GLfloat colrClear[4];
+        GLfloat colrBlend[4];
         GLint vp[4];
         bool saveStates;
         bool drawSuccess;
@@ -60,6 +62,10 @@ public:
     SDrawParams* getDrawParams() { return &m_drawParams; }
     bool drawStart(bool saveStates = true, bool clearColor = true, bool clearDepth = true);
     void drawEnd(Fbo *fboResult = NULL);
+    void restoreStates(); // draw end calls this, so if not using draw end, you can restore with this
+
+    void blit(Fbo *fboDst);
+    void renderThis(const Rect2d &rcDstTot, int fboDst = 0);
 
     bool create(PCamera camera, GLuint width, GLuint height, bool aaOn=true, GLsizei msamples=16);
     bool create(PCamera camera, GLuint width, GLuint height, GLuint txid, bool aaOn = true, GLsizei msamples = 16);
@@ -67,13 +73,16 @@ public:
 
     GLuint getFboId() { return m_fboid; }
     GLuint getTxId() { return m_txid; }
+    GLuint getW() { return m_w;  }
+    GLuint getH() { return m_h; }
 
     Camera* camera() { return _camera.get(); }
+
+    bool saveFrame(const char *path, bool flip = true);
 
 protected:
 
     bool saveFrame(BYTE *pBuf, int stride, bool flip=true);
-    bool saveFrame(const char *path, bool flip=true);
 
     bool checkStatus();
     void logFboInfo();

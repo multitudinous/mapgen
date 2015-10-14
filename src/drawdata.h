@@ -14,6 +14,9 @@ public:
 
 public:
 
+    int _winW;
+    int _winH;
+
     PConfig _cfg;
     PDrawAttr _drawAttr;
     PShaderProg _progSmoothLine;

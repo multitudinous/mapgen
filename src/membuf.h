@@ -10,15 +10,15 @@ public:
 	MemBuf(int size, int lengthX, int lengthY=1);
 	virtual ~MemBuf();
 
-	void SetSize(int size, int lengthX, int lengthY=1);
-	void Destroy();
+	void setSize(int size, int lengthX, int lengthY=1);
+	void destroy();
 
-	int GetSize() const { return m_size; } // size of a single element in bytes
-	int GetLenX() const { return m_lenX; }
-	int GetLenY() const { return m_lenY; }
-	int GetByteCount() const { return m_size*m_lenX*m_lenY; }
-	void* GetBuf() { return m_pbuf; }
-	const void* GetBufRead() const { return m_pbuf; }
+	int getSize() const { return m_size; } // size of a single element in bytes
+	int getLenX() const { return m_lenX; }
+	int getLenY() const { return m_lenY; }
+	int getByteCount() const { return m_size*m_lenX*m_lenY; }
+	void* getBuf() { return m_pbuf; }
+	const void* getBufRead() const { return m_pbuf; }
 
 protected:
 	void* m_pbuf;

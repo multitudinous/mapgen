@@ -270,6 +270,11 @@ void MapYaml::loadOutput(const YAML::Node& node)
     _cfg->mapExtents(getExtents(node, "extents"));
     _cfg->msaaOn(getBool(node, "msaa", _cfg->msaaOn()));
     _cfg->msaaSamples(getInt(node, "msamples", _cfg->msaaSamples()));
+    _cfg->ssaaOn(getBool(node, "ssaa", _cfg->ssaaOn()));
+    _cfg->ssaaMul(getInt(node, "ssaamul", _cfg->ssaaMul()));
+    _cfg->jtaaOn(getBool(node, "jtaa", _cfg->jtaaOn()));
+    _cfg->jtaaSamples(getInt(node, "jtaasamples", _cfg->jtaaSamples()));
+    _cfg->jtaaOffset(getDbl(node, "jtaaoffset", _cfg->jtaaOffset()));
 
     _cfg->imgFile(validateOutfile(_cfg->imgFile()));
 }
@@ -855,7 +860,53 @@ PGlObj MapYaml::loadLayer(const YAML::Node& node)
     PGlObj lyr(plyr);
 
     plyr->_name = getString(node, "name");
-    plyr->msaaOn(getBool(node, "msaa", _cfg->msaaOn()));
+    std::string aamode = getString(node, "aa");
+    std::vector<std::string> rmodes;
+    UtlString::explode(aamode, ",", &rmodes);
+    if (rmodes.size() <= 0)
+    {
+        plyr->renderFlags(FboRender::E_RF_NONE);
+    }
+    else
+    {
+        int rmode = FboRender::E_RF_NONE;
+        for (size_t i = 0; i < rmodes.size(); i++)
+        {
+            std::string s = UtlString::toLower(rmodes[i]);
+            if (!s.compare("off"))
+            {
+                rmode = FboRender::E_RF_NONE;
+                break;
+            }
+            else if (!s.compare("on"))
+            {
+                rmode = _cfg->getRenderFlags();
+                break;
+            }
+            else
+            {
+                if (!s.compare("jt") || !s.compare("jtaa"))
+                {
+                    rmode |= FboRender::E_RF_JITTER;
+                }
+                else if (!s.compare("ss") || !s.compare("ssaa"))
+                {
+                    rmode |= FboRender::E_RF_SUPERSAMPLE;
+                }
+                else if (!s.compare("ms") || !s.compare("msaa"))
+                {
+                    rmode |= FboRender::E_RF_SUPERSAMPLE;
+                }
+                else
+                {
+                    LogError("%s Unrecognized aa option: %s", func, s.c_str());
+                }
+            }
+        }
+
+        plyr->renderFlags(rmode);
+    }
+
 
     std::string style = getString(node, "style");
     if (style.size())

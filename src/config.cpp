@@ -1,5 +1,6 @@
 #include "config.h"
 #include "utlstring.h"
+#include "fborender.h"
 
 Config::Config()
 {
@@ -12,8 +13,14 @@ Config::Config()
     _datafile = "data.txt";
     _lyrOutMode = true;
     _colrClear.SetColor(1, 1, 1, 0); // alpha 0 for output, but will be set to 1 for onscreen rendering,
-    _msaaOn = true;
+
+    _msaaOn = false;
     _samples = 16;
+    _ssaaOn = false;
+    _ssaaMul = 2;
+    _jtaaOn = false;
+    _jtaaSamp = 16;
+    _jtaaoffset = 1;
 }
 
 bool Config::windowless()
@@ -27,4 +34,15 @@ void Config::imgFile(const std::string &file)
     _imgfile = file; 
 
     _imgfolder = UtlString::GetPath(_imgfile.c_str(), true);
+}
+
+
+int Config::getRenderFlags()
+{
+    int rf = FboRender::E_RF_NONE;
+    if (msaaOn()) rf |= FboRender::E_RF_MULTISAMPLE;
+    if (ssaaOn()) rf |= FboRender::E_RF_SUPERSAMPLE;
+    if (jtaaOn()) rf |= FboRender::E_RF_JITTER;
+
+    return rf;
 }
