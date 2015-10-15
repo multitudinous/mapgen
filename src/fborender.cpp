@@ -1,5 +1,5 @@
 #include "fborender.h"
-#include "GlObj.h"
+#include "globj.h"
 #include "point2d.h"
 #include "utlgeom2d.h"
 #include "utlgl.h"

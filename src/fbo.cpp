@@ -1,7 +1,7 @@
 #include "fbo.h"
 #include "utlgl.h"
-#include "GlStates.h"
-#include "UtlGeom2d.h"
+#include "glstates.h"
+#include "utlgeom2d.h"
 
 #ifdef GDIPLUS
     #include "utlgdiplus.h"

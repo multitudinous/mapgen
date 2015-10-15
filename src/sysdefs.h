@@ -22,7 +22,7 @@ using namespace std;
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #endif
 
 #define QT
