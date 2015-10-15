@@ -214,7 +214,7 @@ void GlutSys::destroy()
 {
 	if (m_hanWin)
 	{
-		//glutDestroyWindow(m_hanWin); // this crashes when shutting down the window with the gui, but doesn't if forcing a shutdown such as windowless mode.
+		glutDestroyWindow(m_hanWin); // this crashes when shutting down the window with the gui, but doesn't if forcing a shutdown such as windowless mode.
         m_hanWin = 0;
 	}
 
@@ -286,8 +286,8 @@ void GlutSys::onDisplay()
 
     if (_exit)
     {
-        destroy();
         glutLeaveMainLoop();
+        destroy();
         return;
     }
     glutPostRedisplay();
