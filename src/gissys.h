@@ -60,6 +60,8 @@ protected:
     virtual void destroy();
     virtual void onKeyboard(unsigned char key, int x, int y);
 
+    virtual void onMouseMove();
+
     bool initFbo();
 
     void displayStandard();

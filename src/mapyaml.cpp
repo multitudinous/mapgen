@@ -860,6 +860,7 @@ PGlObj MapYaml::loadLayer(const YAML::Node& node)
     PGlObj lyr(plyr);
 
     plyr->_name = getString(node, "name");
+    plyr->_draw = getBool(node, "draw", true);
     std::string aamode = getString(node, "aa");
     std::vector<std::string> rmodes;
     UtlString::explode(aamode, ",", &rmodes);

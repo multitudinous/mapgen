@@ -37,14 +37,15 @@ PGlObj GisSys::loadTiff(const char *file, PColorPicker picker, Stats *stats, con
         picker->begin(id);
     }
 
-    PTexture tx = UtlTxGeo::loadHmap(&tiff, picker.get(), stats, validation);
+    PMemBuf tiffdata;
+    PTexture tx = UtlTxGeo::loadHmap(&tiff, picker.get(), stats, validation, &tiffdata);
 
     if (picker)
     {
         picker->end();
     }
 
-    PGlObj img(new GeoImgRaster(tx, *tiff.GetExtents(), picker, *stats));
+    PGlObj img(new GeoImgRaster(tx, *tiff.GetExtents(), picker, *stats, tiffdata));
     //((GeoImgRaster *)img.get())->init(tx, *tiff.GetExtents());
 
     return img;
@@ -293,7 +294,7 @@ void GisSys::zoomExtents()
 //============================================================================
 void GisSys::zoomExtents(const Extents &ext)
 {
-    m_moveSys->m_camera->setExtents2d(ext, true);
+    moveSys()->m_camera->setExtents2d(ext, true);
     //m_moveSys->m_camera->SetUpOrthoZoom(m_winW, m_winH, ext);
 
     if (_fbo)
@@ -386,6 +387,12 @@ void GisSys::displayData()
         displayStandard();
     }
     
+    if (dataSel()->sel())
+    {
+        dataDraw()->_drawSelected = true;
+        dataSel()->sel()->draw(dataDraw());
+        dataDraw()->_drawSelected = false;
+    }
 
     // only exit if there is no batch config, if there is one we want to keep running
     if (!_batchCfg)
@@ -403,7 +410,7 @@ void GisSys::displayStandard()
 {
     if (!_rootNode) return;
 
-    _rootNode->draw(m_dd.get());
+    _rootNode->draw(dataDraw());
 
     if (_fboToDisk && _fbo)
     {
@@ -552,6 +559,16 @@ void GisSys::destroy()
 void GisSys::onKeyboard(unsigned char key, int x, int y)
 {
     GlutSys::onKeyboard(key, x, y);
+}
+
+//============================================================================
+//============================================================================
+void GisSys::onMouseMove()
+{
+    GlutSys::onMouseMove();
+
+    dataSel()->init(dataMouse()->x(), dataMouse()->y(), true);
+    _rootNode->runSel(m_dd.get());
 }
 
 //============================================================================

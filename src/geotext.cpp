@@ -3,7 +3,8 @@
 
 //============================================================================
 //============================================================================
-GeoText::GeoText() :
+GeoText::GeoText(bool multiline) :
+    _multiline(multiline),
     _alignH(Define::align_h_ctr),
     _alignV(Define::align_v_ctr)
 {
@@ -15,6 +16,7 @@ GeoText::GeoText() :
 GeoText::GeoText(const GeoText &text) :
     GeoObj(text)
 {
+    _multiline = text._multiline;
     _text = text.text();
     _ext = text.extents();
     _alignH = text.alignH();
@@ -97,7 +99,15 @@ void GeoText::draw(DrawData *pdd)
     GlText *pfont = DrawAttr::font(pdd->_drawAttr, _drawAttr);
     if (!pfont) return;
 
-    box3d box = pfont->getBBoxd(_text.c_str(), _ext, _alignH, _alignV);
+    box3d box;
+    if (_multiline)
+    {
+        box = pfont->getBBoxLayoutd(_text.c_str(), _ext, _alignH, _alignV);
+    }
+    else
+    {
+        box = pfont->getBBoxd(_text.c_str(), _ext, _alignH, _alignV);
+    }
 
     drawFill(pdd, box);
     drawOutline(pdd, box);
@@ -137,7 +147,15 @@ void GeoText::drawLabel(DrawData *pdd, const box3d &txbox)
     Rgbf color = DrawAttr::colorLabels(pdd->_drawAttr, _drawAttr);
 
     glColor4fv(color.m_af);
-    pfont->renderBL(_text.c_str(), txbox.getBtmLeft().get2d());
+
+    if (_multiline)
+    {
+        pfont->renderLayout(_text.c_str(), txbox.getBtmLeft().get2d());
+    }
+    else
+    {
+        pfont->renderBL(_text.c_str(), txbox.getBtmLeft().get2d());
+    }
 }
 
 //============================================================================
@@ -172,7 +190,18 @@ Point2d GeoText::getTextSize(DrawData *pdd)
     if (!pfont) return Point2d(0, 0);
 
     if (_text.size() == 0) return Point2d(0, 0);
+
+    if (_multiline) return getTextSizeLayout(pfont);
+
     box3d box = pfont->getBBoxd(_text.c_str());
 
+    return Point2d(box.getWidth(), box.getHeight());
+}
+
+//============================================================================
+//============================================================================
+Point2d GeoText::getTextSizeLayout(GlText *pfont)
+{
+    box3d box = pfont->getBBoxLayoutd(_text.c_str());
     return Point2d(box.getWidth(), box.getHeight());
 }

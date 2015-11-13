@@ -40,7 +40,7 @@ void GeoImg::drawImg(float alpha)
     glColor4f(1, 1, 1, alpha);
     glBegin(GL_QUADS);
 
-        // meed tp flip image vertically
+        // need tp flip image vertically
         glTexCoord2d(0,1);
         glVertex2d(_ext.l, _ext.b);
 

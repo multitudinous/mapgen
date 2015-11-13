@@ -176,6 +176,61 @@ string UtlGL::ConvertGLFormatToString(GLenum format)
 
 //=======================================================================
 //=======================================================================
+void UtlGL::getPickRay(int mouseX, int mouseY, vec3d *vstart, vec3d *vend, bool iswindows, int *mouseyAdjusted)
+{
+    double matModelView[16], matProjection[16];
+    int viewport[4];
+
+    // get matrix and viewport:
+    glGetDoublev(GL_MODELVIEW_MATRIX, matModelView);
+    glGetDoublev(GL_PROJECTION_MATRIX, matProjection);
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    // window pos of mouse, Y is inverted on Windows
+    double winX = (double)mouseX;
+    double winY = (double)(viewport[3] - mouseY);
+
+    if (mouseyAdjusted) *mouseyAdjusted = viewport[3] - mouseY;
+
+    // get point on the 'near' plane (third param is set to 0.0)
+    gluUnProject(winX, winY, 0.0, matModelView, matProjection, viewport, &vstart->x, &vstart->y, &vstart->z);
+
+    // get point on the 'far' plane (third param is set to 1.0)
+    gluUnProject(winX, winY, 1.0, matModelView, matProjection, viewport, &vend->x, &vend->y, &vend->z);
+
+    // now you can create a ray from vstart to vend
+}
+
+//=======================================================================
+//=======================================================================
+void UtlGL::overaly2dInit()
+{
+    int vp[4];
+    glGetIntegerv(GL_VIEWPORT, vp);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(vp[0], vp[0] + vp[2] - 1, vp[1], vp[1] + vp[3] - 1);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+}
+//=======================================================================
+//=======================================================================
+void UtlGL::overaly2dRestore()
+{
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+}
+
+//=======================================================================
+//=======================================================================
 string UtlGL::getLog(GLhandleARB handle)
 {
     int blen = 0, slen = 0;

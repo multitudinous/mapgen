@@ -5,7 +5,8 @@
 
 //============================================================================
 //============================================================================
-GlText::GlText()
+GlText::GlText() : 
+_layout(new FTSimpleLayout())
 {
 }
 
@@ -21,6 +22,7 @@ bool GlText::initFontPoly(const char *name, int size)
 {
 	_font.reset(new FTPolygonFont(name));
 	_font->FaceSize(size);
+    _layout->SetFont(_font.get());
 
 	return true;
 }
@@ -31,6 +33,7 @@ bool GlText::initFontTexture(const char *name, int size)
 {
 	_font.reset(new FTTextureFont(name));
 	_font->FaceSize(size);
+    _layout->SetFont(_font.get());
 
 	return true;
 }
@@ -42,6 +45,8 @@ bool GlText::initFontExtrude(const char *name, int size, float depth)
 	_font.reset(new FTExtrudeFont(name));
 	_font->FaceSize(size);
 	_font->Depth(depth);
+    _layout->SetFont(_font.get());
+
 	//_font->Outset(0, 5);
 	//_font->Outset(0, 3);
 
@@ -62,6 +67,7 @@ bool GlText::initFontOutline(const char *name, int size)
 {
 	_font.reset(new FTOutlineFont(name));
 	_font->FaceSize(size);
+    _layout->SetFont(_font.get());
 
 	return true;
 }
@@ -109,6 +115,82 @@ void GlText::render(const char *str, int renderMode)
 	if (!_font) return;
 
 	_font->Render(str, -1, FTPoint(), FTPoint(), renderMode);
+}
+
+//============================================================================
+//============================================================================
+void GlText::renderLayout(const char *str, const Point2d &bl, int align)
+{
+    glPushMatrix();
+    glTranslated(bl.dX, bl.dY, 1);
+
+    _layout->SetAlignment((FTGL::TextAlignment)align);
+    _layout->Render(str, -1, FTPoint(), FTGL::RENDER_ALL);
+
+    glPopMatrix();
+}
+
+//============================================================================
+//============================================================================
+float GlText::getLayoutLineLen()
+{
+    return _layout->GetLineLength();
+}
+
+//============================================================================
+//============================================================================
+void GlText::setLayoutLineLen(float len)
+{
+    _layout->SetLineLength(len);
+}
+
+//============================================================================
+//============================================================================
+box3f GlText::getBBoxLayoutf(const char *str, int align)
+{
+    box3d boxd = GlText::getBBoxLayoutd(str);
+
+    box3f boxf;
+    boxf.updateBox((float)boxd.vmin.x, (float)boxd.vmin.y, (float)boxd.vmin.z);
+    boxf.updateBox((float)boxd.vmax.x, (float)boxd.vmax.y, (float)boxd.vmax.z);
+    return boxf;
+}
+
+//============================================================================
+//============================================================================
+box3d GlText::getBBoxLayoutd(const char *str, int align)
+{
+    if (!_font) return box3d();
+    if (!_layout) return box3d();
+
+    _layout->SetAlignment((FTGL::TextAlignment)align);
+    FTBBox ftbox = _layout->BBox(str);
+
+    box3d box;
+    box.updateBox(ftbox.Lower().X(), ftbox.Lower().Y(), ftbox.Lower().Z());
+    box.updateBox(ftbox.Upper().X(), ftbox.Upper().Y(), ftbox.Upper().Z());
+    return box;
+}
+
+//============================================================================
+//============================================================================
+box3d GlText::getBBoxLayoutd(const char *str, const Extents &ext, int alignh, double z)
+{
+    box3d box = getBBoxLayoutd(str, alignh);
+
+    Extents aexts;
+    
+    // todo: deal with align value
+    aexts.l = ext.l;
+    aexts.r = aexts.l + box.getWidth();
+    aexts.b = ext.b;
+    aexts.t = aexts.b + box.getHeight();
+
+    box3d boxnew;
+    boxnew.updateBox(aexts.l, aexts.t, z);
+    boxnew.updateBox(aexts.r, aexts.b, z);
+
+    return boxnew; // the aligned bounding box of the tex
 }
 
 //============================================================================

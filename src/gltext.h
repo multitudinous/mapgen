@@ -7,6 +7,7 @@
 #include <memory>
 
 class FTFont;
+class FTSimpleLayout;
 
 class GlText
 {
@@ -32,11 +33,20 @@ public:
     box3d getBBoxd(const Point2d &center, const char *str);
     box3d getBBoxd(const char *str, const Extents &ext, Define::AlignH ah, Define::AlignV av, double z = 0);
 
+    // for multiline.. could just use these routines instead of above, but seperate for now until refactor
+    void renderLayout(const char *str, const Point2d &bl, int align = 0); // typedef enum { ALIGN_LEFT = 0, ALIGN_CENTER = 1, ALIGN_RIGHT = 2, ALIGN_JUSTIFY = 3 } TextAlignment;
+    float getLayoutLineLen();
+    void setLayoutLineLen(float len);
+    box3f getBBoxLayoutf(const char *str, int align = 0);
+    box3d getBBoxLayoutd(const char *str, int align = 0);
+    box3d getBBoxLayoutd(const char *str, const Extents &ext, int alignh = 0, double z = 0);
+
 
 
 protected:
 
 	std::shared_ptr<FTFont> _font;
+    std::shared_ptr<FTSimpleLayout> _layout;
 };
 
 #endif

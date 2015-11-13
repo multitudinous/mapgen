@@ -40,6 +40,11 @@ public:
 
     virtual string getGLInfo();
 
+    DrawData* dataDraw();
+    DataMouse* dataMouse();
+    DataSel* dataSel();
+    MoveSys* moveSys();
+
 protected:
 
     virtual void destroy();
@@ -54,6 +59,9 @@ protected:
     virtual void onMouse(int button, int state, int x, int y);
     virtual void onMouseScroll(int dir, int x, int y);
     virtual void onMotion(int x, int y);
+    virtual void onMotionPassive(int x, int y);
+
+    virtual void onMouseMove() {};
 
     static void resizeWindow(int width, int height);
     static void display();
@@ -61,6 +69,7 @@ protected:
     static void specialKeys(int key, int x, int y);
     static void mouse(int button, int state, int x, int y);
     static void motion(int x, int y);
+    static void motionPassive(int x, int y);
 
 protected:
 	int m_hanWin;
@@ -70,15 +79,17 @@ protected:
     bool _exit;
 
 	// mouse controls
+    /*
 	int m_mouseOldX;
 	int m_mouseOldY;
 	int m_mouseBtns;
     bool m_mouseFirstDown;
+    */
 	float m_rotX;
 	float m_rotY;
 	float m_transZ;
 
-	PMoveSys m_moveSys;
+	//PMoveSys m_moveSys;
 	bool m_setCamera;
 
 	PDrawData m_dd;

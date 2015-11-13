@@ -2,7 +2,8 @@
 
 //============================================================================
 //============================================================================
-GlObj::GlObj()
+GlObj::GlObj(bool draw) :
+_draw(draw)
 {
 
 }
@@ -12,7 +13,7 @@ GlObj::GlObj()
 GlObj::GlObj(const GlObj &obj)
 {
     _name = obj._name;
-
+    _draw = obj._draw;
     for (unsigned int i=0; i<obj._childList.size(); i++)
     {
         GlObj *obj = _childList[i]->clone();
@@ -27,6 +28,8 @@ GlObj::GlObj(const GlObj &obj)
 //============================================================================
 void GlObj::draw(DrawData *pdd)
 {
+    if (!_draw) return;
+
     for (unsigned int i=0; i<_childList.size(); i++)
     {
         _childList[i]->draw(pdd);
@@ -34,12 +37,26 @@ void GlObj::draw(DrawData *pdd)
 }
 
 //============================================================================
+// todo: if computing a bounding box based on whats displayed,
+// then need to early exit here if !_draw 
 //============================================================================
 void GlObj::computeBox(DrawData *pdd, box3d *pbox)
 {
     for (unsigned int i=0; i<_childList.size(); i++)
     {
         _childList[i]->computeBox(pdd, pbox);
+    }
+}
+
+//============================================================================
+//============================================================================
+void GlObj::runSel(DrawData *pdd)
+{
+    if (!_draw) return;
+
+    for (unsigned int i = 0; i<_childList.size(); i++)
+    {
+        _childList[i]->runSel(pdd);
     }
 }
 

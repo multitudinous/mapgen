@@ -1,0 +1,99 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  file: map.png
+
+styles:
+
+  - name: polymask
+
+    polymask:
+        draw: true
+        masks: stormimg #note: back to front order
+    polyoutline:
+        draw: true
+        linewidth: 2
+        color: 000000
+    labels:
+        draw: true
+        fontsize: 72
+        color: 000000
+        feature: name
+
+  
+colorramps:
+
+  - name: colorgyr
+    min: 00ff00
+    mid: ffff00
+    max: ff0000  
+
+  - name: grayscale
+    min: 000000
+    max: ffffff  
+
+
+dataobjs:
+    
+  - name: yield_150_gray
+    type: tiff
+    file: yield.tif
+    colorramp: grayscale
+    sdevs: 1.50 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+    
+  - name: yield_150_gyr
+    type: tiff
+    file: yield.tif
+    colorramp: colorgyr
+    sdevs: 1.50 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+    
+  - name: yield_full_gray
+    type: tiff
+    file: yield.tif
+    colorramp: grayscale
+    sdevs: -1 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+    
+  - name: yield_full_gyr
+    type: tiff
+    file: yield.tif
+    colorramp: colorgyr
+    sdevs: -1 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+
+mapobjs: #note back to front order
+
+   # yield images
+   - name: lyr_yield_150_gray
+     type: layer
+     draw: false
+     children:
+       - dataobj: yield_150_gray
+       
+   - name: lyr_yield_150_gyr
+     type: layer
+     draw: true
+     children:
+       - dataobj: yield_150_gyr
+       
+   - name: lyr_yield_full_gray
+     type: layer
+     draw: false
+     children:
+       - dataobj: yield_full_gray
+       
+   - name: lyr_yield_full_gyr
+     type: layer
+     draw: false
+     children:
+       - dataobj: yield_full_gyr
+      
+    

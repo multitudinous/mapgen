@@ -40,21 +40,23 @@ PTexture UtlTxGeo::load(const QImage *img)
 
 //============================================================================
 //============================================================================
-PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, ColorPicker *pcolor, Stats *statSettings, bool validation)
+PTexture UtlTxGeo::loadHmap(const GdalFile *pfile, ColorPicker *pcolor, Stats *statSettings, bool validation, PMemBuf *phmap)
 {
-	MemBuf hmap;
+	PMemBuf hmap(new MemBuf());
     Stats stats;
 	Stats *s = &stats;
     if (statSettings) s = statSettings;
 
-	if (!pfile->GetHmap(&hmap, s))
+    if (phmap) *phmap = hmap;
+
+	if (!pfile->GetHmap(hmap.get(), s))
 	{
 		return PTexture();
 	}
 
     s->computeAdjusted();
 
-    PMemBuf rgb = hmapToRgb(&hmap, *s, pcolor, validation);
+    PMemBuf rgb = hmapToRgb(hmap.get(), *s, pcolor, validation);
 
 	PTexture tx(new Texture());
     tx->create(rgb, GL_CLAMP_TO_EDGE, Texture::I_FILTER_NONE);
@@ -181,16 +183,6 @@ PMemBuf UtlTxGeo::hmapToRgb(const MemBuf *hmap, const Stats &stats, ColorPicker 
                 prgb[3] = 255;
                 prgb += 4;
             }
-
-			/*
-			double hn = (d-stats.min)/dis; // normalized height (0.. 1)
-
-			double g = 255.0 * hn;
-			prgb[0] = (BYTE)g;
-			prgb[1] = (BYTE)g;
-			prgb[2] = (BYTE)g;
-			prgb += 3;
-			*/
 
 		}
 	}

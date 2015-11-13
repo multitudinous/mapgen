@@ -16,7 +16,18 @@ public:
     double getMid() const;
     double getMax() const;
     double getPosNorm(double value, bool clamp=true) const;
+
     double getLen() const;
+    double getMean() const;
+    double getForceSdevs() const;
+    double getForceMin() const;
+    double getForceMax() const;
+
+    // original values
+    double getMinOrig() const;
+    double getMaxOrig() const;
+    double getPosNormOrig(double value, bool clamp=true) const;
+    double getLenOrig() const;
 
     // refresh adjusted values
     void computeAdjusted();

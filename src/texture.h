@@ -31,9 +31,11 @@ public:
 	GLuint getWidth();
 	GLuint getHeight();
 
+    MemBuf *img() { return m_pImg.get();  }
+
 protected:
 	GLuint m_glid;
-	std::shared_ptr<MemBuf> m_pImg; // TODO: do we really want to keep this in memory
+	std::shared_ptr<MemBuf> m_pImg; // TODO: do we really want to keep this in memory (maybe for some image operations, see geoimg, geoimgraster
 	int m_filter;
 };
 

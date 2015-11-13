@@ -8,7 +8,7 @@
 class GeoText : public GeoObj
 {
 public:
-    GeoText();
+    GeoText(bool multiline=false);
     GeoText(const GeoText &text);
 
     void text(const std::string &t);
@@ -36,11 +36,14 @@ protected:
     void drawOutline(DrawData *pdd, const box3d &txbox);
     void drawLabel(DrawData *pdd, const box3d &txbox);
 
+    Point2d getTextSizeLayout(GlText *pfont);
+
 protected:
     std::string _text;
     Extents _ext;
     Define::AlignH _alignH;
     Define::AlignV _alignV;
+    bool _multiline;
 
 };
 

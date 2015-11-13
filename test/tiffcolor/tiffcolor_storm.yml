@@ -1,0 +1,99 @@
+---
+output:
+  mode: window
+  width: 1024
+  height: 1024
+  file: map.png
+
+styles:
+
+  - name: polymask
+
+    polymask:
+        draw: true
+        masks: stormimg #note: back to front order
+    polyoutline:
+        draw: true
+        linewidth: 2
+        color: 000000
+    labels:
+        draw: true
+        fontsize: 72
+        color: 000000
+        feature: name
+
+  
+colorramps:
+
+  - name: colorgyr
+    min: 00ff00
+    mid: ffff00
+    max: ff0000  
+
+  - name: grayscale
+    min: 000000
+    max: ffffff  
+
+
+dataobjs:
+
+  - name: stormimg_175_gray
+    type: tiff
+    file: StormOutput_SEG_SOIL_LOSS.tif
+    colorramp: grayscale
+    sdevs: 1.75 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+    
+  - name: stormimg_175_gyr
+    type: tiff
+    file: StormOutput_SEG_SOIL_LOSS.tif
+    colorramp: colorgyr
+    sdevs: 1.75 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+    
+  - name: stormimg_full_gray
+    type: tiff
+    file: StormOutput_SEG_SOIL_LOSS.tif
+    colorramp: grayscale
+    sdevs: -1 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+   
+  - name: stormimg_full_gyr
+    type: tiff
+    file: StormOutput_SEG_SOIL_LOSS.tif
+    colorramp: colorgyr
+    sdevs: -1 # - 1 use full range
+    minrv: -9999 # use min from file
+    maxrv: -9999 # use max from file
+
+mapobjs: #note back to front order
+
+    # storm images
+   - name: lyr_stormimg_175_gray
+     type: layer
+     draw: false
+     children:
+       - dataobj: stormimg_175_gray
+       
+   - name: lyr_stormimg_175_gyr
+     type: layer
+     draw: true
+     children:
+       - dataobj: stormimg_175_gyr
+       
+   - name: lyr_stormimg_full_gray
+     type: layer
+     draw: false
+     children:
+       - dataobj: stormimg_full_gray
+       
+   - name: lyr_stormimg_full_gyr
+     type: layer
+     draw: false
+     children:
+       - dataobj: stormimg_full_gyr  
+      
+    

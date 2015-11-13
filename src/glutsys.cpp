@@ -7,9 +7,6 @@ static GlutSys *g_pSys = NULL;
 GlutSys::GlutSys()
 {
 	m_hanWin = 0;
-	m_mouseOldX = 0;
-	m_mouseOldY = 0;
-	m_mouseBtns = 0;
 	m_rotX = 0.0;
 	m_rotY = 0.0;
 	m_transZ = -3.0;
@@ -26,7 +23,7 @@ GlutSys::GlutSys()
 		m_globalInit = true;
 	}
 
-	m_moveSys.reset(new MoveSys(20.0f));
+	//m_moveSys.reset(new MoveSys(20.0f));
 	//m_moveSys.reset(new MoveSys(0.1f));
 	m_setCamera = true;
 
@@ -41,6 +38,34 @@ GlutSys::~GlutSys()
     destroy();
 
 	if (m_globalInit) g_pSys = NULL;
+}
+
+//============================================================================
+//============================================================================
+DrawData* GlutSys::dataDraw()
+{
+    return m_dd.get();
+}
+
+//============================================================================
+//============================================================================
+DataMouse* GlutSys::dataMouse()
+{
+    return m_dd->_dm.get();
+}
+
+//============================================================================
+//============================================================================
+DataSel* GlutSys::dataSel()
+{
+    return m_dd->_ds.get();
+}
+
+//============================================================================
+//============================================================================
+MoveSys* GlutSys::moveSys()
+{
+    return m_dd->_movesys.get();
 }
 
 //============================================================================
@@ -73,7 +98,7 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
 
     //destroy();
 
-    m_moveSys.reset(new MoveSys(20.0f));
+    //m_moveSys.reset(new MoveSys(20.0f));
     //m_moveSys.reset(new MoveSys(0.1f));
     m_dd.reset(new DrawData());
 
@@ -95,6 +120,7 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
     glutInitWindowSize(m_dd->_winW, m_dd->_winH);
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION); // for glutLeaveMainLoop to return executation to the caller and not exit the application.
     m_hanWin = glutCreateWindow("GIS Render");
+    glutSetCursor(GLUT_CURSOR_CROSSHAIR);
 
     //glutHideWindow();
 
@@ -105,6 +131,7 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
     glutSpecialFunc(specialKeys);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
+    glutPassiveMotionFunc(motionPassive);
 
 	// initialize necessary OpenGL extensions
     //glewInit();
@@ -137,7 +164,7 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
 	
 
     // viewport
-    m_moveSys->m_camera->onResize(winWidth, winHeight);
+    moveSys()->m_camera->onResize(winWidth, winHeight);
 
     /*
     glViewport(0, 0, winWidth, winHeight);
@@ -219,14 +246,11 @@ void GlutSys::destroy()
 	}
 
 	m_hanWin = 0;
-	m_mouseOldX = 0;
-	m_mouseOldY = 0;
-	m_mouseBtns = 0;
 	m_rotX = 0.0;
 	m_rotY = 0.0;
 	m_transZ = -3.0;
 
-    m_moveSys.reset();
+    //m_moveSys.reset();
     m_dd.reset();
 }
 
@@ -234,9 +258,9 @@ void GlutSys::destroy()
 //============================================================================
 void GlutSys::setCamera()
 {
-	if (m_moveSys && m_setCamera)
+    if (moveSys() && m_setCamera)
 	{
-        m_moveSys->m_camera->setView();
+        moveSys()->m_camera->setView();
         //m_dd->m_frustum->CalcViewVolumePlanes();
 		return;
 	}
@@ -257,9 +281,9 @@ void GlutSys::onResizeWindow(int width, int height)
         m_dd->_winH = height;
     }
 
-    if (m_moveSys)
+    if (moveSys())
     {
-        m_moveSys->m_camera->onResize(width, height);
+        moveSys()->m_camera->onResize(width, height);
     }
 }
 
@@ -311,22 +335,22 @@ void GlutSys::onKeyboard(unsigned char key, int x, int y)
             exit();
             break;
 		case 'w':
-			if (m_moveSys) m_moveSys->MoveForward();
+			if (moveSys()) moveSys()->MoveForward();
 			break;
 		case 's':
-			if (m_moveSys) m_moveSys->MoveBackward();
+			if (moveSys()) moveSys()->MoveBackward();
 			break;
 		case 'a':
-			if (m_moveSys) m_moveSys->StrafeLeft();
+			if (moveSys()) moveSys()->StrafeLeft();
 			break;
 		case 'd':
-			if (m_moveSys) m_moveSys->StrafeRight();
+			if (moveSys()) moveSys()->StrafeRight();
 			break;
 		case 'r':
-			if (m_moveSys) m_moveSys->MoveUp();
+			if (moveSys()) moveSys()->MoveUp();
 			break;
 		case 'f':
-			if (m_moveSys) m_moveSys->MoveDown();
+			if (moveSys()) moveSys()->MoveDown();
 			break;
 		case 'm':
 			m_dd->m_wireframe = !m_dd->m_wireframe;
@@ -360,16 +384,16 @@ void GlutSys::onKeyboardSpecial(int key, int x, int y)
 	switch(key)
 	{
 		case GLUT_KEY_LEFT:
-			if (m_moveSys) m_moveSys->LookLeft();
+			if (moveSys()) moveSys()->LookLeft();
 			break;
 		case GLUT_KEY_RIGHT:
-			if (m_moveSys) m_moveSys->LookRight();
+			if (moveSys()) moveSys()->LookRight();
 			break;
 		case GLUT_KEY_UP:
-			if (m_moveSys) m_moveSys->LookUp();
+			if (moveSys()) moveSys()->LookUp();
 			break;
 		case GLUT_KEY_DOWN:
-			if (m_moveSys) m_moveSys->LookDown();
+			if (moveSys()) moveSys()->LookDown();
 			break;
 	}
 }
@@ -380,15 +404,15 @@ void GlutSys::onMouse(int button, int state, int x, int y)
 {
     if (state == GLUT_DOWN) 
 	{
-        m_mouseBtns |= 1<<button;
+        dataMouse()->btnsDown() |= 1 << button;
     } 
 	else if (state == GLUT_UP) 
 	{
-        m_mouseBtns = 0;
+        dataMouse()->btnsDown() = DataMouse::MOUSE_DOWN_NONE;
     }
 
-    m_mouseOldX = x;
-    m_mouseOldY = y;
+    dataMouse()->x() = x;
+    dataMouse()->y() = y;
 
     glutPostRedisplay();
 }
@@ -406,16 +430,16 @@ void GlutSys::onMouseScroll(int dir, int x, int y)
     if (dir > 0)
     {
         // zoom in
-        m_moveSys->m_camera->zoomInc(-zoomAmt);
+        moveSys()->m_camera->zoomInc(-zoomAmt);
     }
     else
     {
         // zoom out
-        m_moveSys->m_camera->zoomInc(zoomAmt);
+        moveSys()->m_camera->zoomInc(zoomAmt);
     }
 
-    m_mouseOldX = x;
-    m_mouseOldY = y;
+    dataMouse()->x() = x;
+    dataMouse()->y() = y;
 
     glutPostRedisplay();
 }
@@ -425,18 +449,22 @@ void GlutSys::onMouseScroll(int dir, int x, int y)
 void GlutSys::onMotion(int x, int y)
 {
     float dx, dy;
-    dx = x - m_mouseOldX;
-    dy = y - m_mouseOldY;
+    dx = x - dataMouse()->x();
+    dy = y - dataMouse()->y();
 
     // MBTN Down not being recognized
-    if (m_mouseBtns & GlutSys::MOUSE_MBTN_DOWN || m_mouseBtns & GlutSys::MOUSE_LBTN_DOWN)
+    if (dataMouse()->btnsDown() & DataMouse::MOUSE_DOWN_MBTN || dataMouse()->btnsDown() & DataMouse::MOUSE_DOWN_LBTN)
     {
         // pan
-        m_moveSys->m_camera->panByPixel(-dx, dy);
+        moveSys()->m_camera->panByPixel(-dx, dy);
     }
 
-    m_mouseOldX = x;
-    m_mouseOldY = y;
+    dataMouse()->prevx() = dataMouse()->x();
+    dataMouse()->prevy() = dataMouse()->y();
+    dataMouse()->x() = x;
+    dataMouse()->y() = y;
+    onMouseMove(); // TODO: setup view tools
+
 
     glutPostRedisplay();
 
@@ -464,6 +492,13 @@ void GlutSys::onMotion(int x, int y)
     glRotatef(m_rotY, 0.0, 1.0, 0.0);
     glutPostRedisplay();
     */
+}
+
+//============================================================================
+//============================================================================
+void GlutSys::onMotionPassive(int x, int y)
+{
+    onMotion(x, y);
 }
 
 //============================================================================
@@ -513,4 +548,11 @@ void GlutSys::mouse(int button, int state, int x, int y)
 void GlutSys::motion(int x, int y)
 {
     if (g_pSys) g_pSys->onMotion(x, y);
+}
+
+//============================================================================
+//============================================================================
+void GlutSys::motionPassive(int x, int y)
+{
+    if (g_pSys) g_pSys->onMotionPassive(x, y);
 }

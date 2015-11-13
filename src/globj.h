@@ -4,15 +4,19 @@
 #include "drawdata.h"
 #include "box3.h"
 
+class DrawData;
+
 class GlObj
 {
 public:
-    GlObj();
+    GlObj(bool draw=true);
     GlObj(const GlObj &obj);
 
     virtual void draw(DrawData *pdd);
 
     virtual void computeBox(DrawData *pdd, box3d *pbox);
+
+    virtual void runSel(DrawData *pdd);
 
     virtual void insertBack(shared_ptr<GlObj> obj);
     virtual void insertFront(shared_ptr<GlObj> obj);
@@ -35,10 +39,12 @@ public:
     void setName(const std::string &name) { _name = name; }
     std::string getName() { return _name; }
 
-   
+    void setDraw(bool d) { _draw = d;  }
+    bool getDraw() { return _draw;  }
 
 public:
     std::string _name;
+    bool _draw;
 
 protected:
     vector<shared_ptr<GlObj>> _childList;
