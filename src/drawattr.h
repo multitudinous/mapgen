@@ -39,6 +39,8 @@ public:
     Rgbf getColorPolyFill();
     Rgbf getColorPolyOutline();
     Rgbf getColorLabels();
+
+    void addFeatureColor(const std::string &feature, const std::string &color);
     
     static bool drawPolyFill(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
     static bool drawPolyOutline(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
@@ -76,6 +78,8 @@ public:
 
     static GlText* font(DrawAttr *plyr, DrawAttr *pover);
     static std::string* feature(DrawAttr *plyr, DrawAttr *pover);
+
+
 
 
 public:

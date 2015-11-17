@@ -80,8 +80,7 @@ void GeoObj::initAttr(DrawData *pdd)
                 char hex[32];
                 sprintf_s(hex, 32, "#%02x%02x%02x", attr->_colorPolyFill.GetRB(), attr->_colorPolyFill.GetGB(), attr->_colorPolyFill.GetBB());
                 shex = hex;
-
-                pdd->_drawAttr->_filledFeatureColorMap.insert(std::pair<std::string, std::string>(svalue, shex));
+                pdd->_drawAttr->addFeatureColor(svalue, shex);
             }
         }
         

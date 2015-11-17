@@ -66,6 +66,7 @@ mapobjs: #note back to front order
    - name: field_fill
      type: layer
      style: fill
+     exportcolormap: colormap.json
      children:
        - dataobj: fielddata
        

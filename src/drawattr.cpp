@@ -188,6 +188,30 @@ Rgbf DrawAttr::getColorLabels()
 }
 
 //============================================================================
+// duplicate keys are ok, but not duplicate keys and values
+//============================================================================
+void DrawAttr::addFeatureColor(const std::string &feature, const std::string &color)
+{
+    bool found = false;
+    typedef DrawAttr::FeatureColorMap::iterator iterator;
+    std::pair<iterator, iterator> itpair = _filledFeatureColorMap.equal_range(feature);
+    iterator it = itpair.first;
+    for (; it != itpair.second; ++it)
+    {
+        if (it->second == color)
+        {
+            found = true;
+            break;
+        }
+    }
+
+    if (found) return;
+
+    _filledFeatureColorMap.insert(std::pair<std::string, std::string>(feature, color));
+}
+
+
+//============================================================================
 //============================================================================
 bool DrawAttr::drawPolyFill(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover)
 {
