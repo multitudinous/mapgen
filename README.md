@@ -252,6 +252,7 @@ mapobj properties:
 name: layername                     # name used for output, layername.png when in layerout mode
 type: layer                         # layer is the only valid type
 style: stylename                    # style to apply to the layer
+exportcolormap: colormap.json       # optional to export a feature color map in json [{"feature": data, color: #ff00ff}, {"feature": data2, color: #ff00ff}]
 aa: on                              # optional to turn on antialiasing that is configured above, by default it is set to off
 children:
     - dataobj: dataobjname          # currently only dataobjects are supported, you can add multiple objects by seperating them by ,
