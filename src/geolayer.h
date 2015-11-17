@@ -16,8 +16,15 @@ public:
     int renderFlags() const { return _renderFlags; }
     void  renderFlags(int flags) { _renderFlags = flags; }
 
+    std::string exportColorMapFile() const  { return _exportColorMapFile;  }
+    void exportColorMapFile(std::string exportFile) { _exportColorMapFile = exportFile; }
+
+protected:
+    void exportColorMap(DrawData *pdd);
+
 protected:
     int _renderFlags;
+    std::string _exportColorMapFile;
 };
 
 #endif

@@ -203,6 +203,22 @@ void UtlGL::getPickRay(int mouseX, int mouseY, vec3d *vstart, vec3d *vend, bool 
 
 //=======================================================================
 //=======================================================================
+bool UtlGL::objToScreen(GLdouble objx, GLdouble objy, GLdouble objz, vec3d *vwin)
+{
+    double matMdl[16], matPrj[16];
+    int vp[4];
+
+    // get matrix and viewport:
+    glGetDoublev(GL_MODELVIEW_MATRIX, matMdl);
+    glGetDoublev(GL_PROJECTION_MATRIX, matPrj);
+    glGetIntegerv(GL_VIEWPORT, vp);
+
+    if (gluProject(objx, objy, objz, matMdl, matPrj, vp, &vwin->x, &vwin->y, &vwin->z) == GL_FALSE) return false;
+    return true;
+}
+
+//=======================================================================
+//=======================================================================
 void UtlGL::overaly2dInit()
 {
     int vp[4];

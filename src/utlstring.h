@@ -7,13 +7,13 @@
 class UtlString
 {
 public:
-	static std::string GetPath(const char *filePath, bool includeLastSep=true);
-	static std::string GetFilename(const char *filePath);
-	static std::string RemoveExtension(const char *file, std::string *pExt=NULL);
-    static std::string GetExtension(const char *filePath);
-	static void AddDirSlash(std::string &path);
+	static std::string getPath(const char *filePath, bool includeLastSep=true);
+	static std::string getFilename(const char *filePath);
+	static std::string removeExtension(const char *file, std::string *pExt=NULL);
+    static std::string getExtension(const char *filePath);
+	static void addDirSlash(std::string &path);
 
-	static bool GetList(const char *src, std::vector<int> *pResult);
+	static bool getList(const char *src, std::vector<int> *pResult);
 
     static int explode(std::string str, const std::string &separator, std::vector<std::string>* results);
 
@@ -28,7 +28,7 @@ public:
     static std::string toLower(const std::string &s);
 
     static std::string triml(const std::string &s);
-    static std::string trimr(const std::string &s);
+    static std::string trimr(const std::string &s, char rc = ' ');
     static std::string trim(const std::string &s);
 
     static void replaceString(std::string& subject, const std::string& search, const std::string& replace);

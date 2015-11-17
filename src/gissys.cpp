@@ -11,6 +11,7 @@
 #include "geojson.h"
 #include "geolayer.h"
 #include "sleepsim.h"
+#include "utlstring.h"
 
 //============================================================================
 //============================================================================
@@ -47,6 +48,9 @@ PGlObj GisSys::loadTiff(const char *file, PColorPicker picker, Stats *stats, con
 
     PGlObj img(new GeoImgRaster(tx, *tiff.GetExtents(), picker, *stats, tiffdata));
     //((GeoImgRaster *)img.get())->init(tx, *tiff.GetExtents());
+    std::string name = UtlString::getFilename(file);
+    name = UtlString::removeExtension(name.c_str());
+    img->setName(name);
 
     return img;
 }
@@ -174,7 +178,7 @@ bool GisSys::loadAerial(GeoAerial *pa, const Extents &ext)
 {
     const char *func = "GisSys::loadAerial() - ";
 
-    BingImg imgbing(m_filePaths->m_pathCache.c_str());
+    BingImg imgbing(filePaths()->m_pathCache.c_str());
     imgbing.query(ext);
     while (!imgbing.done())
     {
@@ -402,6 +406,8 @@ void GisSys::displayData()
             exit(); // done
         }
     }
+
+    dataValidate()->validate(false);
 }
 
 //============================================================================

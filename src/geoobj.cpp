@@ -70,6 +70,22 @@ void GeoObj::initAttr(DrawData *pdd)
             attr->_overrideColorLabels = true;
         }
 
+        // do we need to fill up a color map for export
+        if (pdd->_drawAttr->_fillFeatureColorMap)
+        {
+            
+            std::string svalue = "", shex = "";
+            if (getFeatureValue(pdd->_drawAttr->_feature, &svalue))
+            {
+                char hex[32];
+                sprintf_s(hex, 32, "#%02x%02x%02x", attr->_colorPolyFill.GetRB(), attr->_colorPolyFill.GetGB(), attr->_colorPolyFill.GetBB());
+                shex = hex;
+
+                pdd->_drawAttr->_filledFeatureColorMap.insert(std::pair<std::string, std::string>(svalue, shex));
+            }
+        }
+        
+
         setDrawAttr(attr);
     }
    
@@ -86,6 +102,13 @@ bool GeoObj::haveFeature(DrawData *pdd, std::string *value)
 //============================================================================
 //============================================================================
 bool GeoObj::getFeatureValue(const std::string &feature, double *value)
+{
+    return false;
+}
+
+//============================================================================
+//============================================================================
+bool GeoObj::getFeatureValue(const std::string &feature, std::string *value)
 {
     return false;
 }

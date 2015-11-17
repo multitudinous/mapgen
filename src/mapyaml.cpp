@@ -24,7 +24,7 @@ MapYaml::MapYaml()
 //============================================================================
 void MapYaml::initSearchPath(const std::string &yamlfile)
 {
-    std::string path =  UtlString::GetPath(yamlfile.c_str());
+    std::string path =  UtlString::getPath(yamlfile.c_str());
     if (path.size())
     _searchPath.push_back(path);
 }
@@ -34,6 +34,8 @@ void MapYaml::initSearchPath(const std::string &yamlfile)
 bool MapYaml::load(const std::string &text, GisSys *pgis)
 {
     const char *func = "MapYaml::load() - ";
+
+    _yamlpath = "";
 
     YAML::Node doc;
     try
@@ -77,18 +79,19 @@ bool MapYaml::loadFile(const char *file, GisSys *pgis)
     {
         clear();
         // check if it is a file to avoid yaml ifstream exception that is causing issues
-        std::string yamlpath;
-        if (!fileExists(file, &yamlpath))
+        std::string yamlfullpath;
+        if (!fileExists(file, &yamlfullpath))
         {
             LogError("%s file doesn't exist: %s", func, file);
             return false;
         }
 
-        _yamlfile = yamlpath;
-        initSearchPath(yamlpath);
+        _yamlfile = yamlfullpath;
+        _yamlpath = UtlString::getPath(yamlfullpath.c_str());
+        initSearchPath(yamlfullpath);
 
 
-        doc = YAML::LoadFile(yamlpath);
+        doc = YAML::LoadFile(yamlfullpath);
     }
     catch (...)//catch (YAML::ParserException &e)
     {
@@ -629,7 +632,7 @@ PGlObj MapYaml::loadDataObj(const YAML::Node& node)
 #ifdef _DEBUG
         if (picker && picker->hasImg())
         {
-            std::string path = UtlString::GetPath(_yamlfile.c_str());
+            std::string path = UtlString::getPath(_yamlfile.c_str());
             std::string pathPic = path + "colorpicker.png";
             std::string pathVal = path + "colorpickerval.png";
             picker->saveImg(pathPic.c_str());
@@ -774,7 +777,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     
 
     // validate the format
-    std::string format = UtlString::GetExtension(fileout.c_str());
+    std::string format = UtlString::getExtension(fileout.c_str());
     format = UtlString::toLower(format);
     if (format != "png" && format != "svg")
     {
@@ -861,6 +864,23 @@ PGlObj MapYaml::loadLayer(const YAML::Node& node)
 
     plyr->_name = getString(node, "name");
     plyr->_draw = getBool(node, "draw", true);
+
+    // do we need to export the color map to a json file
+    std::string exportColorMapFile = getString(node, "exportcolormap");
+    if (exportColorMapFile.size())
+    {
+        std::string path = UtlString::getPath(exportColorMapFile.c_str(), false);
+        if (!path.size() || !UtlQt::validateDir(path.c_str(), false))
+        {
+            if (_yamlpath.size())
+            {
+                exportColorMapFile = UtlQt::pathCombine(_yamlpath.c_str(), exportColorMapFile.c_str()).toStdString();
+            }
+        }
+    }
+    plyr->exportColorMapFile(exportColorMapFile);
+
+    // get aa
     std::string aamode = getString(node, "aa");
     std::vector<std::string> rmodes;
     UtlString::explode(aamode, ",", &rmodes);
@@ -1326,18 +1346,17 @@ PDrawAttr MapYaml::getStyle(const std::string &name)
 //============================================================================
 std::string MapYaml::validateOutfile(const std::string &file)
 {
-    std::string path = UtlString::GetPath(file.c_str(), false);
+    std::string path = UtlString::getPath(file.c_str(), false);
     if (path.size())
     {
         // if we have a valid full path, use it
         if (UtlQt::validateDir(path.c_str(), false)) return file;
     }
 
-    path = UtlString::GetPath(_yamlfile.c_str(), true);
+    path = UtlString::getPath(_yamlfile.c_str(), true);
     path = path + file;
     return path;
 }
-
 //============================================================================
 //============================================================================
 bool MapYaml::getFile(const YAML::Node& node, std::string *file)

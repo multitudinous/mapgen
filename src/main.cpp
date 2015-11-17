@@ -12,6 +12,7 @@
 
 int run(QCoreApplication *a, PFilePaths filePaths, int argc, char *argv[]);
 void initYaml(const char *file, GisSys *sys);
+void initValidate(GisSys *sys);
 bool initBatchWordFind(int argc, char *argv[], GisSys *sys);
 
 void initTestSci(GisSys *sys);
@@ -107,6 +108,14 @@ int run(QCoreApplication *a, PFilePaths filePaths, int argc, char *argv[])
         LogTrace("No map data to render..."); // could be just a legend output
         return 0;
     }
+
+    if (argc > 2)
+    {
+        if (!strcmp(argv[2], "--validate"))
+        {
+            initValidate(&sys);
+        }
+    }
     
     sys.run();
 
@@ -122,6 +131,14 @@ void initYaml(const char *file, GisSys *sys)
     //yaml.load("D:/dev/gis/test/aerial/yaml.txt", sys);
 }
 
+//============================================================================
+//============================================================================
+void initValidate(GisSys *sys)
+{
+    std::string path = sys->filePaths()->m_pathBin + std::string("validate.log");
+    sys->dataValidate()->init(path.c_str());
+    sys->dataValidate()->validate(true);
+}
 //============================================================================
 //============================================================================
 bool initBatchWordFind(int argc, char *argv[], GisSys *sys)

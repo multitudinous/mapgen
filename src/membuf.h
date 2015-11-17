@@ -20,6 +20,8 @@ public:
 	void* getBuf() { return m_pbuf; }
 	const void* getBufRead() const { return m_pbuf; }
 
+    void copy(const MemBuf &buf, bool flipY, bool flipA);
+
 protected:
 	void* m_pbuf;
 	int m_size;

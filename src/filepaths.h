@@ -16,6 +16,7 @@ public:
     std::string m_pathCache;
     std::string m_pathImgOut;
 
+    std::string m_pathValidate;
     std::string m_pathData;
 	std::string m_pathVidProf;
 	std::string m_pathVidOut;

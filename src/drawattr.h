@@ -131,6 +131,10 @@ public:
 
     bool _overrideFont;
     bool _overrideFeature;
+
+    bool _fillFeatureColorMap;
+    typedef std::multimap<std::string, std::string> FeatureColorMap; // feature, color
+    FeatureColorMap _filledFeatureColorMap;
 };
 
 typedef std::shared_ptr< DrawAttr > PDrawAttr;

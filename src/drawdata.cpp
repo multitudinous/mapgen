@@ -10,9 +10,11 @@ DrawData::DrawData() :
     _winH(0),
     _cfg(new Config()),
     m_hGluTess(NULL),
+    _filePaths(new FilePaths()),
     _movesys(new MoveSys(20.0f)),
     _ds(new DataSel()),
     _dm(new DataMouse()),
+    _dv(new DataValidate()),
     m_shadersOn(true),
     m_wireframe(false),
     m_lightingOn(false),
@@ -20,6 +22,20 @@ DrawData::DrawData() :
 {
 
     //m_frustum.reset(new Frustum());
+}
+
+//============================================================================
+//============================================================================
+void DrawData::filePaths(PFilePaths fp)
+{
+    _filePaths = fp;
+}
+
+//============================================================================
+//============================================================================
+FilePaths* DrawData::filePaths()
+{
+    return _filePaths.get();
 }
 
 //============================================================================
@@ -34,6 +50,13 @@ DataSel* DrawData::dataSel()
 DataMouse* DrawData::dataMouse() 
 { 
     return _dm.get(); 
+}
+
+//============================================================================
+//============================================================================
+DataValidate* DrawData::dataValidate()
+{
+    return _dv.get();
 }
 
 //============================================================================

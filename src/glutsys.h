@@ -43,7 +43,9 @@ public:
     DrawData* dataDraw();
     DataMouse* dataMouse();
     DataSel* dataSel();
+    DataValidate* dataValidate();
     MoveSys* moveSys();
+    FilePaths* filePaths();
 
 protected:
 
@@ -93,8 +95,6 @@ protected:
 	bool m_setCamera;
 
 	PDrawData m_dd;
-
-	PFilePaths m_filePaths;
 
 #ifdef QT
     QCoreApplication *m_app;

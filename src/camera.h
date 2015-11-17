@@ -18,8 +18,10 @@ public:
     Camera(ECameraMode mode = Perspective);
     Camera(const Camera &c);
 
+    void initOrtho(int winx, int winy, int left = 0, int bottom = 0, bool setViewport=true, bool updateMats=true);
+
     void refresh();
-    void onResize(int winx, int winy, int left=0, int bottom=0);
+    void onResize(int winx, int winy, int left = 0, int bottom = 0, bool setViewport=true, bool updateMats=true);
     void setView(bool clearPrev=true);
 
     double pixelSizeToWorld(double pixelCount);
@@ -39,9 +41,10 @@ public:
 
 
 protected:
-    void setProjection();
+    void setProjection(bool updateMats=true);
     void setPerspective(double winW, double winH);
-    void setOrthoZoom(const Extents &ext);
+    void setOrthoZoom(const Extents &ext, bool updateMats=true);
+    void setOrthoMats();
 
 public:
      ECameraMode _mode;

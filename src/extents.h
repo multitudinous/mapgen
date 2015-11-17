@@ -137,4 +137,136 @@ struct Extents
     }
 };
 
+
+template <typename T>
+struct ExtentsT
+{
+    T l, r, t, b;
+
+    ExtentsT()
+    {
+        l = 0;
+        r = 0;
+        t = 0;
+        b = 0;
+    }
+
+    ExtentsT(const Extents &ext)
+    {
+        l = ext.l;
+        r = ext.r;
+        t = ext.t;
+        b = ext.b;
+    }
+
+    ExtentsT(T left, T top, T right, T bottom)
+    {
+        l = left;
+        r = right;
+        t = top;
+        b = bottom;
+    }
+
+    T cx() const { return l + (r - l) / 2.0; }
+    T cy() const { return b + (t - b) / 2.0; }
+    Point2d center() const { return Point2d(cx(), cy()); }
+    T width() const { return r - l; }
+    T height() const { return t - b; }
+    T area() const { return width() * height(); }
+    bool isZero() const { if (fabs(width()) < .001 && fabs(height()) < .001) return true; return false; }
+
+
+    void move(const Point2d &mv)
+    {
+        Point2d c = center();
+        c += mv;
+        setFromCenter(c.dX, c.dY, width(), height());
+    }
+
+    void setFromCenter(T centerx, T centery, T width, T height)
+    {
+        l = centerx - width / 2.0;
+        r = centerx + width / 2.0;
+        b = centery - height / 2.0;
+        t = centery + height / 2.0;
+    }
+
+    void zoom(double per)
+    {
+        double neww = width() * per;
+        double newh = height() * per;
+        double centerx = cx();
+        double centery = cy();
+        setFromCenter(centerx, centery, neww, newh);
+    }
+
+    void makeSquare()
+    {
+        double w = width();
+        double h = height();
+
+        double grow = w - h;
+
+        if (grow < 0)
+            r += grow; // grow horizontal to match height size
+        else
+            t += grow; // grow vertical to match width size
+    }
+
+    void expand(T d)
+    {
+        expandWidth(d);
+        expandHeight(d);
+    }
+
+    void expandWidth(T d)
+    {
+        l -= d;
+        r += d;
+    }
+
+    void expandHeight(T d)
+    {
+        t += d;
+        b -= d;
+    }
+
+    /*
+    std::string asStr() const
+    {
+        // TODO: use <<
+        char str[128];
+        sprintf(str, "l: %.6f, r: %.6f, t: %.6f, b: %.6f", l, r, t, b);
+        return std::string(str);
+    }
+    */
+
+
+    Extents operator* (T d) const
+    {
+        Extents ext;
+        ext.l = l*d;
+        ext.r = r*d;
+        ext.t = t*d;
+        ext.b = b*d;
+
+        return ext;
+    }
+
+    Extents& operator= (const ExtentsT &ext)
+    {
+        if (this == &ext)
+            return *this;
+
+        l = ext.l;
+        r = ext.r;
+        t = ext.t;
+        b = ext.b;
+
+        return *this;
+    }
+};
+
+
+typedef ExtentsT<int> Extentsi;
 #endif

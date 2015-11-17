@@ -16,6 +16,7 @@ public:
 
     virtual bool haveFeature(DrawData *pdd, std::string *value);
     virtual bool getFeatureValue(const std::string &feature, double *value);
+    virtual bool getFeatureValue(const std::string &feature, std::string *value);
 
     virtual GlObj* clone() const;
 

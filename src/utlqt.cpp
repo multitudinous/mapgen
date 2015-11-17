@@ -1,6 +1,7 @@
 #include "utlqt.h"
 #include <QDir>
 #include <QDateTime>
+#include "membuf.h"
 
 //============================================================================
 //============================================================================
@@ -234,4 +235,27 @@ QColor UtlQt::gradientPick(const QImage &picker, float percent)
     }
 
     return QColor(picker.pixel(x, y));
+}
+
+//============================================================================
+//============================================================================
+bool UtlQt::saveImg(MemBuf *imgbuf, const char *file)
+{
+    std::shared_ptr<QImage> qimg;
+
+    if (imgbuf->getSize() == 4)
+    {
+        qimg.reset(new QImage((uchar *)imgbuf->getBuf(), imgbuf->getLenX(), imgbuf->getLenY(), imgbuf->getLenX() * imgbuf->getSize(), QImage::Format_ARGB32));
+    }
+    else if (imgbuf->getSize() == 3)
+    {
+        qimg.reset(new QImage((uchar *)imgbuf->getBuf(), imgbuf->getLenX(), imgbuf->getLenY(), imgbuf->getLenX() * imgbuf->getSize(), QImage::Format_RGB32));
+    }
+    else
+    {
+        return false;
+    }
+
+
+    return qimg->save(file);
 }

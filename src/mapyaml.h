@@ -99,6 +99,7 @@ protected:
 
 protected:
     std::string _yamlfile;
+    std::string _yamlpath;
 
     PConfig _cfg;
     std::map<std::string, PDrawAttr> _styleMap;

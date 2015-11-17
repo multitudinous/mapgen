@@ -7,6 +7,8 @@
 #include "movesys.h"
 #include "datasel.h"
 #include "datamouse.h"
+#include "datavalidate.h"
+#include "filepaths.h"
 
 class DrawData
 {
@@ -15,8 +17,12 @@ public:
 
     bool init();
 
+    void filePaths(PFilePaths fp);
+    FilePaths* filePaths();
+
     DataSel* dataSel();
     DataMouse* dataMouse();
+    DataValidate* dataValidate();
 
 protected:
     bool initOverlay();
@@ -31,9 +37,11 @@ public:
     PDrawAttr _drawAttrOverlay;
     PShaderProg _progSmoothLine;
 
+    PFilePaths _filePaths;
     PMoveSys _movesys;
     PDataSel _ds;
     PDataMouse _dm;
+    PDataValidate _dv;
 
 	bool m_shadersOn;
 	bool m_wireframe;

@@ -7,7 +7,7 @@
 
 //============================================================================
 //============================================================================
-std::string UtlString::GetPath(const char *filePath, bool includeLastSep)
+std::string UtlString::getPath(const char *filePath, bool includeLastSep)
 {
 	std::string path;
 	bool foundSep = false;
@@ -37,7 +37,7 @@ std::string UtlString::GetPath(const char *filePath, bool includeLastSep)
 
 //============================================================================
 //============================================================================
-std::string UtlString::GetFilename(const char *filePath)
+std::string UtlString::getFilename(const char *filePath)
 {
 	std::string path;
 	bool foundSep = false;
@@ -72,7 +72,7 @@ std::string UtlString::GetFilename(const char *filePath)
 
 //============================================================================
 //============================================================================
-std::string UtlString::RemoveExtension(const char *file, std::string *pExt)
+std::string UtlString::removeExtension(const char *file, std::string *pExt)
 {
 	std::string fileName;
 	bool foundSep = false;
@@ -112,7 +112,7 @@ std::string UtlString::RemoveExtension(const char *file, std::string *pExt)
 
 //============================================================================
 //============================================================================
-std::string UtlString::GetExtension(const char *filePath)
+std::string UtlString::getExtension(const char *filePath)
 {
     std::string ext = filePath;
     size_t index = ext.rfind(".");
@@ -123,7 +123,7 @@ std::string UtlString::GetExtension(const char *filePath)
 
 //============================================================================
 //============================================================================
-bool UtlString::GetList(const char *src, std::vector<int> *pResult)
+bool UtlString::getList(const char *src, std::vector<int> *pResult)
 {
 	if (!src || !pResult) return false;
 
@@ -170,7 +170,7 @@ bool UtlString::GetList(const char *src, std::vector<int> *pResult)
 
 //============================================================================
 //============================================================================
-void UtlString::AddDirSlash(std::string &path)
+void UtlString::addDirSlash(std::string &path)
 {
   if (path.size() <= 0) return;
 
@@ -188,6 +188,11 @@ void UtlString::format(std::string& a_string, const char* fmt, ...)
     a_string.resize( size );
     vsnprintf((char*)a_string.data(), size, fmt, vl);
     va_end(vl);
+
+    if (a_string.size() > 0 && a_string[a_string.size() - 1] == '\0')
+    {
+        a_string.resize(a_string.size() - 1); // stl strings shouldn't have null terminators, but vsprintf adds 1
+    }
 }
 
 //============================================================================
@@ -201,6 +206,11 @@ std::string UtlString::format(const char* fmt, ...)
     a_string.resize( size );
     vsnprintf((char*)a_string.data(), size, fmt, vl);
     va_end(vl);
+
+    if (a_string.size() > 0 && a_string[a_string.size() - 1] == '\0')
+    {
+        a_string.resize(a_string.size() - 1); // stl strings shouldn't have null terminators, but vsprintf adds 1
+    }
 
     return a_string;
 }
@@ -323,7 +333,7 @@ std::string UtlString::triml(const std::string &s)
 
 //============================================================================
 //============================================================================
-std::string UtlString::trimr(const std::string &s)
+std::string UtlString::trimr(const std::string &s, char rc)
 {
     std::string t;
     bool cfound = false;
@@ -341,7 +351,7 @@ std::string UtlString::trimr(const std::string &s)
         }
 
 
-        if (c == ' ') continue;
+        if (c == rc) continue;
 
         cfound = true;
         t.insert(0, 1, c);

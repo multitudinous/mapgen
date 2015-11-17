@@ -11,6 +11,8 @@
 #include <QImage>
 #include <QFont>
 
+class MemBuf;
+
 typedef std::shared_ptr< QPainter > PQPainter;
 typedef std::shared_ptr< QPaintDevice > PQPaintDevice;
 typedef std::shared_ptr< QImage > PQImage;
@@ -49,6 +51,8 @@ public:
     static PQLinearGradient gradientRamp(const QRect &rcBar, const QColor &minc, const QColor &midc, const QColor &maxc);
     static PQImage gradientPicker(const QColor &minc, const QColor &midc, const QColor &maxc);
     static QColor gradientPick(const QImage &picker, float percent);
+
+    static bool saveImg(MemBuf *imgbuf, const char *file);
 
 protected:
     typedef std::back_insert_iterator< std::vector<QString> > IteratorBackInsertQStringVector;

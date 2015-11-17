@@ -13,7 +13,7 @@ class GeoAerial;
 class GeoLayer;
 class Stats;
 
-class GisSys : protected GlutSys
+class GisSys : public GlutSys
 {
 public:
 	GisSys();

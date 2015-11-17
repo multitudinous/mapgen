@@ -41,6 +41,8 @@ DrawAttr::DrawAttr()
     _overrideLineAA = false;
     _overrideFeature = false;
     _overrideFont = false;
+
+    _fillFeatureColorMap = false;
 }
 
 //============================================================================

@@ -36,6 +36,15 @@ _zmax(c._zmax)
 
 //============================================================================
 //============================================================================
+void Camera::initOrtho(int winW, int winH, int left, int bottom, bool setViewport, bool updateMats)
+{
+    Extents ext(left, bottom + winH, left + winW, bottom);
+    _extOrig = ext;
+    onResize(winW, winH, left, bottom, setViewport, updateMats);
+}
+
+//============================================================================
+//============================================================================
 double Camera::pixelSizeToWorld(double pixelCount)
 {
     double worldAmount = pixelCount * _extMod.width() / _winRect.width();
@@ -140,25 +149,30 @@ void Camera::refresh()
 
 //============================================================================
 //============================================================================
-void Camera::onResize(int winx, int winy, int left, int bottom)
+void Camera::onResize(int winx, int winy, int left, int bottom, bool setViewport, bool updateMats)
 {
-    glViewport(left, bottom, winx, winy);
+    if (setViewport)
+    {
+        glViewport(left, bottom, winx, winy);
+    }
 
     _winRect.l = left;
     _winRect.b = bottom;
     _winRect.r = left + winx;
     _winRect.t = bottom + winy;
 
-    setProjection();
+    setProjection(updateMats);
 }
 
 //============================================================================
 //============================================================================
-void Camera::setProjection()
+void Camera::setProjection(bool updateMats)
 {
     if (_mode == Ortho)
-        setOrthoZoom(_extOrig);
-    else
+    {
+        setOrthoZoom(_extOrig, updateMats);
+    }
+    else if (updateMats)
     {
         setPerspective(_winRect.width(), _winRect.height());
     }
@@ -181,7 +195,7 @@ void Camera::setPerspective(double winW, double winH)
 
 //============================================================================
 //============================================================================
-void Camera::setOrthoZoom(const Extents &ext)
+void Camera::setOrthoZoom(const Extents &ext, bool updateMats)
 {
 	// OK, now save the dimensions of the window
     double width = _winRect.width();
@@ -239,11 +253,22 @@ void Camera::setOrthoZoom(const Extents &ext)
     //LogTrace("ortho center %.2f, %.2f", _ext.cx(), _ext.cy());
     //LogTrace("zoom  center %.2f, %.2f", extZ.cx(), extZ.cy());
 
-    glMatrixMode( GL_PROJECTION );
-    glLoadIdentity();
-    //glOrtho( _ext.l, _ext.r, _ext.b, _ext.t, _zmin, _zmax);
-    glOrtho( _extMod.l, _extMod.r, _extMod.b, _extMod.t, _zmin, _zmax);
-
-	glMatrixMode( GL_MODELVIEW ); 
-	glLoadIdentity(); 
+    if (updateMats)
+    {
+        setOrthoMats();
+    }
 }
+
+//============================================================================
+//============================================================================
+void Camera::setOrthoMats()
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+        //glOrtho( _ext.l, _ext.r, _ext.b, _ext.t, _zmin, _zmax);
+    glOrtho(_extMod.l, _extMod.r, _extMod.b, _extMod.t, _zmin, _zmax);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+

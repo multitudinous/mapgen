@@ -59,3 +59,55 @@ void MemBuf::destroy()
 	m_lenX = 0;
 	m_lenY = 0;
 }
+
+//============================================================================
+//============================================================================
+void MemBuf::copy(const MemBuf &buf, bool flipY, bool flipA)
+{
+    setSize(buf.getSize(), buf.getLenX(), buf.getLenY());
+
+    const unsigned char *src;
+    unsigned char *dst;
+    int linelen = getLenX() * getSize();
+    int bytesperpix = getSize();
+
+    for (int y = 0; y < getLenY(); y++)
+    {
+        dst = (unsigned char *)getBuf() + y * linelen;
+
+        int srcpos = y * linelen;
+        if (flipY)
+        {
+            srcpos = (buf.getLenY() - y - 1) * linelen;
+        }
+        
+        src = (const unsigned char *)buf.getBufRead() + srcpos;
+
+        for (int x = 0; x < getLenX(); x++)
+        {
+            if (flipA && bytesperpix==4)
+            {
+                dst[0] = src[2];
+                dst[1] = src[1];
+                dst[2] = src[0];
+                dst[3] = src[3];
+                /*
+                dst[0] = src[3];
+                dst[3] = src[0];
+                dst[1] = src[1];
+                dst[2] = src[2];
+                */
+            }
+            else
+            {
+                memcpy(dst, src, bytesperpix);
+            }
+
+            src += bytesperpix;
+            dst += bytesperpix;
+        }
+    }
+
+
+
+}

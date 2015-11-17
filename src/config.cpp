@@ -33,7 +33,7 @@ void Config::imgFile(const std::string &file)
 { 
     _imgfile = file; 
 
-    _imgfolder = UtlString::GetPath(_imgfile.c_str(), true);
+    _imgfolder = UtlString::getPath(_imgfile.c_str(), true);
 }
 
 

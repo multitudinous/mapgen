@@ -12,6 +12,7 @@ public:
 	static string ConvertGLFormatToString(GLenum format);
 
     static void getPickRay(int mousex, int mousey, vec3d *vstart, vec3d *vend, bool iswindows=true, int *mouseyAdjusted=NULL);
+    static bool objToScreen(GLdouble objx, GLdouble objy, GLdouble objz, vec3d *vwin);
 
     static void overaly2dInit();
     static void overaly2dRestore();

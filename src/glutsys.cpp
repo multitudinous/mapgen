@@ -63,9 +63,23 @@ DataSel* GlutSys::dataSel()
 
 //============================================================================
 //============================================================================
+DataValidate* GlutSys::dataValidate()
+{
+    return m_dd->_dv.get();
+}
+
+//============================================================================
+//============================================================================
 MoveSys* GlutSys::moveSys()
 {
     return m_dd->_movesys.get();
+}
+
+//============================================================================
+//============================================================================
+FilePaths* GlutSys::filePaths()
+{
+    return m_dd->filePaths();
 }
 
 //============================================================================
@@ -106,12 +120,13 @@ bool GlutSys::init(QCoreApplication *app, int argc, const char** argv, int winWi
 
     m_dd->_winW = winWidth;
     m_dd->_winH = winHeight;
-	m_filePaths = pFilePaths;
-    if (m_filePaths.get() == NULL)
+
+    if (pFilePaths.get() == NULL)
     {
-        m_filePaths.reset(new FilePaths());
-        m_filePaths->Init(argv[0]);
+        pFilePaths.reset(new FilePaths());
+        pFilePaths->Init(argv[0]);
     }
+    m_dd->filePaths(pFilePaths);
 
     // initialize GLUT 
     glutInit(&argc, (char**)argv);
