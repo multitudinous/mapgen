@@ -4,7 +4,7 @@
 #include "geotext.h"
 #include "utlstring.h"
 #include "utlqt.h"
-#include "Fbo.h"
+#include "fbo.h"
 #include <QImage>
 
 //============================================================================
