@@ -19,6 +19,13 @@
 #endif
 
 
+//============================================================================
+//============================================================================
+#if WIN32
+	#define snprintf _snprintf // maybe able to remove this when moving to visual studio 2015
+#endif
+
+
 class Platform
 {
 public:
