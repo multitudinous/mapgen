@@ -78,7 +78,7 @@ void GeoObj::initAttr(DrawData *pdd)
             if (getFeatureValue(pdd->_drawAttr->_feature, &svalue))
             {
                 char hex[32];
-                sprintf_s(hex, 32, "#%02x%02x%02x", attr->_colorPolyFill.GetRB(), attr->_colorPolyFill.GetGB(), attr->_colorPolyFill.GetBB());
+                snprintf(hex, 32, "#%hhx%hhx%hhx", attr->_colorPolyFill.GetRB(), attr->_colorPolyFill.GetGB(), attr->_colorPolyFill.GetBB());
                 shex = hex;
                 pdd->_drawAttr->addFeatureColor(svalue, shex);
             }

@@ -4,7 +4,7 @@
 #include "config.h"
 #include "drawattr.h"
 #include "shaderprog.h"
-#include "movesys.h"
+#include "MoveSys.h"
 #include "datasel.h"
 #include "datamouse.h"
 #include "datavalidate.h"

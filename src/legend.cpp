@@ -75,7 +75,7 @@ Legend::~Legend()
 //============================================================================
 bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, std::string units)
 {
-    const char *func = "Legend::init() -"; 
+    const char *func = "Legend::init() -";
 
     _validType = false;
     _file = file;
@@ -143,7 +143,7 @@ void Legend::initColorRamp(PColorRamp colorRamp)
     _colorMin = colorRamp->_picker->getMin();
     _colorMid = colorRamp->_picker->getMid();
     _colorMax = colorRamp->_picker->getMax();
-    
+
 }
 
 //============================================================================
@@ -304,7 +304,7 @@ bool Legend::initCdl(PColorRamp colorRamp, const std::string &dataObjName)
     box.update(0, 0);
     drawBegin();
     drawBuckets(true, &box);
-    
+
     _width = box.width() + _mDraw*2 + 4; // add margins, its coming up a bit short for some reason, so adding  on a bit extra
     _height = box.height() + _mDraw * 2 + 4; // add margins, its coming up a bit short for some reason, so adding on a bit extra
     _legFrmt = legFrmtPrev;
@@ -370,7 +370,7 @@ void Legend::initBreakevenCom(double min, double mid, double max)
 {
     LogTrace("creating breakeven commodity legend ...");
 
-    _title = "Price ($/bu)";
+    _title = "Yield (bu/ac)";
     _min = min;
     _mid = mid;
     _max = max;
@@ -537,7 +537,7 @@ void Legend::drawBegin()
     else
     {
         std::string desc = std::string("Map Legend ") + _title;
-       
+
         QSvgGenerator *svg = new QSvgGenerator();
         svg->setFileName(_file.c_str());
         svg->setSize(QSize(getW(), getH()));
@@ -571,7 +571,7 @@ bool Legend::drawEnd()
     }
 
     if (!imgOut->save(QString(_file.c_str()), "png"))
-    {   
+    {
         LogError("%s UnExpected Error: failed to save legend to file %s", func, _file.c_str());
         return false;
     }
@@ -691,7 +691,7 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
 
     // compute title text height
     QRect rcDraw = UtlQt::rectWithMargins(left, top, width, height, _mDraw, _mDraw, _mDraw, _mDraw);
-    QRect rcTitle = getRcTitle(rcDraw); 
+    QRect rcTitle = getRcTitle(rcDraw);
     int barl = rcDraw.left() + sint(_mDataL);
     int bart = rcTitle.bottom() + sint(_mDataT);
     int barw = sint(30);
@@ -974,7 +974,7 @@ void Legend::drawBuckets()
     QRect rcTitle = getRcTitle(rcDraw);
 
     // draw title
-    _painter->setFont(*_fontTitle); 
+    _painter->setFont(*_fontTitle);
     _painter->drawText(rcTitle, Qt::AlignLeft | Qt::AlignTop, QString(_title.c_str()));
 
     // set up buckets
