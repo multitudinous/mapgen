@@ -1,4 +1,6 @@
 #include "utlqt.h"
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QDir>
 #include <QDateTime>
 #include "membuf.h"
@@ -258,4 +260,74 @@ bool UtlQt::saveImg(MemBuf *imgbuf, const char *file)
 
 
     return qimg->save(file);
+}
+
+//============================================================================
+//============================================================================
+qreal UtlQt::getRenderDpiX(qreal *physicalDpi)
+{
+	int rx = 0, px = 0;
+	rx = getRenderDpiX(&px);
+
+	if (physicalDpi) *physicalDpi = (qreal)px;
+	return (qreal)rx;
+}
+
+//============================================================================
+// usually 72 for mac and 96 for windows, but with new 4k displays this is no longer the case
+//============================================================================
+int UtlQt::getRenderDpiX(int *physicalDpi)
+{
+	QDesktopWidget *dw = QApplication::desktop();
+	if (!dw) return 72;
+
+	int nums = dw->screenCount();
+	QWidget *s = dw->screen();
+	if (!s) return 72;
+
+	if (physicalDpi)
+	{
+		*physicalDpi = s->physicalDpiX();
+	}
+
+	return s->logicalDpiX();
+
+
+		/*
+	> Use any Window QWidget :
+		>
+		>     screen_xperinch = mainw->logicalDpiX();
+		>     screen_yperinch = mainw->logicalDpiY();
+		>
+		>
+
+		You can use
+		QApplication::instance()->desktopWidget()->numScreens()
+		and
+		QApplication::instance()->desktopWidget()->screen(int screen)
+
+		To get QWidgets that "represent" each screen.You can get thier dpi's
+		individually.
+		*/
+
+}
+
+//============================================================================
+//============================================================================
+int UtlQt::computeFontPixelSize(int fontPts)
+{
+	qreal screenDpi = 0;
+	qreal renderDpi = getRenderDpiX(&screenDpi);
+	int pixelSize = (int)((qreal)fontPts * screenDpi / renderDpi);
+
+	return pixelSize;
+}
+
+//============================================================================
+//============================================================================
+int UtlQt::computeFontPixelSize(QFont *font, int fontPts)
+{
+	int pixelSize = computeFontPixelSize(fontPts);
+	font->setPixelSize(pixelSize);
+	return pixelSize;
 }

@@ -1,5 +1,5 @@
 //#include <QtCore/QCoreApplication>
-#include <QGuiApplication>
+#include <QApplication>
 #include "sysdefs.h"
 #include "gdalFile.h"
 #include "ogrsf_frmts.h"
@@ -24,10 +24,7 @@ void initAerialDemMask(GisSys *sys);
 int main(int argc, char *argv[])
 {
     //QCoreApplication a(argc, argv);
-    QGuiApplication a(argc, argv);
-
-   //return a.exec();
-
+    QApplication a(argc, argv);
 
     GDALAllRegister();
     OGRRegisterAll();

@@ -54,6 +54,11 @@ public:
 
     static bool saveImg(MemBuf *imgbuf, const char *file);
 
+	static qreal UtlQt::getRenderDpiX(qreal *physicalDpi=NULL);
+	static int getRenderDpiX(int *physicalDpi = NULL);
+	static int computeFontPixelSize(int fontPts = 10);
+	static int computeFontPixelSize(QFont *font, int fontPts = 10);
+
 protected:
     typedef std::back_insert_iterator< std::vector<QString> > IteratorBackInsertQStringVector;
     typedef std::back_insert_iterator< std::list<QString> > IteratorBackInsertQStringList;

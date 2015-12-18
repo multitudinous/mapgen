@@ -40,11 +40,27 @@ _mBucketY(10),
 _scale(1.0),
 _validType(false)
 {
+
     _fontTitle.reset(new QFont("arial", int(14 * _scale)));
     _fontTitle->setWeight(QFont::Bold);
 
+	int szp = UtlQt::computeFontPixelSize(_fontTitle.get(), int(14 * _scale));
+	LogTrace("Legend - Pixel size for title font from point size 14 is %d", szp);
+	
+
     _fontValue.reset(new QFont("arial", int(12 * _scale)));
     _fontValue->setWeight(QFont::Bold);
+
+	szp = UtlQt::computeFontPixelSize(_fontValue.get(), int(12 * _scale));
+	LogTrace("Legend - Pixel size for value font from point size 12 is %d", szp);
+
+
+	/*
+	your render DPI variable should be 96 for Windows and 72 for OSX
+	according to: http://www.rfwilmut.clara.net/about/fonts.html
+	On a Macintosh monitor, the notional resolution is 72 dots-per -inch (dpi), so that a graphic 72 pixels wide would notionally be 1 inch wide - though obviously the actual size would depend on the individual monitor. However it will always print one inch wide.
+	But on a Windows monitor the resolution is (usually) 96 dpi. This means that though the picture is still 72 pixels wide, it will print at 0.75 inches.
+	*/
 }
 
 
