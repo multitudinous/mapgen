@@ -91,6 +91,7 @@ protected:
     double _min;        
     double _max;
     double _mid; // only used for dem type
+
     double _incAmt;
     double _decimals;
     bool _minTop;

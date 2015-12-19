@@ -698,11 +698,41 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
     int barh = rcDraw.height() - (sint(_mDataT) + sint(_mDataB)) - rcTitle.height();
     QRect rcBar = QRect(barl, bart, barw, barh);
 
+	double min1, min2, mid1, mid2; // user wants 4 more values, 2 below the mid, and 2 above
+
+	double dism = mid - min;
+	dism = dism / 3.0;
+	double disd = max - mid;
+	disd = disd / 3.0;
+
+	min1 = min + dism;
+	min2 = min1 + dism;
+	mid1 = mid + disd;
+	mid2 = mid1 + disd;
+
+	std::vector<double> valsd = { min, min1, min2, mid, mid1, mid2, max };
+	std::vector<QString> valss;
+	for (size_t i = 0; i < valsd.size(); i++)
+	{
+		QString vals = rndValToStr(valsd[i]);
+		valss.push_back(vals);
+	}
+
+
 
     // format our values for display to only 2 decimals
+	/*
     QString sbtm = rndValToStr(min);
+	QString sbtm1 = rndValToStr(min1);
+	QString sbtm2 = rndValToStr(min2);
     QString smid = rndValToStr(mid);
+	QString smid1 = rndValToStr(mid1);
+	QString smid2 = rndValToStr(mid2);
     QString stop = rndValToStr(max);
+	*/
+
+	
+
 
 
     // compute value text position
@@ -711,9 +741,11 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
     int txW = rcDraw.right() - txX;
     LogTrace("text width: %d", txW);
 
+	/*
     QRect rcTxMin = UtlQt::textRectVertTop(txX, rcBar.top(), txW, txH); // bottom left pt
     QRect rcTxMid = UtlQt::textRectVertCtr(txX, rcBar.center().y(), txW, txH);
     QRect rcTxMax = UtlQt::textRectVertBtm(txX, rcBar.bottom(), txW, txH);
+	*/
 
     LogTrace("bar cy: %d", rcBar.center().y());
     //LogTrace("text mid: %d", rcTxMid);
@@ -736,9 +768,52 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
 
     // draw value text
     _painter->setFont(*_fontValue);
+
+	
+
+	// lets find the maximum width and align to the right based on that
+	QFontMetrics fm = _painter->fontMetrics();
+	int maxw = 0;
+	for (size_t i = 0; i < valss.size(); i++)
+	{
+		QString text = valss[i];
+		int width = fm.width(text);
+		if (width > maxw) maxw = width;
+	}
+	
+	// draw the text values
+	int mv = rcBar.height() / ((int)valss.size() - 1);
+	int cury = rcBar.bottom();
+	int btmtopofs = 4; // shift the bottom and top items a bit to align better with the top and bottom of the bar, we could just center them, but it looks better if the text doesn't go above or below the bar
+	for (size_t i = 0; i < valss.size(); i++)
+	{
+		QString text = valss[i];
+		QRect rcTx = UtlQt::textRectVertCtr(txX, cury, maxw, txH);
+
+		int valign = Qt::AlignVCenter;
+		if (i == 0)
+		{
+			rcTx.setBottom(rcBar.bottom() + 4);
+			rcTx.setTop(rcTx.bottom() - txH);
+			valign = Qt::AlignBottom;
+		}
+		else if (i == valss.size() - 1)
+		{
+			rcTx.setTop(rcBar.top() - 4);
+			rcTx.setBottom(rcTx.top() + txH);
+			valign = Qt::AlignTop;
+		}
+
+		_painter->drawText(rcTx, Qt::AlignRight | valign, text);
+		
+
+		cury -= mv;
+	}
+	/*
     _painter->drawText(rcTxMin, Qt::AlignLeft | Qt::AlignTop, stop);
     _painter->drawText(rcTxMid, Qt::AlignLeft | Qt::AlignVCenter, smid);
     _painter->drawText(rcTxMax, Qt::AlignLeft | Qt::AlignBottom, sbtm);
+	*/
 }
 
 //============================================================================
