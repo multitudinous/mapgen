@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QDateTime>
 #include "membuf.h"
+#include "utlmath.h"
 
 //============================================================================
 //============================================================================
@@ -264,63 +265,51 @@ bool UtlQt::saveImg(MemBuf *imgbuf, const char *file)
 
 //============================================================================
 //============================================================================
-qreal UtlQt::getRenderDpiX(qreal *physicalDpi)
+void UtlQt::getRenderDpi(qreal *renderX, qreal *physicalDpiX, qreal *renderY, qreal *physicalDpiY)
 {
-	int rx = 0, px = 0;
-	rx = getRenderDpiX(&px);
+	int rx = 72, ry = 72, px = 96, py = 96;
+	getRenderDpi(&rx, &px, &ry, &py);
 
-	if (physicalDpi) *physicalDpi = (qreal)px;
-	return (qreal)rx;
+	if (renderX) *renderX = (qreal)rx;
+	if (renderY) *renderY = (qreal)ry;
+	if (physicalDpiX) *physicalDpiX = (qreal)px;
+	if (physicalDpiY) *physicalDpiY = (qreal)py;
 }
 
 //============================================================================
-// usually 72 for mac and 96 for windows, but with new 4k displays this is no longer the case
 //============================================================================
-int UtlQt::getRenderDpiX(int *physicalDpi)
+void UtlQt::getRenderDpi(int *renderX, int *physicalDpiX, int *renderY, int *physicalDpiY)
 {
+	int rx = 72, ry = 72, px = 96, py = 96;
+	QWidget *s = NULL;
 	QDesktopWidget *dw = QApplication::desktop();
-	if (!dw) return 72;
-
-	int nums = dw->screenCount();
-	QWidget *s = dw->screen();
-	if (!s) return 72;
-
-	if (physicalDpi)
+	if (dw && (s = dw->screen()))
 	{
-		*physicalDpi = s->physicalDpiX();
+		rx = s->logicalDpiX();
+		ry = s->logicalDpiY();
+		px = s->physicalDpiY();
+		py = s->physicalDpiY();
 	}
 
-	return s->logicalDpiX();
-
-
-		/*
-	> Use any Window QWidget :
-		>
-		>     screen_xperinch = mainw->logicalDpiX();
-		>     screen_yperinch = mainw->logicalDpiY();
-		>
-		>
-
-		You can use
-		QApplication::instance()->desktopWidget()->numScreens()
-		and
-		QApplication::instance()->desktopWidget()->screen(int screen)
-
-		To get QWidgets that "represent" each screen.You can get thier dpi's
-		individually.
-		*/
-
+	if (renderX) *renderX = rx;
+	if (renderY) *renderY = ry;
+	if (physicalDpiX) *physicalDpiX = px;
+	if (physicalDpiY) *physicalDpiY = py;
 }
 
 //============================================================================
 //============================================================================
 int UtlQt::computeFontPixelSize(int fontPts)
 {
-	qreal screenDpi = 0;
-	qreal renderDpi = getRenderDpiX(&screenDpi);
-	int pixelSize = (int)((qreal)fontPts * screenDpi / renderDpi);
+	qreal rx, sx, ry, sy = 0;
+	getRenderDpi(&rx, &sx, &ry, &sy);
 
-	return pixelSize;
+	qreal pixelSizeX = (qreal)fontPts * rx/sx;
+	qreal pixelSizeY = (qreal)fontPts * ry / sy;
+
+	pixelSizeY = UtlMath::rndUp(pixelSizeY, 0);
+
+	return pixelSizeY;
 }
 
 //============================================================================

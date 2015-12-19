@@ -54,8 +54,9 @@ public:
 
     static bool saveImg(MemBuf *imgbuf, const char *file);
 
-	static qreal UtlQt::getRenderDpiX(qreal *physicalDpi=NULL);
-	static int getRenderDpiX(int *physicalDpi = NULL);
+	static void getRenderDpi(qreal *renderX = NULL, qreal *physicalDpiX = NULL, qreal *renderY = NULL, qreal *physicalDpiY = NULL);
+	static void getRenderDpi(int *renderX=NULL, int *physicalDpiX = NULL, int *renderY = NULL, int *physicalDpiY = NULL);
+
 	static int computeFontPixelSize(int fontPts = 10);
 	static int computeFontPixelSize(QFont *font, int fontPts = 10);
 
