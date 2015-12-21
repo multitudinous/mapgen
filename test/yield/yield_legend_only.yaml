@@ -1,4 +1,17 @@
 ---
+
+fonts:
+
+  - name: arial14
+    face: arial
+    size: 14pt
+    color: 0000ff
+
+  - name: arial12
+    face: arial
+    size: 12pt
+    color: 000000
+
 colorramps:
 
   - name: coloryield
@@ -15,13 +28,15 @@ dataobjs:
     sdevs: 1.5 # - 1 use full range
     minrv: -9999 # use min from file
     maxrv: -9999 # use max from file
-       
+
 legends: #we could add these to the map rendering if needed, but for now they are only saved to disk
-    
+
     - name: maplegend
       type: legend
       file: legendonly.png
       legtype: yield
       units: m
+      fonttitle: arial14
+      fontvalues: arial12
       flipcolors: false
       dataobj: yieldimg

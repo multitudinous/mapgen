@@ -12,6 +12,7 @@
 #include "colorramp.h"
 #include "define.h"
 #include "legend.h"
+#include "font.h"
 
 #include <QColor>
 
@@ -51,8 +52,11 @@ protected:
     bool loadFont(const YAML::Node& node, std::string *fontFile, int *fontSize);
     bool findFont(const char *fontName, std::string *fontFile);
 
-    void loadColorRamps(const YAML::Node& styles);
-    PColorRamp loadColorRamp(const YAML::Node& styles);
+	void loadFonts(const YAML::Node& node);
+	PFont loadFont(const YAML::Node& node);
+
+    void loadColorRamps(const YAML::Node& node);
+    PColorRamp loadColorRamp(const YAML::Node& node);
 
     PColorRand loadColorRand(const YAML::Node& node, const char *name="crand");
 
@@ -90,6 +94,7 @@ protected:
     PGlObj getDataObj(const std::string &name);
     PGlObj getComputeObj(const std::string &name);
     PColorRamp getColorRamp(const std::string &name);
+	PFont getFont(const std::string &name);
     PDrawAttr getStyle(const std::string &name);
 
     std::string validateOutfile(const std::string &file);
@@ -103,6 +108,7 @@ protected:
 
     PConfig _cfg;
     std::map<std::string, PDrawAttr> _styleMap;
+	std::map<std::string, PFont> _fontMap; // currently only used for legends, needs to eventually be used for labels as well
     std::map<std::string, PColorRamp> _colorRampMap;
     std::map<std::string, PGlObj> _dataObjMap;
     std::map<std::string, PLegend> _legendObjMap;

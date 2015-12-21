@@ -42,6 +42,18 @@ colorramps:
     minv: 0.0
     maxv: 5.0
 
+fonts:
+
+  - name: title
+    face: Tahoma
+    size: 12pt
+    color: 0000ff
+
+  - name: value
+    face: arial
+    size: 12pt
+    color: 000000
+
 dataobjs:
 
   - name: fielddata
@@ -76,3 +88,5 @@ legends:
      legtype: toteros
      units: m
      colorramp: toteros_color
+     fonttitle: title
+     fontvalues: value

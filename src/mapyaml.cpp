@@ -129,6 +129,12 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
             _cfg.reset(new Config());
         }
 
+		// load fonts (legends use them)
+		if (doc["fonts"])
+		{
+			loadFonts(doc["fonts"]);
+		}
+
         // load colorramps (data objects depend on them)
         if (doc["colorramps"])
         {
@@ -417,6 +423,32 @@ bool MapYaml::findFont(const char *fontName, std::string *fontFile)
     LogError("%s", err.c_str());
 
     return false;
+}
+
+
+//============================================================================
+//============================================================================
+void MapYaml::loadFonts(const YAML::Node& node)
+{
+	for (std::size_t i = 0; i<node.size(); i++)
+	{
+		PFont font = loadFont(node[i]);
+		if (font) _fontMap[font->name()] = font;
+	}
+}
+
+//============================================================================
+//============================================================================
+PFont MapYaml::loadFont(const YAML::Node& node)
+{
+	PFont font(new Font());
+
+	font->name(getString(node, "name", "arial12"));
+	font->face(getString(node, "face", "Arial"));
+	font->size(getString(node, "size", "12pt"));
+	font->color(getColor(node, "color"));
+
+	return font;
 }
 
 //============================================================================
@@ -740,6 +772,8 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     std::string units = getString(node, "units", "m");
     std::string dataobjName = getString(node, "dataobj", "");
     std::string colorRampName = getString(node, "colorramp", "");
+	std::string fontTitleName = getString(node, "fonttitle", "");
+	std::string fontValuesName = getString(node, "fontvalues", "");
     //bool flipcolors = getBool(node, "flipcolors", false);
 
     bool dynamic = false;
@@ -767,6 +801,21 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
             return PLegend();
         }
     }
+
+	// fonts
+	PFont fontTitle, fontValues;
+	if (fontTitleName.size() > 0)
+	{
+		fontTitle = getFont(fontTitleName);
+	}
+
+	if (fontValuesName.size() > 0)
+	{
+		fontValues = getFont(fontValuesName);
+	}
+
+	if (!fontTitle) { fontTitle.reset(new Font("arial", 14)); }
+	if (!fontValues) { fontValues.reset(new Font("arial", 12)); }
 
     // find the color ramp
     PColorRamp colorRamp;
@@ -800,7 +849,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
         max = rimg->stats().getMax();
     }
 
-    PLegend leg(new Legend());
+    PLegend leg(new Legend(fontTitle.get(), fontValues.get()));
     if (!leg->init(fileout, legtype, format, colorRamp, dataobjName, min, mid, max, units))
     {
         LogError("%s UnExpected Error: failed to init legend type %s", func, legtype.c_str());
@@ -1314,6 +1363,19 @@ PGlObj MapYaml::getComputeObj(const std::string &name)
 
     PGlObj obj = std::dynamic_pointer_cast<GlObj>(it->second);
     return obj;
+}
+
+//============================================================================
+//============================================================================
+PFont MapYaml::getFont(const std::string &name)
+{
+	std::map<std::string, PFont>::iterator it = _fontMap.find(name);
+	if (it == _fontMap.end())
+	{
+		return PFont();
+	}
+
+	return it->second;
 }
 
 //============================================================================

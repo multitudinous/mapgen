@@ -6,7 +6,7 @@
 
 //============================================================================
 //============================================================================
-Legend::Legend() :
+Legend::Legend(const Font *fiTitle, const Font *fiValue) :
 _legType("dem"),
 _legFrmt("svg"),
 _units("m"),
@@ -41,6 +41,18 @@ _scale(1.0),
 _validType(false)
 {
 
+	_fontTitle.reset(new QFont(fiTitle->face().c_str()));
+	_fontTitle->setPixelSize(fiTitle->getPixelSize() * _scale);
+	_fontTitle->setWeight(QFont::Bold);
+
+	_fontValue.reset(new QFont(fiValue->face().c_str()));
+	_fontValue->setPixelSize(fiValue->getPixelSize() * _scale);
+	_fontValue->setWeight(QFont::Bold);
+
+	_colorTitle = fiTitle->color();
+	_colorValue = fiValue->color();
+	
+	/*
     _fontTitle.reset(new QFont("arial", int(14 * _scale)));
     _fontTitle->setWeight(QFont::Bold);
 
@@ -53,7 +65,7 @@ _validType(false)
 
 	szp = UtlQt::computeFontPixelSize(_fontValue.get(), int(12 * _scale));
 	LogTrace("Legend - Pixel size for value font from point size 12 is %d", szp);
-
+	*/
 
 	/*
 	your render DPI variable should be 96 for Windows and 72 for OSX
@@ -602,6 +614,7 @@ void Legend::initPaint(QPaintDevice *pd)
     _painter.reset(new QPainter(pd));
     _painter->setFont(*_fontValue);
     _painter->setRenderHint(QPainter::Antialiasing);
+	_painter->setRenderHint(QPainter::TextAntialiasing);
 }
 
 //============================================================================
@@ -751,6 +764,7 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
     //LogTrace("text mid: %d", rcTxMid);
 
     // draw title
+	_painter->setPen(QPen(_colorTitle));
     _painter->setFont(*_fontTitle);
     _painter->drawText(rcTitle, Qt::AlignLeft | Qt::AlignTop, QString(_title.c_str()));
 
@@ -768,6 +782,7 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
 
     // draw value text
     _painter->setFont(*_fontValue);
+	_painter->setPen(QPen(_colorValue));
 
 	
 
@@ -796,7 +811,7 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
 			rcTx.setBottom(rcBar.bottom() + 4);
 			rcTx.setTop(rcTx.bottom() - txH);
 			valign = Qt::AlignBottom;
-		}
+		} 
 		else if (i == valss.size() - 1)
 		{
 			rcTx.setTop(rcBar.top() - 4);
@@ -830,6 +845,7 @@ void Legend::drawBuckets(bool measure, box2i *box)
 
     // draw title
     _painter->setFont(*_fontTitle);
+	_painter->setPen(QPen(_colorTitle));
     drawText(rcTitle, QString(_title.c_str()), Qt::AlignLeft | Qt::AlignTop, !measure, measure, box);
 
     // set up buckets
@@ -1006,6 +1022,8 @@ int Legend::drawBucket(const QRect &rcDraw, int bleft, int btop, const QColor &b
         pen.setWidth(sint(2));
         _painter->setPen(pen);
         _painter->drawRect(rcBucket);
+
+		_painter->setPen(QPen(_colorValue));
         _painter->drawText(rcText, Qt::AlignLeft | Qt::AlignVCenter, text);
     }
 

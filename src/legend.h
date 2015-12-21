@@ -5,11 +5,12 @@
 #include "colorramp.h"
 #include "colorpickercat.h"
 #include "box2.h"
+#include "font.h"
 
 class Legend
 {
 public:
-    Legend();
+	Legend(const Font *fontInfoTitle, const Font *fontInfoValues);
     virtual ~Legend();
 
     bool init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min = 0, double mid = 0, double max = 0, std::string units = "m");
@@ -83,6 +84,8 @@ protected:
     PQPaintDevice _renderObj;
     PQFont _fontTitle;
     PQFont _fontValue;
+	QColor _colorTitle;
+	QColor _colorValue;
 
     std::string _legType; // possible types = toteros, winderos, watereros, sci, sciom, profit, dem
     std::string _legFrmt; // possible formats = svg, png
