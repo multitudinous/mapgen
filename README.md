@@ -32,7 +32,7 @@ QT5.4
 
 Sections:
 ---------------------
-output, styles, colorramps, dataobjs, mapobjs, legends, bucket colorramp list
+output, styles, colorramps, fonts, dataobjs, mapobjs, legends, bucket colorramp list
 
 
 =====================================================================================================================
@@ -190,6 +190,33 @@ colorramps:
     
 
 =====================================================================================================================
+* Fonts Section
+=====================================================================================================================
+Legends require a title font and a values font. Font size can be pt or px. 
+Pt values are converted to pixels based on display resolution.
+
+font properties:
+----------------
+name: nameid
+face: Arial
+size: 14pt or 14px
+color: 000000
+
+Example:
+---------------------
+fonts:
+
+  - name: title
+    face: Tahoma
+    size: 14pt
+    color: 0000ff
+
+  - name: value
+    face: Arial
+    size: 12pt
+    color: 000000
+
+=====================================================================================================================
 * Dataobjs Section
 =====================================================================================================================
 3 types of dataobjs: geojson, tiff, aerial
@@ -308,6 +335,9 @@ legtype: dem | yield | soillos | sedload | brkevcom | brkevexp | toteros | winde
 units: m | ft                   # meter or feet units
 dataobj: yieldimg               # tiff dataobj to use when appropriate based on legend type
 colorramp: name                 # name of color ramp that specifies colors bucket count, minv, maxv
+
+fonttitle: name					# name of a font that was specified in the fonts section
+fontvalues: name				# name of a font that was specified in the fonts section
 
 Example:
 ---------------------
