@@ -333,6 +333,7 @@ file: legend.svg | legend.png   # legend file with svg or png extension (if no p
 legtype: dem | yield | soillos | sedload | brkevcom | brkevexp | toteros | winderos | watereros | sci | sciom | profit | rr | r2d2 
                                 # note: dem, yield, soilloss, sedload are dyamic legends and can only be created with a tiff dataobj, the rest can be generated without data
 units: m | ft                   # meter or feet units
+custom_units: string            # applies only to yield legend type. Replaces legend title text with this string.
 dataobj: yieldimg               # tiff dataobj to use when appropriate based on legend type
 colorramp: name                 # name of color ramp that specifies colors bucket count, minv, maxv
 
