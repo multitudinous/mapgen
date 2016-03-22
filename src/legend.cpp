@@ -85,7 +85,7 @@ Legend::~Legend()
 
 //============================================================================
 //============================================================================
-bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, std::string units)
+bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, std::string units, std::string custom_units)
 {
     const char *func = "Legend::init() -";
 
@@ -98,7 +98,7 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
     if (legtype == "dem")
         initDem(min, mid, max, units);
     else if (legtype == "yield")
-        initYield(min, mid, max);
+        initYield(min, mid, max, custom_units);
     else if (legtype == "soilloss")
         initSoilLoss(min, mid, max);
     else if (legtype == "sedload")
@@ -363,11 +363,18 @@ void Legend::initDem(double min, double mid, double max, const std::string &unit
 
 //============================================================================
 //============================================================================
-void Legend::initYield(double min, double mid, double max)
+void Legend::initYield(double min, double mid, double max, std::string custom_units)
 {
     LogTrace("creating yield legend ...");
 
-    _title = "Yield (bu/ac)";
+    if ("" == custom_units)
+    {
+        _title = "Yield (bu/ac)";
+    }
+    else
+    {
+        _title = custom_units;
+    }
     _min = min;
     _mid = mid;
     _max = max;

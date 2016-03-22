@@ -770,6 +770,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     std::string fileout = getString(node, "file");
     std::string legtype = getString(node, "legtype");
     std::string units = getString(node, "units", "m");
+    std::string custom_units = getString(node, "custom_units", "");
     std::string dataobjName = getString(node, "dataobj", "");
     std::string colorRampName = getString(node, "colorramp", "");
 	std::string fontTitleName = getString(node, "fonttitle", "");
@@ -850,7 +851,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     }
 
     PLegend leg(new Legend(fontTitle.get(), fontValues.get()));
-    if (!leg->init(fileout, legtype, format, colorRamp, dataobjName, min, mid, max, units))
+    if (!leg->init(fileout, legtype, format, colorRamp, dataobjName, min, mid, max, units, custom_units))
     {
         LogError("%s UnExpected Error: failed to init legend type %s", func, legtype.c_str());
         return PLegend();
