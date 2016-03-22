@@ -163,7 +163,8 @@ bool Stats::adjustFromMean()
 {
     if (_forceSdevs < 0) return false;
 
-    double move = _forceSdevs * _mean;
+    //double move = _forceSdevs * _mean;
+	double move = _forceSdevs * _sdev;
     _adjustedMin = _mean - move;
     _adjustedMax = _mean + move;
 
