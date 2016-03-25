@@ -41,38 +41,38 @@ _scale(1.0),
 _validType(false)
 {
 
-	_fontTitle.reset(new QFont(fiTitle->face().c_str()));
-	_fontTitle->setPixelSize(fiTitle->getPixelSize() * _scale);
-	_fontTitle->setWeight(QFont::Bold);
+    _fontTitle.reset(new QFont(fiTitle->face().c_str()));
+    _fontTitle->setPixelSize(fiTitle->getPixelSize() * _scale);
+    _fontTitle->setWeight(QFont::Bold);
 
-	_fontValue.reset(new QFont(fiValue->face().c_str()));
-	_fontValue->setPixelSize(fiValue->getPixelSize() * _scale);
-	_fontValue->setWeight(QFont::Bold);
+    _fontValue.reset(new QFont(fiValue->face().c_str()));
+    _fontValue->setPixelSize(fiValue->getPixelSize() * _scale);
+    _fontValue->setWeight(QFont::Bold);
 
-	_colorTitle = fiTitle->color();
-	_colorValue = fiValue->color();
-	
-	/*
+    _colorTitle = fiTitle->color();
+    _colorValue = fiValue->color();
+
+    /*
     _fontTitle.reset(new QFont("arial", int(14 * _scale)));
     _fontTitle->setWeight(QFont::Bold);
 
-	int szp = UtlQt::computeFontPixelSize(_fontTitle.get(), int(14 * _scale));
-	LogTrace("Legend - Pixel size for title font from point size 14 is %d", szp);
-	
+    int szp = UtlQt::computeFontPixelSize(_fontTitle.get(), int(14 * _scale));
+    LogTrace("Legend - Pixel size for title font from point size 14 is %d", szp);
+
 
     _fontValue.reset(new QFont("arial", int(12 * _scale)));
     _fontValue->setWeight(QFont::Bold);
 
-	szp = UtlQt::computeFontPixelSize(_fontValue.get(), int(12 * _scale));
-	LogTrace("Legend - Pixel size for value font from point size 12 is %d", szp);
-	*/
+    szp = UtlQt::computeFontPixelSize(_fontValue.get(), int(12 * _scale));
+    LogTrace("Legend - Pixel size for value font from point size 12 is %d", szp);
+    */
 
-	/*
-	your render DPI variable should be 96 for Windows and 72 for OSX
-	according to: http://www.rfwilmut.clara.net/about/fonts.html
-	On a Macintosh monitor, the notional resolution is 72 dots-per -inch (dpi), so that a graphic 72 pixels wide would notionally be 1 inch wide - though obviously the actual size would depend on the individual monitor. However it will always print one inch wide.
-	But on a Windows monitor the resolution is (usually) 96 dpi. This means that though the picture is still 72 pixels wide, it will print at 0.75 inches.
-	*/
+    /*
+    your render DPI variable should be 96 for Windows and 72 for OSX
+    according to: http://www.rfwilmut.clara.net/about/fonts.html
+    On a Macintosh monitor, the notional resolution is 72 dots-per -inch (dpi), so that a graphic 72 pixels wide would notionally be 1 inch wide - though obviously the actual size would depend on the individual monitor. However it will always print one inch wide.
+    But on a Windows monitor the resolution is (usually) 96 dpi. This means that though the picture is still 72 pixels wide, it will print at 0.75 inches.
+    */
 }
 
 
@@ -85,7 +85,7 @@ Legend::~Legend()
 
 //============================================================================
 //============================================================================
-bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, std::string units, std::string custom_units)
+bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, std::string units, const std::string &custom_units)
 {
     const char *func = "Legend::init() -";
 
@@ -130,6 +130,13 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
         initRR();
     else if (legtype == "r2d2")
         initRUSLE22D();
+        else if (legtype == "generic_bucket")
+        {
+            if (!initGenericBucket(colorRamp, custom_units))
+        {
+            return false;
+        }
+        }
     else
     {
         LogError("%s unknown function type %s", func, _legType.c_str());
@@ -155,7 +162,6 @@ void Legend::initColorRamp(PColorRamp colorRamp)
     _colorMin = colorRamp->_picker->getMin();
     _colorMid = colorRamp->_picker->getMid();
     _colorMax = colorRamp->_picker->getMax();
-
 }
 
 //============================================================================
@@ -363,7 +369,7 @@ void Legend::initDem(double min, double mid, double max, const std::string &unit
 
 //============================================================================
 //============================================================================
-void Legend::initYield(double min, double mid, double max, std::string custom_units)
+void Legend::initYield(double min, double mid, double max, const std::string &custom_units)
 {
     LogTrace("creating yield legend ...");
 
@@ -441,6 +447,34 @@ void Legend::initSedLoad(double min, double mid, double max)
     _decimals = 2;
     _width = 170;
     _height = 300;
+}
+
+//============================================================================
+//============================================================================
+bool Legend::initGenericBucket(PColorRamp colorRamp, const std::string &custom_units)
+{
+    if (!colorRamp)
+    {
+        LogError("Legend::initGenericBucket - must have a color ramp");
+        return false;
+    }
+
+    _min = colorRamp->_minv;
+    _max = colorRamp->_maxv;
+    _buckets = colorRamp->_buckets;
+    _incAmt = (_max - _min) / static_cast<double>(_buckets);
+    _colorMin = colorRamp->_picker->getMin();
+    _colorMid = colorRamp->_picker->getMid();
+    _colorMax = colorRamp->_picker->getMax();
+    _decimals = 1;
+    _minTop = false;
+    _useMaxPlus = false;
+    _useLess = false;
+    _useGreater = false;
+    _showRange = true;
+    _title = custom_units;
+
+    return true;
 }
 
 //============================================================================
@@ -621,7 +655,7 @@ void Legend::initPaint(QPaintDevice *pd)
     _painter.reset(new QPainter(pd));
     _painter->setFont(*_fontValue);
     _painter->setRenderHint(QPainter::Antialiasing);
-	_painter->setRenderHint(QPainter::TextAntialiasing);
+    _painter->setRenderHint(QPainter::TextAntialiasing);
 }
 
 //============================================================================
@@ -718,40 +752,40 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
     int barh = rcDraw.height() - (sint(_mDataT) + sint(_mDataB)) - rcTitle.height();
     QRect rcBar = QRect(barl, bart, barw, barh);
 
-	double min1, min2, mid1, mid2; // user wants 4 more values, 2 below the mid, and 2 above
+    double min1, min2, mid1, mid2; // user wants 4 more values, 2 below the mid, and 2 above
 
-	double dism = mid - min;
-	dism = dism / 3.0;
-	double disd = max - mid;
-	disd = disd / 3.0;
+    double dism = mid - min;
+    dism = dism / 3.0;
+    double disd = max - mid;
+    disd = disd / 3.0;
 
-	min1 = min + dism;
-	min2 = min1 + dism;
-	mid1 = mid + disd;
-	mid2 = mid1 + disd;
+    min1 = min + dism;
+    min2 = min1 + dism;
+    mid1 = mid + disd;
+    mid2 = mid1 + disd;
 
-	std::vector<double> valsd = { min, min1, min2, mid, mid1, mid2, max };
-	std::vector<QString> valss;
-	for (size_t i = 0; i < valsd.size(); i++)
-	{
-		QString vals = rndValToStr(valsd[i]);
-		valss.push_back(vals);
-	}
+    std::vector<double> valsd = { min, min1, min2, mid, mid1, mid2, max };
+    std::vector<QString> valss;
+    for (size_t i = 0; i < valsd.size(); i++)
+    {
+        QString vals = rndValToStr(valsd[i]);
+        valss.push_back(vals);
+    }
 
 
 
     // format our values for display to only 2 decimals
-	/*
+    /*
     QString sbtm = rndValToStr(min);
-	QString sbtm1 = rndValToStr(min1);
-	QString sbtm2 = rndValToStr(min2);
+    QString sbtm1 = rndValToStr(min1);
+    QString sbtm2 = rndValToStr(min2);
     QString smid = rndValToStr(mid);
-	QString smid1 = rndValToStr(mid1);
-	QString smid2 = rndValToStr(mid2);
+    QString smid1 = rndValToStr(mid1);
+    QString smid2 = rndValToStr(mid2);
     QString stop = rndValToStr(max);
-	*/
+    */
 
-	
+
 
 
 
@@ -761,17 +795,17 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
     int txW = rcDraw.right() - txX;
     LogTrace("text width: %d", txW);
 
-	/*
+    /*
     QRect rcTxMin = UtlQt::textRectVertTop(txX, rcBar.top(), txW, txH); // bottom left pt
     QRect rcTxMid = UtlQt::textRectVertCtr(txX, rcBar.center().y(), txW, txH);
     QRect rcTxMax = UtlQt::textRectVertBtm(txX, rcBar.bottom(), txW, txH);
-	*/
+    */
 
     LogTrace("bar cy: %d", rcBar.center().y());
     //LogTrace("text mid: %d", rcTxMid);
 
     // draw title
-	_painter->setPen(QPen(_colorTitle));
+    _painter->setPen(QPen(_colorTitle));
     _painter->setFont(*_fontTitle);
     _painter->drawText(rcTitle, Qt::AlignLeft | Qt::AlignTop, QString(_title.c_str()));
 
@@ -789,53 +823,53 @@ void Legend::drawRamp(int left, int top, int width, int height, double min, doub
 
     // draw value text
     _painter->setFont(*_fontValue);
-	_painter->setPen(QPen(_colorValue));
+    _painter->setPen(QPen(_colorValue));
 
-	
 
-	// lets find the maximum width and align to the right based on that
-	QFontMetrics fm = _painter->fontMetrics();
-	int maxw = 0;
-	for (size_t i = 0; i < valss.size(); i++)
-	{
-		QString text = valss[i];
-		int width = fm.width(text);
-		if (width > maxw) maxw = width;
-	}
-	
-	// draw the text values
-	int mv = rcBar.height() / ((int)valss.size() - 1);
-	int cury = rcBar.bottom();
-	int btmtopofs = 4; // shift the bottom and top items a bit to align better with the top and bottom of the bar, we could just center them, but it looks better if the text doesn't go above or below the bar
-	for (size_t i = 0; i < valss.size(); i++)
-	{
-		QString text = valss[i];
-		QRect rcTx = UtlQt::textRectVertCtr(txX, cury, maxw, txH);
 
-		int valign = Qt::AlignVCenter;
-		if (i == 0)
-		{
-			rcTx.setBottom(rcBar.bottom() + 4);
-			rcTx.setTop(rcTx.bottom() - txH);
-			valign = Qt::AlignBottom;
-		} 
-		else if (i == valss.size() - 1)
-		{
-			rcTx.setTop(rcBar.top() - 4);
-			rcTx.setBottom(rcTx.top() + txH);
-			valign = Qt::AlignTop;
-		}
+    // lets find the maximum width and align to the right based on that
+    QFontMetrics fm = _painter->fontMetrics();
+    int maxw = 0;
+    for (size_t i = 0; i < valss.size(); i++)
+    {
+        QString text = valss[i];
+        int width = fm.width(text);
+        if (width > maxw) maxw = width;
+    }
 
-		_painter->drawText(rcTx, Qt::AlignRight | valign, text);
-		
+    // draw the text values
+    int mv = rcBar.height() / ((int)valss.size() - 1);
+    int cury = rcBar.bottom();
+    int btmtopofs = 4; // shift the bottom and top items a bit to align better with the top and bottom of the bar, we could just center them, but it looks better if the text doesn't go above or below the bar
+    for (size_t i = 0; i < valss.size(); i++)
+    {
+        QString text = valss[i];
+        QRect rcTx = UtlQt::textRectVertCtr(txX, cury, maxw, txH);
 
-		cury -= mv;
-	}
-	/*
+        int valign = Qt::AlignVCenter;
+        if (i == 0)
+        {
+            rcTx.setBottom(rcBar.bottom() + 4);
+            rcTx.setTop(rcTx.bottom() - txH);
+            valign = Qt::AlignBottom;
+        }
+        else if (i == valss.size() - 1)
+        {
+            rcTx.setTop(rcBar.top() - 4);
+            rcTx.setBottom(rcTx.top() + txH);
+            valign = Qt::AlignTop;
+        }
+
+        _painter->drawText(rcTx, Qt::AlignRight | valign, text);
+
+
+        cury -= mv;
+    }
+    /*
     _painter->drawText(rcTxMin, Qt::AlignLeft | Qt::AlignTop, stop);
     _painter->drawText(rcTxMid, Qt::AlignLeft | Qt::AlignVCenter, smid);
     _painter->drawText(rcTxMax, Qt::AlignLeft | Qt::AlignBottom, sbtm);
-	*/
+    */
 }
 
 //============================================================================
@@ -852,7 +886,7 @@ void Legend::drawBuckets(bool measure, box2i *box)
 
     // draw title
     _painter->setFont(*_fontTitle);
-	_painter->setPen(QPen(_colorTitle));
+    _painter->setPen(QPen(_colorTitle));
     drawText(rcTitle, QString(_title.c_str()), Qt::AlignLeft | Qt::AlignTop, !measure, measure, box);
 
     // set up buckets
@@ -1030,7 +1064,7 @@ int Legend::drawBucket(const QRect &rcDraw, int bleft, int btop, const QColor &b
         _painter->setPen(pen);
         _painter->drawRect(rcBucket);
 
-		_painter->setPen(QPen(_colorValue));
+        _painter->setPen(QPen(_colorValue));
         _painter->drawText(rcText, Qt::AlignLeft | Qt::AlignVCenter, text);
     }
 
@@ -1245,3 +1279,4 @@ QColor Legend::getColorMidYellow()
 {
     return QColor("#ffff00");
 }
+
