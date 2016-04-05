@@ -45,7 +45,7 @@ bool MapYaml::load(const std::string &text, GisSys *pgis)
         //std::cout << doc << "\n";
         // debug
         /*
-        for (YAML::iterator it = doc.begin(); it != doc.end(); ++it) 
+        for (YAML::iterator it = doc.begin(); it != doc.end(); ++it)
         {
             std::string scalar = it->as<std::string>();
             LogTrace("Found scalar: %s", scalar.c_str());
@@ -379,7 +379,7 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
                 haveFont = false;
             }
         }
-        
+
         if (haveFont)
         {
             attr->_font.initFontTexture(fontfile.c_str(), fontsize);
@@ -514,7 +514,7 @@ PColorRamp MapYaml::loadColorRamp(const YAML::Node& node)
         max = "#" + max;
         ramp->_picker.reset(new ColorPickerGradient(QColor(min.c_str()), QColor(max.c_str())));
     }
-    
+
 
     // for bucket coloring
     ramp->_buckets = getInt(node, "buckets",  0);
@@ -769,6 +769,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     // get the values we need
     std::string fileout = getString(node, "file");
     std::string legtype = getString(node, "legtype");
+    int decimals = getInt(node, "decimals");
     std::string units = getString(node, "units", "m");
     std::string custom_units = getString(node, "custom_units", "");
     std::string dataobjName = getString(node, "dataobj", "");
@@ -824,7 +825,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     {
         colorRamp = getColorRamp(colorRampName);
     }
-    
+
 
     // validate the format
     std::string format = UtlString::getExtension(fileout.c_str());
@@ -841,7 +842,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     double min = 0;
     double mid = 0;
     double max = 0;
-    
+
     // get dynamic values
     if (rimg)
     {
@@ -851,7 +852,7 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
     }
 
     PLegend leg(new Legend(fontTitle.get(), fontValues.get()));
-    if (!leg->init(fileout, legtype, format, colorRamp, dataobjName, min, mid, max, units, custom_units))
+    if (!leg->init(fileout, legtype, format, colorRamp, dataobjName, min, mid, max, decimals, units, custom_units))
     {
         LogError("%s UnExpected Error: failed to init legend type %s", func, legtype.c_str());
         return PLegend();
@@ -859,10 +860,10 @@ PLegend MapYaml::loadLegend(const YAML::Node& node)
 
     // set dynamic colors to match the raster
     if (rimg)
-    { 
+    {
         if (rimg->picker() == NULL)
         {
-            LogTrace("%s Unable to get colors from raster image dataobj, so using legend defaults", func); 
+            LogTrace("%s Unable to get colors from raster image dataobj, so using legend defaults", func);
         }
         else
         {

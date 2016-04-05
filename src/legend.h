@@ -13,7 +13,7 @@ public:
     Legend(const Font *fontInfoTitle, const Font *fontInfoValues);
     virtual ~Legend();
 
-    bool init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min = 0, double mid = 0, double max = 0, std::string units = "m", const std::string &custom_units = "");
+    bool init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min = 0, double mid = 0, double max = 0, int decimals = 2, std::string units = "m", const std::string &custom_units = "");
     bool render();
 
     void setColorMin(const QColor &c);
@@ -36,7 +36,7 @@ protected:
     bool initCdl(PColorRamp colorRamp, const std::string &dataObjName);
     void initRR();
     void initDem(double min, double mid, double max, const std::string &units);
-    void initYield(double min, double mid, double max, const std::string &custom_units);
+    void initYield(double min, double mid, double max, int decimals, const std::string &custom_units);
     void initBreakevenCom(double min, double mid, double max);
     void initBreakevenExp(double min, double mid, double max);
     void initSoilLoss(double min, double mid, double max);
@@ -130,4 +130,3 @@ protected:
 
 typedef std::shared_ptr< Legend > PLegend;
 #endif
-

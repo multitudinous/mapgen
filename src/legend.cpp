@@ -85,7 +85,7 @@ Legend::~Legend()
 
 //============================================================================
 //============================================================================
-bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, std::string units, const std::string &custom_units)
+bool Legend::init(const std::string &file, const std::string &legtype, const std::string &legformat, PColorRamp colorRamp, const std::string &dataObjName, double min, double mid, double max, int decimals, std::string units, const std::string &custom_units)
 {
     const char *func = "Legend::init() -";
 
@@ -98,7 +98,7 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
     if (legtype == "dem")
         initDem(min, mid, max, units);
     else if (legtype == "yield")
-        initYield(min, mid, max, custom_units);
+        initYield(min, mid, max, decimals, custom_units);
     else if (legtype == "soilloss")
         initSoilLoss(min, mid, max);
     else if (legtype == "sedload")
@@ -369,7 +369,7 @@ void Legend::initDem(double min, double mid, double max, const std::string &unit
 
 //============================================================================
 //============================================================================
-void Legend::initYield(double min, double mid, double max, const std::string &custom_units)
+void Legend::initYield(double min, double mid, double max, int decimals, const std::string &custom_units)
 {
     LogTrace("creating yield legend ...");
 
@@ -384,7 +384,7 @@ void Legend::initYield(double min, double mid, double max, const std::string &cu
     _min = min;
     _mid = mid;
     _max = max;
-    _decimals = 2;
+    _decimals = decimals;
     _width = 170;
     _height = 300;
 }
@@ -1279,4 +1279,3 @@ QColor Legend::getColorMidYellow()
 {
     return QColor("#ffff00");
 }
-
