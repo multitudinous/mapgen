@@ -130,13 +130,15 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
         initRR();
     else if (legtype == "r2d2")
         initRUSLE22D();
-        else if (legtype == "generic_bucket")
-        {
-            if (!initGenericBucket(colorRamp, custom_units))
+    else if (legtype == "generic_bucket")
+    {
+        if (!initGenericBucket(colorRamp, custom_units, decimals))
         {
             return false;
         }
-        }
+    }
+    else if (legtype == "bucket_2")
+        initBucket2(colorRamp, custom_units, decimals);
     else
     {
         LogError("%s unknown function type %s", func, _legType.c_str());
@@ -451,7 +453,7 @@ void Legend::initSedLoad(double min, double mid, double max)
 
 //============================================================================
 //============================================================================
-bool Legend::initGenericBucket(PColorRamp colorRamp, const std::string &custom_units)
+bool Legend::initGenericBucket(PColorRamp colorRamp, const std::string &custom_units, int decimals)
 {
     if (!colorRamp)
     {
@@ -466,7 +468,7 @@ bool Legend::initGenericBucket(PColorRamp colorRamp, const std::string &custom_u
     _colorMin = colorRamp->_picker->getMin();
     _colorMid = colorRamp->_picker->getMid();
     _colorMax = colorRamp->_picker->getMax();
-    _decimals = 1;
+    _decimals = decimals;
     _minTop = false;
     _useMaxPlus = false;
     _useLess = false;
@@ -476,6 +478,27 @@ bool Legend::initGenericBucket(PColorRamp colorRamp, const std::string &custom_u
 
     return true;
 }
+
+//============================================================================
+//============================================================================
+void Legend::initBucket2(PColorRamp colorRamp, const std::string &custom_units, int decimals)
+{
+    _min = colorRamp->_minv;
+    _max = colorRamp->_maxv;
+    _buckets = colorRamp->_buckets;
+    _incAmt = (_max - _min) / (static_cast<double>(_buckets) - 1.0);
+    _colorMin = colorRamp->_picker->getMin();
+    _colorMid = colorRamp->_picker->getMid();
+    _colorMax = colorRamp->_picker->getMax();
+    _decimals = decimals;
+    _minTop = false;
+    _useMaxPlus = false;
+    _useLess = true;
+    _useGreater = true;
+    _showRange = false;
+    _title = custom_units;
+}
+
 
 //============================================================================
 //============================================================================
@@ -917,6 +940,10 @@ void Legend::drawBuckets(bool measure, box2i *box)
     // set up a gradient picker
     gradient = UtlQt::gradientPicker(cb, _colorMid, ce);
 
+    // Make room for > bucket and < bucket
+    if (_useGreater && _useLess)
+        _buckets += 2;
+
     // draw buckets and text
     int num = 1;
     while (true)
@@ -952,6 +979,13 @@ void Legend::drawBuckets(bool measure, box2i *box)
                     incvalue = false;
                 }
             }
+        }
+
+        // next-to-last item
+        if (num == _buckets - 1)
+        {
+            if (_useGreater && _useLess)
+                incvalue = false;
         }
 
         // last item

@@ -41,7 +41,8 @@ protected:
     void initBreakevenExp(double min, double mid, double max);
     void initSoilLoss(double min, double mid, double max);
     void initSedLoad(double min, double mid, double max);
-    bool initGenericBucket(PColorRamp colorRamp, const std::string &custom_units);
+    bool initGenericBucket(PColorRamp colorRamp, const std::string &custom_units, int decimals);
+    void initBucket2(PColorRamp colorRamp, const std::string &custom_units, int decimals);
 
     void initSettingsErosion();
     void initSettingsSci();

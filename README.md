@@ -330,10 +330,15 @@ legend properties:
 name: legendname                # name of the legend, for future use
 type: legend                    # type of object for future use
 file: legend.svg | legend.png   # legend file with svg or png extension (if no path is specified, will write out to yaml input file's location)
-legtype: dem | yield | soillos | sedload | brkevcom | brkevexp | toteros | winderos | watereros | sci | sciom | profit | rr | r2d2 
-                                # note: dem, yield, soilloss, sedload are dyamic legends and can only be created with a tiff dataobj, the rest can be generated without data
+legtype: dem | yield | soillos | sedload | brkevcom | brkevexp | toteros | winderos | watereros | sci | sciom | profit | rr | r2d2 | generic_bucket | bucket_2
+                                # note: dem, yield, soilloss, sedload are dyamic legends and can only be created with a tiff dataobj, the rest can be generated
+                                 without data
+                                 generic_bucket is max-at-top bucketed legend that shows range for each bucket and stops at min max
+                                 bucket_2 is max-at-top, doesn't show range, and includes an extra bin at top and bottom for > and < than max/min respectively.
+                                 
 units: m | ft                   # meter or feet units
-custom_units: string            # applies only to yield legend type. Replaces legend title text with this string.
+custom_units: string            # applies only to yield, generic_bucket, bucket_2. Replaces legend title text with this string.
+decimals: integer               # applies to same types as custom_units; sets display precision of legend numbers
 dataobj: yieldimg               # tiff dataobj to use when appropriate based on legend type
 colorramp: name                 # name of color ramp that specifies colors bucket count, minv, maxv
 
