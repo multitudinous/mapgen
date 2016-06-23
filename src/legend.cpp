@@ -139,6 +139,8 @@ bool Legend::init(const std::string &file, const std::string &legtype, const std
     }
     else if (legtype == "bucket_2")
         initBucket2(colorRamp, custom_units, decimals);
+    else if (legtype == "bucket_3")
+        initBucket3(colorRamp, custom_units, decimals);
     else
     {
         LogError("%s unknown function type %s", func, _legType.c_str());
@@ -495,6 +497,27 @@ void Legend::initBucket2(PColorRamp colorRamp, const std::string &custom_units, 
     _useMaxPlus = false;
     _useLess = true;
     _useGreater = true;
+    _showRange = false;
+    _title = custom_units;
+}
+
+
+//============================================================================
+//============================================================================
+void Legend::initBucket3(PColorRamp colorRamp, const std::string &custom_units, int decimals)
+{
+    _min = colorRamp->_minv;
+    _max = colorRamp->_maxv;
+    _buckets = colorRamp->_buckets;
+    _incAmt = (_max - _min) / (static_cast<double>(_buckets) - 1.0);
+    _colorMin = colorRamp->_picker->getMin();
+    _colorMid = colorRamp->_picker->getMid();
+    _colorMax = colorRamp->_picker->getMax();
+    _decimals = decimals;
+    _minTop = false;
+    _useMaxPlus = false;
+    _useLess = false;
+    _useGreater = false;
     _showRange = false;
     _title = custom_units;
 }

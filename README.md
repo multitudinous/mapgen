@@ -53,7 +53,7 @@ msaa: true                  # enable or disable multisample rendering here (this
 msamples: 16                # number of samples used for multisample rendering
 ssaa: true                  # enable or disable super sample antialiasing rendering
 ssaamul: 2                  # super sample multiplier, so 2 would be render at width * 2 and height * 2, then filter the final result down to width, height
-jtaa: true                  # enable or disable jitter antialiasing 
+jtaa: true                  # enable or disable jitter antialiasing
 jtaasamples: 16             # number of samples to render
 jtaaoffset: 1.0             # each samples offset in pixels
                             # note: antialiasing is now per layer, by default it is off, to turn it on you must enable it on the layer.. see below
@@ -66,7 +66,7 @@ output:
   height: 1024
   file: map.png
   layerout: true
-  
+
 
 =====================================================================================================================  
 * Styles Section
@@ -81,7 +81,7 @@ polymask
 ---------------
 draw: true | false          # true to enable the mask, false no mask. default is true.
 masks: dataobj1, dataobj2   # you can specify multiple tiff dataobjs, though usually one is sufficient. if you specify more than 1 back to front ordering is used
- 
+
 polyfill
 ---------------
 draw: true | false
@@ -117,7 +117,7 @@ font: ARIAL.TTF             # true type font file and will look in the following
                             #                   /Library/Fonts
                             #                   ~/Library/Fonts
                             #                   /Network/Library/Fonts
-                            
+
 Example (a total of 4 styles):
 ---------------------                        
  styles:
@@ -136,7 +136,7 @@ Example (a total of 4 styles):
         fontsize: 72
         color: 000000
         feature: name
-        
+
   - name: fill
 
     polyfill:
@@ -146,9 +146,9 @@ Example (a total of 4 styles):
             s: .55 # smaller the number the lighter
             v: 1 #smaller the number the darker
         colorbyfeature: true
-        
+
   - name: outline
-        
+
     polyoutline:
         draw: true
         linewidth: 2
@@ -161,7 +161,7 @@ Example (a total of 4 styles):
         fontsize: 32
         color: FF0000
         feature: musym
-  
+
 
 =====================================================================================================================
 * Colorramps Section
@@ -187,12 +187,12 @@ colorramps:
     min: 00ff00
     mid: ffff00
     max: ff0000
-    
+
 
 =====================================================================================================================
 * Fonts Section
 =====================================================================================================================
-Legends require a title font and a values font. Font size can be pt or px. 
+Legends require a title font and a values font. Font size can be pt or px.
 Pt values are converted to pixels based on display resolution.
 
 font properties:
@@ -245,7 +245,7 @@ aerial
 ---------------
 extents:                        # optional, specify extra amount in 3857 distance to add to the extents of the data bounding box to get the aerial image for
     extra: 250
-    
+
 Example:
 ---------------------
 dataobjs:
@@ -265,13 +265,13 @@ dataobjs:
 
   - name: fielddata
     type: geojson
-    file: field.geojson 
-    
-    
+    file: field.geojson
+
+
 =====================================================================================================================
 * Mapobjs Section
 =====================================================================================================================
-Currently there is only 1 type of map object which is a layer. 
+Currently there is only 1 type of map object which is a layer.
 Note: Map objects will be rendered in back to front order
 
 mapobj properties:
@@ -283,7 +283,7 @@ exportcolormap: colormap.json       # optional to export a feature color map in 
 aa: on                              # optional to turn on antialiasing that is configured above, by default it is set to off
 children:
     - dataobj: dataobjname          # currently only dataobjects are supported, you can add multiple objects by seperating them by ,
-       
+
 Example:
 ---------------------
 
@@ -292,32 +292,32 @@ mapobjs:
    - name: aerial
      type: layer
      children:
-       - dataobj: aerialimg 
+       - dataobj: aerialimg
 
    - name: field
      type: layer
      style: polymask
      children:
        - dataobj: fielddata
-       
+
    - name: field_fill
      type: layer
      style: fill
      children:
        - dataobj: fielddata
-       
+
    - name: field_outline
      type: layer
      style: outline
      children:
        - dataobj: fielddata
-       
+
    - name: field_labels
      type: layer
      style: labels
      children:
        - dataobj: fielddata
-       
+
 
 =====================================================================================================================
 * Legends Section
@@ -330,14 +330,15 @@ legend properties:
 name: legendname                # name of the legend, for future use
 type: legend                    # type of object for future use
 file: legend.svg | legend.png   # legend file with svg or png extension (if no path is specified, will write out to yaml input file's location)
-legtype: dem | yield | soillos | sedload | brkevcom | brkevexp | toteros | winderos | watereros | sci | sciom | profit | rr | r2d2 | generic_bucket | bucket_2
+legtype: dem | yield | soillos | sedload | brkevcom | brkevexp | toteros | winderos | watereros | sci | sciom | profit | rr | r2d2 | generic_bucket | bucket_2 | bucket_3
                                 # note: dem, yield, soilloss, sedload are dyamic legends and can only be created with a tiff dataobj, the rest can be generated
                                  without data
-                                 generic_bucket is max-at-top bucketed legend that shows range for each bucket and stops at min max
+                                 generic_bucket is max-at-top, shows range for each bucket, and stops at min max
                                  bucket_2 is max-at-top, doesn't show range, and includes an extra bin at top and bottom for > and < than max/min respectively.
-                                 
+                                 bucket_3 is max-at-top, doesn't show range, and stops at min max
+
 units: m | ft                   # meter or feet units
-custom_units: string            # applies only to yield, generic_bucket, bucket_2. Replaces legend title text with this string.
+custom_units: string            # applies only to yield, generic_bucket, bucket_2, bucket_3. Replaces legend title text with this string.
 decimals: integer               # applies to same types as custom_units; sets display precision of legend numbers
 dataobj: yieldimg               # tiff dataobj to use when appropriate based on legend type
 colorramp: name                 # name of color ramp that specifies colors bucket count, minv, maxv
@@ -348,15 +349,15 @@ fontvalues: name				# name of a font that was specified in the fonts section
 Example:
 ---------------------
 legends:
-    
+
    - name: maplegend
      type: legend
      file: legend.png
      legtype: yield
      units: m
      dataobj: yieldimg
-     
-     
+
+
 =====================================================================================================================
 * Bucket Color Ramp Section
 =====================================================================================================================
@@ -371,7 +372,7 @@ colorramps:
     buckets: 11
     minv: 0.0
     maxv: 5.0
-    
+
 sci, sciom
 ----------------------------------------------
 colorramps:
@@ -382,7 +383,7 @@ colorramps:
     buckets: 12
     minv: -1.0
     maxv: 1.0
-    
+
 rr
 ----------------------------------------------
 colorramps:
@@ -393,7 +394,7 @@ colorramps:
     buckets: 11
     minv: -100.0
     maxv: 100.0
-    
+
 r2d2
 ----------------------------------------------
 colorramps:
