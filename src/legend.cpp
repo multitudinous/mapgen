@@ -385,6 +385,12 @@ void Legend::initYield(double min, double mid, double max, int decimals, const s
     {
         _title = custom_units;
     }
+
+    if ((min < 0) && (min == mid) && (min == max))
+    {
+      min = mid = max = 0;
+    }
+
     _min = min;
     _mid = mid;
     _max = max;
