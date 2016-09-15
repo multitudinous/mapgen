@@ -6,7 +6,8 @@
 
 FILE *Logger::_fp = NULL;
 bool Logger::_logXml = false;
-
+#define MG_LOG_TRACE 0
+#define MG_LOG_WARNING 0
 //============================================================================
 //============================================================================
 void Logger::init(bool logToFile, const char *file, bool logXml)
@@ -16,7 +17,7 @@ void Logger::init(bool logToFile, const char *file, bool logXml)
     _logXml = logXml;
 
     if (!logToFile) return;
-    
+
     _fp = fopen(file, "wt");
 }
 
@@ -86,7 +87,7 @@ void LogError(const tchar *format, ...)
 //============================================================================
 void LogWarning(const tchar *format, ...)
 {
-    //#if WIN32
+#if MG_LOG_WARNING
     tchar buffer[10240];
     va_list args;
 
@@ -109,12 +110,14 @@ void LogWarning(const tchar *format, ...)
     }
 
     Logger::logMsg(strOut.c_str());
+#endif
 }
 
 //============================================================================
 //============================================================================
 void LogTrace(const tchar *format, ...)
 {
+#if MG_LOG_TRACE
     tchar buffer[10240];
     va_list args;
 
@@ -136,4 +139,5 @@ void LogTrace(const tchar *format, ...)
     }
 
     Logger::logMsg(strOut.c_str());
+#endif
 }
