@@ -55,6 +55,7 @@ public:
 
 	GLUtesselator *m_hGluTess;
 
+	bool _maskOutInner;
 
 };
 
