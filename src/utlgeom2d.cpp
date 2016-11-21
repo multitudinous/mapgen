@@ -1,4 +1,4 @@
-#include "utlgeom2d.h"
+﻿#include "utlgeom2d.h"
 
 
 //============================================================================
@@ -49,4 +49,43 @@ void UtlGeom2d::fit(double srcW, double srcH, const Rect2d &rcDstTot, Rect2d *rc
     double difH = (rcDstTot.height() - resultH) / 2.0;
     rcDst->bottom(rcDstTot.bottom() + difH);
     rcDst->top(rcDst->bottom() + resultH);
+}
+
+
+//============================================================================
+// Sum over the edges, (x2 − x1)(y2 + y1).
+// If the result is positive the curve is clockwise, if it's negative the curve is counter-clockwise. 
+// (The result is twice the enclosed area, with a +/- convention.)
+//============================================================================
+bool UtlGeom2d::isCCW(const ListPt2d &pts, bool loop)
+{
+	double sum = 0;
+
+	const Point2d *pt1 = NULL, *pt2 = NULL;
+	for (size_t i = 0; i < pts.size(); i++)
+	{
+		pt2 = &pts[i];
+		if (!pt1)
+		{
+			pt1 = pt2;
+			continue;
+		}
+
+		sum += (pt2->dX - pt1->dX) * (pt2->dY + pt1->dY);
+		pt1 = pt2;
+	}
+
+	if (loop && pts.size() > 2)
+	{
+		pt1 = &pts[pts.size() - 1];
+		pt2 = &pts[0];
+		sum += (pt2->dX - pt1->dX) * (pt2->dY + pt1->dY);
+	}
+
+	if (sum < 0)
+	{
+		return true; // CCW
+	}
+
+	return false; // CW
 }

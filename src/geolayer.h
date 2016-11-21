@@ -20,6 +20,10 @@ public:
     void exportColorMapFile(std::string exportFile) { _exportColorMapFile = exportFile; }
 
 protected:
+
+	void drawDebug(DrawData *pdd);
+	bool drawMaskOutInner(DrawData *pdd);
+
     void exportColorMap(DrawData *pdd);
 
 protected:

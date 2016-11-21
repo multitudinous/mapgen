@@ -18,7 +18,8 @@ DrawData::DrawData() :
     m_shadersOn(true),
     m_wireframe(false),
     m_lightingOn(false),
-    _drawSelected(false)
+    _drawSelected(false),
+	_maskOutInner(false)
 {
 
     //m_frustum.reset(new Frustum());

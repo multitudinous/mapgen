@@ -42,6 +42,8 @@ public:
 
     virtual GlObj* clone() const;
 
+	std::vector< shared_ptr<GeoPoly> >& getInnerRings() { return _innerRings; }
+
 protected:
     void drawFill(DrawData *pdd);
     void drawOutline(DrawData *pdd);
@@ -68,7 +70,7 @@ protected:
 
     PVbo _vboOutline;
 
-     // TODO: need to refactor to support 1 outter ring, and 0.. n inner rings
+	std::vector< shared_ptr<GeoPoly> > _innerRings;
 };
 
 typedef shared_ptr<GeoPoly> PGeoPoly;

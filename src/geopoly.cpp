@@ -54,8 +54,25 @@ void GeoPoly::drawFill(DrawData *pdd)
     Rgbf color = DrawAttr::colorPolyFill(pdd->_drawAttr, _drawAttr);
 
     glColor4fv(color.m_af);
-    Gldraw::drawPolyConcaveVN(pdd->m_hGluTess, this);
 
+
+	if (!_innerRings.size())
+	{
+		Gldraw::drawPolyConcaveVN(pdd->m_hGluTess, this);
+		return;
+	}
+
+	// mask out inner polys
+	std::vector< const ListPt2d*> outerList;
+	outerList.push_back(&getPts());
+
+	std::vector< const ListPt2d*> innerList;
+	for (size_t i = 0; i < _innerRings.size(); i++)
+	{
+		innerList.push_back(&_innerRings[i]->getPts());
+	}
+
+	Gldraw::drawMaskOutInner(pdd, outerList, innerList);
 }
 
 //============================================================================
@@ -67,23 +84,28 @@ void GeoPoly::drawOutline(DrawData *pdd)
     float linew = DrawAttr::lineWidth(pdd->_drawAttr, _drawAttr);
     bool lineAA = DrawAttr::lineAA(pdd->_drawAttr, _drawAttr);
 
-    Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
+    //Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
 
     // todo: need a flag if points or linew changes need to recreate the vbo
     bool drawVbo = false;
-    if (pdd->m_shadersOn && pdd->_progSmoothLine)
-    {
-        if (!_vboOutline)
-        {
-            _vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::round_join, UtlGlLine::square_cap);
-        }
+	if (lineAA)
+	{
+		if (pdd->m_shadersOn && pdd->_progSmoothLine)
+		{
+			if (!_vboOutline)
+			{
+				_vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::round_join, UtlGlLine::square_cap);
+			}
 
-        if (_vboOutline) drawVbo = true;
-    }
+			if (_vboOutline) drawVbo = true;
+		}
+	}
 
     // draw the line with the correct configured algorithm
     if (drawVbo && lineAA)
     {
+		//Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
+
         pdd->_progSmoothLine->enable();
         GLuint uidColr = pdd->_progSmoothLine->getUniformLoc("ucolor");
         if (uidColr != -1) 

@@ -73,6 +73,36 @@ void GlDraw::drawPolyConcaveVN(GLUtesselator *hTess, const std::vector<vec3d> &p
 
 //============================================================================
 //============================================================================
+void Gldraw::drawPts(const ListPt2d &pts, float size, float r, float g, float b, float a)
+{
+	float afColrCur[4];
+	glGetFloatv(GL_CURRENT_COLOR, afColrCur);
+	// get the current point size
+	float sizeCur;
+	glGetFloatv(GL_POINT_SIZE, &sizeCur);
+
+	glColor4f(r, g, b, a);
+	// set the point size
+	glPointSize(size);
+
+
+	glBegin(GL_POINTS);
+
+	for (int i = 0; i<pts.size(); i++)
+	{
+		Point2d pt = pts.at(i);
+		glVertex2d(pt.dX, pt.dY);
+	}
+
+	glEnd();
+
+	// restore
+	glColor4fv(afColrCur);
+	glPointSize(size);
+}
+
+//============================================================================
+//============================================================================
 void Gldraw::drawLine(double x1, double y1, double x2, double y2, //coordinates of the line
     float w, //width/thickness of the line in pixel
     float Cr, float Cg, float Cb) //RGB color components
@@ -194,15 +224,15 @@ void Gldraw::drawLine(double x1, double y1, double x2, double y2, //coordinates 
     glBegin(GL_TRIANGLE_STRIP);
     if (!alphablend) { glColor3f(Br, Bg, Bb); }
     else { glColor4f(Cr, Cg, Cb, 0); }
-    glVertex2f(x1 - tx - Rx, y1 - ty - Ry); //fading edge
-    glVertex2f(x2 - tx - Rx, y2 - ty - Ry);
+    glVertex2d(x1 - tx - Rx, y1 - ty - Ry); //fading edge
+    glVertex2d(x2 - tx - Rx, y2 - ty - Ry);
 
     if (!alphablend) { glColor3f(Cr, Cg, Cb); }
     else { glColor4f(Cr, Cg, Cb, A); }
-    glVertex2f(x1 - tx, y1 - ty); //core
-    glVertex2f(x2 - tx, y2 - ty);
-    glVertex2f(x1 + tx, y1 + ty);
-    glVertex2f(x2 + tx, y2 + ty);
+    glVertex2d(x1 - tx, y1 - ty); //core
+    glVertex2d(x2 - tx, y2 - ty);
+    glVertex2d(x1 + tx, y1 + ty);
+    glVertex2d(x2 + tx, y2 + ty);
 
     if ((abs(dx) < ALW || abs(dy) < ALW) && w <= 1.0) {
         //printf("skipped one fading edge\n");
@@ -210,8 +240,8 @@ void Gldraw::drawLine(double x1, double y1, double x2, double y2, //coordinates 
     else {
         if (!alphablend) { glColor3f(Br, Bg, Bb); }
         else { glColor4f(Cr, Cg, Cb, 0); }
-        glVertex2f(x1 + tx + Rx, y1 + ty + Ry); //fading edge
-        glVertex2f(x2 + tx + Rx, y2 + ty + Ry);
+        glVertex2d(x1 + tx + Rx, y1 + ty + Ry); //fading edge
+        glVertex2d(x2 + tx + Rx, y2 + ty + Ry);
     }
     glEnd();
 
@@ -357,6 +387,43 @@ void Gldraw::drawMask(DrawData *pdd, GlObj *maskColoring, const ListPt2d &region
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glDisable(GL_STENCIL_TEST);
+}
+
+//============================================================================
+//============================================================================
+void Gldraw::drawMaskOutInner(DrawData *pdd, const std::vector< const ListPt2d*> &outerList, const std::vector< const ListPt2d*> &innerList)
+{
+	if (!outerList.size()) return;
+	if (!innerList.size()) return;
+
+	glClearStencil(0);
+	glClear(GL_STENCIL_BUFFER_BIT);
+
+	glEnable(GL_STENCIL_TEST);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	glStencilFunc(GL_ALWAYS, 1, 1);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+
+	for (size_t i = 0; i < innerList.size(); i++)
+	{
+		if (innerList[i]->size() < 3) continue;
+		Gldraw::drawPolyConcaveVN(pdd->m_hGluTess, *innerList[i]);
+	}
+
+	glStencilFunc(GL_NOTEQUAL, 1, 1);    // Draw where inner polys are not
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	
+	for (size_t i = 0; i < outerList.size(); i++)
+	{
+		if (outerList[i]->size() < 3) continue;
+		Gldraw::drawPolyConcaveVN(pdd->m_hGluTess, *outerList[i]);
+	}
+
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glDisable(GL_STENCIL_TEST);
 }
 
 //============================================================================

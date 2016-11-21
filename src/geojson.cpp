@@ -217,6 +217,11 @@ bool GeoJson::convertGeometry(OGRGeometry *geom, OGRFeatureDefn *poFDefn, OGRFea
 
     LogTrace("Geometry found with name: %s and type: %s", geom->getGeometryName(), OGRGeometryTypeToName(geom->getGeometryType()));
 
+	if (geom->IsRing())
+	{
+		LogTrace("found ring");
+	}
+
     if (geom->getGeometryType() == wkbPolygon)
     {
         PGlObj poly = getPoly((OGRPolygon *)geom);
@@ -249,6 +254,10 @@ bool GeoJson::convertGeometry(OGRGeometry *geom, OGRFeatureDefn *poFDefn, OGRFea
         LogTrace("Multipolygon converted %d geometries", converted);
         if (count && count == converted) return true;
     }
+	else
+	{
+		LogTrace("Unsupported geometry type found.");
+	}
 
     /*
     if( poGeometry != NULL && wkbFlatten(poGeometry->getGeometryType()) == wkbPoint )
@@ -287,26 +296,54 @@ PGlObj GeoJson::getPoly(OGRPolygon *ogrpoly)
     ogrpoly->flattenTo2D();
 
     OGRLinearRing *ring = ogrpoly->getExteriorRing();
-    if (!ring)
+	if (!ring)
     {
-        LogError("no outer ring for poly", func);
+        LogError("no outer ring for poly");
         return PGlObj();
     }
 
-    for (int i=0; i<ring->getNumPoints(); i++)
-    {
-        Point2d ptin(ring->getX(i), ring->getY(i)); //pt->getZ(i)
-        Point2d pt = convertPt(ptin, _trans);
-        poly->push_back(pt);
-    }
+	if (ring->getNumPoints() < 3)
+	{
+		LogError("no outer ring for poly doesn't have enough points, found %d points", ring->getNumPoints());
+		return PGlObj();
+	}
 
+	getPoly(ring, poly);
 
-    // TODO: inner rings
+    // get inner rings
+	int innerCount = ogrpoly->getNumInteriorRings();
+	LogTrace("Inner Ring Count: %d", innerCount);
+
+	for (int i = 0; i < innerCount; i++)
+	{
+		OGRLinearRing *innerRing = ogrpoly->getInteriorRing(i);
+		if (innerRing->getNumPoints() < 3)
+		{
+			LogError("inner ring for poly doesn't have enough points, found %d points", innerRing->getNumPoints());
+			continue;
+		}
+
+		PGeoPoly innerpoly(new GeoPoly());
+		getPoly(innerRing, innerpoly.get());
+		poly->getInnerRings().push_back(innerpoly);
+	}
 
 
     LogTrace("Polygon with %d points, interior rings: %d", poly->size(), ogrpoly->getNumInteriorRings());
 
     return obj;
+}
+
+//============================================================================
+//============================================================================
+void GeoJson::getPoly(OGRLinearRing *ring, GeoPoly *poly)
+{
+	for (int i = 0; i < ring->getNumPoints(); i++)
+	{
+		Point2d ptin(ring->getX(i), ring->getY(i)); //pt->getZ(i)
+		Point2d pt = convertPt(ptin, _trans);
+		poly->push_back(pt);
+	}
 }
 
 //============================================================================
