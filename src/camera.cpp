@@ -193,6 +193,59 @@ void Camera::setPerspective(double winW, double winH)
     glLoadIdentity();
 }
 
+
+//============================================================================
+//============================================================================
+void Camera::computeExtentFromWidth(const Extents &extOrig, double winW, double winH, Extents *extNew, bool adjust)
+{
+	GLdouble dx = extOrig.width();
+	GLdouble dy = extOrig.height();
+
+	extNew->l = extOrig.l;
+	extNew->r = extOrig.r;
+
+	GLdouble dY = dx * winH / winW;
+
+	// lets center
+	GLdouble yCenter = extOrig.cy();
+	extNew->b = yCenter - dY / 2.0;
+	extNew->t = yCenter + dY / 2.0;
+
+	if (adjust)
+	{
+		if (extNew->height() < extOrig.height())
+		{
+			computeExtentFromHeight(extOrig, winW, winH, extNew, false);
+		}
+	}
+}
+
+//============================================================================
+//============================================================================
+void Camera::computeExtentFromHeight(const Extents &extOrig, double winW, double winH, Extents *extNew, bool adjust)
+{
+	GLdouble dx = extOrig.width();
+	GLdouble dy = extOrig.height();
+
+	extNew->t = extOrig.t;
+	extNew->b = extOrig.b;
+
+	GLdouble dX = dy * winW / winH;
+
+	// lets center
+	GLdouble xCenter = extOrig.cx();
+	extNew->l = xCenter - dX / 2.0;
+	extNew->r = xCenter + dX / 2.0;
+
+	if (adjust)
+	{
+		if (extNew->width() < extOrig.width())
+		{
+			computeExtentFromWidth(extOrig, winW, winH, extNew, false);
+		}
+	}
+}
+
 //============================================================================
 //============================================================================
 void Camera::setOrthoZoom(const Extents &ext, bool updateMats)
@@ -213,6 +266,15 @@ void Camera::setOrthoZoom(const Extents &ext, bool updateMats)
 
 	if(fabs(dx) > 0.001 || fabs(dy) > 0.001)//Controls how far you can zoom in
 	{
+		if (dx >= dy)
+		{
+			computeExtentFromWidth(ext, width, height, &_ext, true);
+		}
+		else
+		{
+			computeExtentFromHeight(ext, width, height, &_ext, true);
+		}
+		/*
 		if(dx >= dy)
         {
             _ext.l = ext.l;
@@ -238,6 +300,16 @@ void Camera::setOrthoZoom(const Extents &ext, bool updateMats)
             _ext.r = xCenter + dX/2.0;
 	
 		}
+		*/
+
+		/*
+		double scale = std::fmin(width/dx, height/dy);
+		GLdouble xcenter = ext.cx();
+		GLdouble ycenter = ext.cy();
+		GLdouble neww = dx * scale;
+		GLdouble newh = dy * scale;
+		_ext.setFromCenter(xcenter, ycenter, neww, newh);
+		*/
 
 	}
     else

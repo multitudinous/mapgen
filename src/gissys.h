@@ -30,7 +30,7 @@ public:
 
     void saveFrameToDisk(const std::string &path);
 
-    void zoomExtents();
+	void zoomExtents(double incper=0.0);
     void zoomExtents(const Extents &ext);
 
     void insertBack(PGlObj obj);

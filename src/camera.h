@@ -46,6 +46,9 @@ protected:
     void setOrthoZoom(const Extents &ext, bool updateMats=true);
     void setOrthoMats();
 
+	void computeExtentFromWidth(const Extents &extOrig, double winW, double winH, Extents *extNew, bool adjust = true);
+	void computeExtentFromHeight(const Extents &extOrig, double winW, double winH, Extents *extNew, bool adjust = true);
+
 public:
      ECameraMode _mode;
 
