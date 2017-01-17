@@ -1,0 +1,86 @@
+---
+output:
+  mode: desktop
+  width: 1024
+  height: 1024
+  file: map.png
+  layeroutmode: true
+  bgcolor: FFFFFFFF
+  msaa: false
+  msamples: 16
+  ssaa: true
+  ssaamul: 2
+  jtaa: true
+  jtaasamples: 16
+  jtaaoffset: 1.0
+
+styles:
+
+  - name: fill
+
+    polyfill:
+        draw: true
+        colorramp: sci_color
+        colorbyfeature: true
+        feature: sci
+        
+  - name: outline
+        
+    polyoutline:
+        draw: true
+        lineaa: true
+        linewidth: 1
+        color: FF0000
+
+  - name: labels
+
+    labels:
+        draw: true
+        fontsize: 32
+        color: 000000
+        feature: sci
+        
+colorramps:
+
+  - name: sci_color
+    min: ff0000
+    mid: ffff00
+    max: 55aa00
+    buckets: 12
+    minv: -1.0
+    maxv: 1.0
+    
+
+dataobjs:
+
+  - name: fielddata
+    type: geojson
+    file: roi_zones_webster_area.geojson
+    epsgfr: 4326
+    epsgto: 3857
+
+mapobjs: #note back to front order
+
+   - name: field_fill
+     type: layer
+     style: fill
+     exportcolormap: colormap.json
+     aa: off
+     children:
+       - dataobj: fielddata
+       
+   - name: field_outline
+     type: layer
+     style: outline
+     aa: on
+     children:
+       - dataobj: fielddata
+       
+legends:
+    
+   - name: maplegend
+     type: legend
+     file: legend.png
+     legtype: sci
+     units: m
+     colorramp: sci_color

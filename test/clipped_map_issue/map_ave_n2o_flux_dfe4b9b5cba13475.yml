@@ -1,0 +1,68 @@
+---
+output:
+  mode: desktop
+  width: 700
+  height: 600
+  layeroutmode: false
+  file: 937e6b7e9ea7fad9_ave_n2o_flux.png
+  bgcolor: FFFFFF
+  msaa: false
+  ssaa: true
+  ssaamul: 2
+styles:
+- name: eros
+  polyfill:
+    draw: true
+    colorramp: color_eros
+    colorbyfeature: true
+    feature: ave_n2o_flux
+  polyoutline:
+    draw: true
+    linewidth: 4
+    color: 0
+    jtaa: true
+    jtaasamples: 16
+    jtaaoffset: 1.0
+- name: eros_labels
+  labels:
+    draw: true
+    fontsize: 24
+    color: 0
+    feature: ave_n2o_flux
+colorramps:
+- name: color_eros
+  max: ff0000
+  mid: ffff00
+  min: 55aa00
+  buckets: 10
+  minv: 250
+  maxv: 700
+dataobjs:
+- name: eros_data
+  type: geojson
+  file: ave_n2o_flux_input.json
+mapobjs:
+- name: eros_map
+  type: layer
+  style: eros
+  children:
+  - dataobj: eros_data
+legends:
+- name: maplegend
+  type: legend
+  file: legend_ave_n2o_flux.png
+  legtype: generic_bucket
+  colorramp: color_eros
+  fonttitle: title
+  fontvalues: value
+  decimals: 3
+  custom_units: lbs N2O /ac/yr
+fonts:
+- name: title
+  face: Raleway
+  size: 14px
+  color: 0
+- name: value
+  face: Raleway
+  size: 14px
+  color: 0

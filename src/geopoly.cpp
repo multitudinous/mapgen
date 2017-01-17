@@ -2,6 +2,7 @@
 #include "gldraw.h"
 #include "utlline2d.h"
 #include "utlglline.h"
+#include "vaser.h"
 #include <cstring> 
 
 //============================================================================
@@ -88,24 +89,74 @@ void GeoPoly::drawOutline(DrawData *pdd)
 
     // todo: need a flag if points or linew changes need to recreate the vbo
     bool drawVbo = false;
-	if (lineAA)
-	{
-		if (pdd->m_shadersOn && pdd->_progSmoothLine)
-		{
-			if (!_vboOutline)
-			{
-				_vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::round_join, UtlGlLine::square_cap);
-			}
+	bool drawVaser = true;
 
-			if (_vboOutline) drawVbo = true;
+	if (!drawVaser)
+	{
+		if (lineAA)
+		{
+			if (pdd->m_shadersOn && pdd->_progSmoothLine)
+			{
+				if (!_vboOutline)
+				{
+					//_vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::round_join, UtlGlLine::square_cap);
+					_vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::miter_join, UtlGlLine::square_cap);
+				}
+
+				if (_vboOutline) drawVbo = true;
+			}
 		}
 	}
 
+
+	if (drawVaser)
+	{
+		std::vector<Vec2> pts(_pts.size());
+		for (size_t i = 0; i < _pts.size(); i++)
+		{
+			Vec2 pt;
+			pt.x = _pts[i].dX;
+			pt.y = _pts[i].dY;
+			pts[i] = pt;
+		}
+
+		Color col;
+		col.r = color.GetR();
+		col.g = color.GetG();
+		col.b = color.GetB();
+		col.a = color.GetA();
+
+		VASEr::polyline_opt opt;
+		opt.tess = NULL;
+		opt.cap = VASEr::PLC_butt;
+		opt.joint = VASEr::PLJ_round;
+		
+		opt.feather = false;
+		opt.feathering = 1;
+		opt.no_feather_at_cap = true;
+		opt.no_feather_at_core = false;
+
+		VASEr::renderer::before();
+		VASEr::polyline(&pts[0], col, (double)linew, (int)pts.size(), &opt);
+		VASEr::renderer::after();
+
+		/*
+		glColor3f(1, 0, 0);
+		glPointSize(4);
+		glBegin(GL_POINTS);
+		for (size_t i = 0; i < pts.size(); i++)
+		{
+			glVertex2d(pts[i].x, pts[i].y);
+		}
+		glEnd();
+		*/
+	}
     // draw the line with the correct configured algorithm
-    if (drawVbo && lineAA)
+    else if (drawVbo && lineAA)
     {
 		//Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
 
+		glDisable(GL_CULL_FACE);
         pdd->_progSmoothLine->enable();
         GLuint uidColr = pdd->_progSmoothLine->getUniformLoc("ucolor");
         if (uidColr != -1) 
