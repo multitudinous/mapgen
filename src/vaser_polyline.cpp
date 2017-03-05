@@ -345,6 +345,8 @@ void vectors_to_arc( vertex_array_holder& hold, const Point& P,
 	inner_arc( hold, P, C,C2, dangle,angle1,angle2, r,r2, ignor_ends, apparent_P);
 }
 
+/*
+// Disable this debug rendering code for now.. need a text drawing routine
 #ifdef VASER_DEBUG
 void annotate( const Point& P, Color cc, int I=-1)
 {
@@ -392,6 +394,9 @@ void printpoint( const Point& P, const char* name)
 	fflush(stdout);
 }
 #endif
+*/
+
+
 /*
 Point plus_minus( const Point& a, const Point& b, bool plus)
 {

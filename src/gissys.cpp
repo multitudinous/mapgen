@@ -288,7 +288,7 @@ void GisSys::saveFrameToDisk(const std::string &path)
 void GisSys::zoomExtents(double incper)
 {
     box3d bbox = computeBox();
-    LogTrace("Map bounding box: L: %f, R: %f, T: %f, B: %f", bbox.vmin.x, bbox.vmax.x, bbox.vmax.y, bbox.vmin.y);
+    LogTrace("Map bounding box: L: %f, R: %f, T: %f, B: %f, W: %f, H: %f", bbox.vmin.x, bbox.vmax.x, bbox.vmax.y, bbox.vmin.y, bbox.getWidth(), bbox.getHeight());
 
 	double xinc = ((bbox.vmax.x - bbox.vmin.x) * incper) / 2.0;
 	double yinc = ((bbox.vmax.y - bbox.vmin.y) * incper) / 2.0;

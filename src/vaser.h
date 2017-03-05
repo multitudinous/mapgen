@@ -17,8 +17,11 @@ typedef your_color Color;
 struct Vec2 { double x, y; };
 struct Color { float r, g, b, a; };
 
+#define VASER_DEBUG 1
+
 #ifdef VASER_DEBUG
-#define DEBUG printf
+#include "logger.h"
+#define DEBUG LogTrace
 #else
 #define DEBUG ;//
 #endif
