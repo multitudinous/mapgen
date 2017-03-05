@@ -13,7 +13,7 @@ GeoLayer::GeoLayer() :
 #include "geopoly.h"
 #include "gldraw.h"
 #include "box2.h"
-#include "UtlGlLine.h"
+#include "utlglline.h"
 
 void drawLineLoop(const ListPt2d &pts, float w, float r, float g, float b)
 {

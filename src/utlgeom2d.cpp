@@ -61,8 +61,8 @@ bool UtlGeom2d::isCCW(const ListPt2d &pts, bool loop)
 {
 	double sum = 0;
 
-	const Point2d *pt1 = NULL, *pt2 = NULL;
-	for (size_t i = 0; i < pts.size(); i++)
+	const Point2d *pt1 = nullptr, *pt2 = nullptr;
+	for (std::size_t i = 0; i < pts.size(); i++)
 	{
 		pt2 = &pts[i];
 		if (!pt1)
