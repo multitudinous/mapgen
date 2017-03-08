@@ -27,6 +27,7 @@ DrawAttr::DrawAttr()
 
     _lineWidth = 1;
     _lineAA = true;
+	_lineMode = LM_BASIC;
 
     _overrideAlpha = false;
     _overrideDrawPolyFill = false;
@@ -39,6 +40,7 @@ DrawAttr::DrawAttr()
     _overrideColorLabels = false;
     _overrideLineWidth = false;
     _overrideLineAA = false;
+	_overrideLineMode = false;
     _overrideFeature = false;
     _overrideFont = false;
 
@@ -291,6 +293,13 @@ bool DrawAttr::lineAA(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover)
 
 //============================================================================
 //============================================================================
+int DrawAttr::lineMode(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover)
+{
+	return DrawAttr::lineMode(plyr.get(), pover.get());
+}
+
+//============================================================================
+//============================================================================
 GlText* DrawAttr::font(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover)
 {
     return DrawAttr::font(plyr.get(), pover.get());
@@ -411,6 +420,16 @@ bool DrawAttr::lineAA(DrawAttr *plyr, DrawAttr *pover)
     if (plyr) return plyr->_lineAA;
 
     return false;
+}
+
+//============================================================================
+//============================================================================
+int DrawAttr::lineMode(DrawAttr *plyr, DrawAttr *pover)
+{
+	if (pover && pover->_overrideLineMode) return pover->_lineMode;
+	if (plyr) return plyr->_lineMode;
+
+	return LM_BASIC;
 }
 
 //============================================================================

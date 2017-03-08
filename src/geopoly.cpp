@@ -84,18 +84,36 @@ void GeoPoly::drawOutline(DrawData *pdd)
     Rgbf color = DrawAttr::colorPolyOutline(pdd->_drawAttr, _drawAttr);
     float linew = DrawAttr::lineWidth(pdd->_drawAttr, _drawAttr);
     bool lineAA = DrawAttr::lineAA(pdd->_drawAttr, _drawAttr);
+	int lineMode = DrawAttr::lineMode(pdd->_drawAttr, _drawAttr);
 
+	if (lineMode == DrawAttr::LM_SHADER && !lineAA) lineMode == DrawAttr::LM_BASIC;
+
+	switch (lineMode)
+	{
+	case DrawAttr::LM_SHADER:
+		drawOutlineShader(pdd, color, linew);
+		break;
+	case DrawAttr::LM_VASER:
+		drawOutlineVaser(pdd, color, linew);
+		break;
+	default:
+		drawOutlineBasic(pdd, color, linew);
+		break;
+	}
+
+
+	/*
     //Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
 
     // todo: need a flag if points or linew changes need to recreate the vbo
     bool drawVbo = false;
-	bool drawVaser = true;
+	bool drawVaser = false;
 
 	if (!drawVaser)
 	{
 		if (lineAA)
 		{
-			if (pdd->m_shadersOn && pdd->_progSmoothLine)
+			if (pdd->m_shadersOn && pdd->_progSmoothLine && )
 			{
 				if (!_vboOutline)
 				{
@@ -107,7 +125,6 @@ void GeoPoly::drawOutline(DrawData *pdd)
 			}
 		}
 	}
-
 
 	if (drawVaser)
 	{
@@ -139,17 +156,6 @@ void GeoPoly::drawOutline(DrawData *pdd)
 		VASEr::renderer::before();
 		VASEr::polyline(&pts[0], col, (double)linew, (int)pts.size(), &opt);
 		VASEr::renderer::after();
-
-		/*
-		glColor3f(1, 0, 0);
-		glPointSize(4);
-		glBegin(GL_POINTS);
-		for (size_t i = 0; i < pts.size(); i++)
-		{
-			glVertex2d(pts[i].x, pts[i].y);
-		}
-		glEnd();
-		*/
 	}
     // draw the line with the correct configured algorithm
     else if (drawVbo && lineAA)
@@ -172,6 +178,70 @@ void GeoPoly::drawOutline(DrawData *pdd)
         //Gldraw::drawLineLoop(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
         Gldraw::drawLineLoopBasic(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
     }
+	*/
+}
+
+//============================================================================
+//============================================================================
+void GeoPoly::drawOutlineBasic(DrawData *pdd, const Rgbf &color, float linew)
+{
+	Gldraw::drawLineLoopBasic(getPts(), linew, color.GetR(), color.GetG(), color.GetB());
+}
+
+//============================================================================
+//============================================================================
+void GeoPoly::drawOutlineShader(DrawData *pdd, const Rgbf &color, float linew)
+{
+	if (!_vboOutline)
+	{
+		//_vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::round_join, UtlGlLine::square_cap);
+		_vboOutline = UtlGlLine::createLined(_pts, linew, UtlGlLine::miter_join, UtlGlLine::square_cap);
+	}
+
+	glDisable(GL_CULL_FACE);
+	pdd->_progSmoothLine->enable();
+	GLuint uidColr = pdd->_progSmoothLine->getUniformLoc("ucolor");
+	if (uidColr != -1)
+	{
+		glUniform4fv(uidColr, 1, color.GetColor());
+	}
+
+	_vboOutline->draw();
+	pdd->_progSmoothLine->disable();
+}
+
+//============================================================================
+//============================================================================
+void GeoPoly::drawOutlineVaser(DrawData *pdd, const Rgbf &color, float linew)
+{
+	std::vector<Vec2> pts(_pts.size());
+	for (size_t i = 0; i < _pts.size(); i++)
+	{
+		Vec2 pt;
+		pt.x = _pts[i].dX;
+		pt.y = _pts[i].dY;
+		pts[i] = pt;
+	}
+
+	Color col;
+	col.r = color.GetR();
+	col.g = color.GetG();
+	col.b = color.GetB();
+	col.a = color.GetA();
+
+	VASEr::polyline_opt opt;
+	opt.tess = NULL;
+	opt.cap = VASEr::PLC_butt;
+	opt.joint = VASEr::PLJ_round;
+
+	opt.feather = false;
+	opt.feathering = 1;
+	opt.no_feather_at_cap = true;
+	opt.no_feather_at_core = false;
+
+	VASEr::renderer::before();
+	VASEr::polyline(&pts[0], col, (double)linew, (int)pts.size(), &opt);
+	VASEr::renderer::after();
 }
 
 //============================================================================

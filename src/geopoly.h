@@ -56,6 +56,11 @@ protected:
     Point2d findLabelPt(DrawData *pdd);
     bool findLabelPointFromIsects(DrawData *pdd, const Point2d &left, const Point2d &right, Point2d *result);
 
+
+	void drawOutlineBasic(DrawData *pdd, const Rgbf &color, float linew);
+	void drawOutlineShader(DrawData *pdd, const Rgbf &color, float linew);
+	void drawOutlineVaser(DrawData *pdd, const Rgbf &color, float linew);
+
 protected:
     ListPt2d _pts;
 

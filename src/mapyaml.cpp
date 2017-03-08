@@ -356,6 +356,21 @@ PDrawAttr MapYaml::loadStyle(const YAML::Node& node)
         std::string feature = getString(an, "feature");
         if (feature.size() > 0) attr->_feature = feature;
 
+		std::string linemode = getString(an, "linemode", "vaser");
+		linemode = UtlString::toLower(linemode);
+		if (!linemode.compare("vaser"))
+		{
+			attr->_lineMode = DrawAttr::LM_VASER;
+		}
+		else if (!linemode.compare("shader"))
+		{
+			attr->_lineMode = DrawAttr::LM_SHADER;
+		}
+		else
+		{
+			attr->_lineMode = DrawAttr::LM_BASIC;
+		}
+
         // if (an["linewidth"])
     }
 

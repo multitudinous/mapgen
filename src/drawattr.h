@@ -21,6 +21,13 @@ public:
         Right = 32
     };
 
+	enum LineMode
+	{
+		LM_BASIC = 1,
+		LM_SHADER = 2,
+		LM_VASER = 4
+	};
+
 public:
     DrawAttr();
 
@@ -56,6 +63,7 @@ public:
 
     static float lineWidth(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
     static bool lineAA(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
+	static int lineMode(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
 
     static GlText* font(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
     static std::string* feature(shared_ptr<DrawAttr> plyr, shared_ptr<DrawAttr> pover);
@@ -75,6 +83,7 @@ public:
 
     static float lineWidth(DrawAttr *plyr, DrawAttr *pover);
     static bool lineAA(DrawAttr *plyr, DrawAttr *pover);
+	static int lineMode(DrawAttr *plyr, DrawAttr *pover);
 
     static GlText* font(DrawAttr *plyr, DrawAttr *pover);
     static std::string* feature(DrawAttr *plyr, DrawAttr *pover);
@@ -115,6 +124,7 @@ public:
 
     float _lineWidth;
     bool _lineAA;
+	int _lineMode;
 
     GlText _font;
 
@@ -132,6 +142,7 @@ public:
 
     bool _overrideLineWidth;
     bool _overrideLineAA;
+	bool _overrideLineMode;
 
     bool _overrideFont;
     bool _overrideFeature;
