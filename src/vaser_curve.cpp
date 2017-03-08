@@ -15,10 +15,10 @@ namespace VASEr
 		public:
 			std::vector<Vec2>   P;
 			std::vector<Color>  C;
-			std::vector<double> W;
-			std::vector<double> L; //length along polyline
+			std::vector<real> W;
+			std::vector<real> L; //length along polyline
 			int N;
-			double path_length; //total segment length
+			real path_length; //total segment length
 
 			polyline_buffer() : P(), C(), W(), L()
 			{
@@ -26,7 +26,7 @@ namespace VASEr
 				path_length = 0.0;
 				L.push_back(0.0);
 			}
-			void point(double x, double y)
+			void point(real x, real y)
 			{
 				Vec2 V = { x, y };
 				addvertex(V);
@@ -35,7 +35,7 @@ namespace VASEr
 			{
 				addvertex(V);
 			}
-			static void point_cb(void* obj, double x, double y)
+			static void point_cb(void* obj, real x, real y)
 			{
 				polyline_buffer* This = (polyline_buffer*)obj;
 				Vec2 V = { x, y };
@@ -45,7 +45,7 @@ namespace VASEr
 			{
 				addvertex(V, &cc);
 			}
-			void vertex(Vec2 V, Color cc, double ww)
+			void vertex(Vec2 V, Color cc, real ww)
 			{
 				addvertex(V, &cc, ww);
 			}
@@ -56,7 +56,7 @@ namespace VASEr
 				else
 					C.back() = cc;
 			}
-			void set_weight(double ww)
+			void set_weight(real ww)
 			{
 				if (!W.size())
 					W.push_back(ww);
@@ -75,7 +75,7 @@ namespace VASEr
 				polyline(&P[0], &C[0], &W[0], N, options, &in_options);
 			}
 		private:
-			bool addvertex(const Vec2& V, const Color* cc = 0, double ww = 0.0)
+			bool addvertex(const Vec2& V, const Color* cc = 0, real ww = 0.0)
 			{
 				if (N && P[N - 1].x == V.x && P[N - 1].y == V.y)
 					return false; //duplicate
@@ -85,7 +85,7 @@ namespace VASEr
 					P.push_back(V);
 					if (N > 0)
 					{
-						double len = (Point(V) - Point(P[N - 1])).length();
+						real len = (Point(V) - Point(P[N - 1])).length();
 						path_length += len;
 						L.push_back(len);
 					}
@@ -137,9 +137,9 @@ namespace VASEr
 			if (inopt.target)
 				buf = *inopt.target;
 
-			const double BZ_default_approximation_scale = 0.5;
-			const double BZ_default_angle_tolerance = 15.0 / 180 * vaser_pi;
-			const double BZ_default_cusp_limit = 5.0;
+			const real BZ_default_approximation_scale = 0.5;
+			const real BZ_default_angle_tolerance = 15.0 / 180 * vaser_pi;
+			const real BZ_default_cusp_limit = 5.0;
 
 			for (int i = 0; i < length - 3; i += 3)
 			{
@@ -172,7 +172,7 @@ namespace VASEr
 		VASErin::polybezier(P, grad, length, options, 0);
 	}
 
-	void polybezier(const Vec2* P, Color cc, double ww, int length, const polybezier_opt* options)
+	void polybezier(const Vec2* P, Color cc, real ww, int length, const polybezier_opt* options)
 	{
 		gradient grad = { 0 };
 		gradient_stop stop[2] = { 0 };

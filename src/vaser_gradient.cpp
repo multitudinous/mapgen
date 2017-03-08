@@ -5,12 +5,12 @@ namespace VASEr
 	namespace VASErin
 	{	//VASEr internal namespace
 
-		double grad_getstep(double A, double B, double t, double T)
+		real grad_getstep(real A, real B, real t, real T)
 		{
 			return ((T - t)*A + t*B) / T;
 		}
 
-		void gradient_apply(const gradient* gradp, Color* C, double* W, const double* L, int length, double path_length)
+		void gradient_apply(const gradient* gradp, Color* C, real* W, const real* L, int length, real path_length)
 		{
 			if (!gradp) return;
 			if (!gradp->stops || !gradp->length) return;
@@ -21,12 +21,12 @@ namespace VASEr
 			short las_c = -1, las_a = -1, las_w = -1, //last
 				cur_c = -1, cur_a = -1, cur_w = -1, //current
 				nex_c = 0, nex_a = 0, nex_w = 0; //next
-			double length_along = 0.0;
+			real length_along = 0.0;
 			if (grad.length > 1)
 				for (int i = 0; i < length; i++)
 				{
 					length_along += L[i];
-					double p;
+					real p;
 					if (grad.unit == GD_ratio)
 						p = length_along / path_length;
 					else if (grad.unit == GD_length)

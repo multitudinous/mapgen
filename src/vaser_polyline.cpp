@@ -37,18 +37,18 @@ namespace VASErin
  * 5.  when a segment is shorter than its own width,,
  */
 
-/* const double vaser_actual_PPI = 96.0;
-	const double vaser_standard_PPI = 111.94; //the PPI I used for calibration
+/* const real vaser_actual_PPI = 96.0;
+	const real vaser_standard_PPI = 111.94; //the PPI I used for calibration
  */
 
 //critical weight to do approximation rather than real joint processing
-const double cri_segment_approx=1.6;
+const real cri_segment_approx=1.6;
 
-void determine_t_r ( double w, double& t, double& R)
+void determine_t_r ( real w, real& t, real& R)
 {
 	//efficiency: can cache one set of w,t,R values
 	// i.e. when a polyline is of uniform thickness, the same w is passed in repeatedly
-	double f=w-static_cast<int>(w);
+	real f=w-static_cast<int>(w);
 	
 	/*   */if ( w>=0.0 && w<1.0) {
 		t=0.05; R=0.768;//R=0.48+0.32*f;
@@ -63,27 +63,27 @@ void determine_t_r ( double w, double& t, double& R)
 	} else if ( w>=5.0 && w<6.0){
 		t=1.9+f*0.6; R=1.08;
 	} else if ( w>=6.0){
-		double ff=w-6.0;
+		real ff=w-6.0;
 		t=2.5+ff*0.50; R=1.08;
 	}
 	
 	/* //PPI correction
-	double PPI_correction = vaser_standard_PPI / vaser_actual_PPI;
-	const double up_bound = 1.6; //max value of w to receive correction
-	const double start_falloff = 1.0;
+	real PPI_correction = vaser_standard_PPI / vaser_actual_PPI;
+	const real up_bound = 1.6; //max value of w to receive correction
+	const real start_falloff = 1.0;
 	if ( w>0.0 && w<up_bound)
 	{	//here we gracefully apply the correction
 		// so that the effect of correction diminishes starting from w=start_falloff
 		//   and completely disappears when w=up_bound
-		double correction = 1.0 + (PPI_correction-1.0)*(up_bound-w)/(up_bound-start_falloff);
+		real correction = 1.0 + (PPI_correction-1.0)*(up_bound-w)/(up_bound-start_falloff);
 		t *= PPI_correction;
 		R *= PPI_correction;
 	} */
 }
-float get_PLJ_round_dangle(float t, float r)
+real get_PLJ_round_dangle(real t, real r)
 {
-	float dangle;
-	float sum = t+r;
+	real dangle;
+	real sum = t+r;
 	if ( sum <= 1.44f+1.08f) //w<=4.0, feathering=1.0
 		dangle = 0.6f/(t+r);
 	else if ( sum <= 3.25f+1.08f) //w<=6.5, feathering=1.0
@@ -94,11 +94,11 @@ float get_PLJ_round_dangle(float t, float r)
 }
 
 void make_T_R_C( Point& P1, Point& P2, Point* T, Point* R, Point* C,
-				double w, const polyline_opt& opt,
-				double* rr, double* tt, float* dist,
+				real w, const polyline_opt& opt,
+				real* rr, real* tt, real* dist,
 				bool seg_mode=false)
 {
-	double t=1.0,r=0.0;
+	real t=1.0,r=0.0;
 	Point DP=P2-P1;
 	
 	//calculate t,r
@@ -127,8 +127,8 @@ void make_T_R_C( Point& P1, Point& P2, Point* T, Point* R, Point* C,
 	if (rr) *rr = r;
 	
 	//calculate T,R,C
-	double len = DP.normalize();
-	if (dist) *dist = (float)len;
+	real len = DP.normalize();
+	if (dist) *dist = (real)len;
 	if (C) *C = DP;
 	DP.perpen();
 	
@@ -138,8 +138,8 @@ void make_T_R_C( Point& P1, Point& P2, Point* T, Point* R, Point* C,
 
 void same_side_of_line( Point& V, const Point& ref, const Point& a, const Point& b)
 {
-	double sign1 = Point::signed_area( a+ref,a,b);
-	double sign2 = Point::signed_area( a+V,  a,b);
+	real sign1 = Point::signed_area( a+ref,a,b);
+	real sign2 = Point::signed_area( a+V,  a,b);
 	if ( (sign1>=0) != (sign2>=0))
 	{
 		V.opposite();
@@ -162,14 +162,14 @@ struct st_polyline
 		//all T,R,T1,R1 are outward
 	
 	//for djoint==PLJ_round
-	float t,r;
+	real t,r;
 	
 	//for degeneration case
 	bool degenT; //core degenerated
 	bool degenR; //fade degenerated
 	bool pre_full; //draw the preceding segment in full
 	Point PT,PR;
-	float pt; //parameter at intersection
+	real pt; //parameter at intersection
 	bool R_full_degen;
 	
 	char djoint; //determined joint
@@ -181,7 +181,7 @@ struct st_anchor
 {
 	Point P[3]; //point
 	Color C[3]; //color
-	double W[3];//weight
+	real W[3];//weight
 	
 	Point cap_start, cap_end;
 	st_polyline SL[3];
@@ -190,8 +190,8 @@ struct st_anchor
 
 void inner_arc( vertex_array_holder& hold, const Point& P,
 		const Color& C, const Color& C2,
-		float dangle, float angle1, float angle2,
-		float r, float r2, bool ignor_ends,
+		real dangle, real angle1, real angle2,
+		real r, real r2, bool ignor_ends,
 		Point* apparent_P)	//(apparent center) center of fan
 //draw the inner arc between angle1 and angle2 with dangle at each step.
 // -the arc has thickness, r is the outer radius and r2 is the inner radius,
@@ -206,7 +206,7 @@ void inner_arc( vertex_array_holder& hold, const Point& P,
 // -the result is pushed to hold, in form of a triangle strip
 // -an inner arc is an arc which is always shorter than or equal to a half circumference
 {
-	const double& m_pi = vaser_pi;
+	const real& m_pi = vaser_pi;
 	
 	bool incremental=true;
 	
@@ -234,10 +234,10 @@ void inner_arc( vertex_array_holder& hold, const Point& P,
 		if ( ignor_ends)
 		{
 			int i=0;
-			for ( float a=angle1+dangle; a<angle2; a+=dangle, i++)
+			for ( real a=angle1+dangle; a<angle2; a+=dangle, i++)
 			{
-				float x=cos(a);
-				float y=sin(a);
+				real x=cos(a);
+				real y=sin(a);
 				
 				#define INNER_ARC_PUSH \
 					hold.push( Point(P.x+x*r,P.y-y*r), C);\
@@ -258,13 +258,13 @@ void inner_arc( vertex_array_holder& hold, const Point& P,
 		else
 		{
 			int i=0;
-			for ( float a=angle1; ; a+=dangle, i++)
+			for ( real a=angle1; ; a+=dangle, i++)
 			{
 				if ( a>angle2)
 					a=angle2;
 				
-				float x=cos(a);
-				float y=sin(a);
+				real x=cos(a);
+				real y=sin(a);
 				
 				INNER_ARC_PUSH
 				
@@ -283,10 +283,10 @@ void inner_arc( vertex_array_holder& hold, const Point& P,
 		if ( ignor_ends)
 		{
 			int i=0;
-			for ( float a=angle1-dangle; a>angle2; a-=dangle, i++)
+			for ( real a=angle1-dangle; a>angle2; a-=dangle, i++)
 			{
-				float x=cos(a);
-				float y=sin(a);
+				real x=cos(a);
+				real y=sin(a);
 				
 				INNER_ARC_PUSH
 				
@@ -299,13 +299,13 @@ void inner_arc( vertex_array_holder& hold, const Point& P,
 		else
 		{
 			int i=0;
-			for ( float a=angle1; ; a-=dangle, i++)
+			for ( real a=angle1; ; a-=dangle, i++)
 			{
 				if ( a<angle2)
 					a=angle2;
 				
-				float x=cos(a);
-				float y=sin(a);
+				real x=cos(a);
+				real y=sin(a);
 				
 				INNER_ARC_PUSH
 				#undef INNER_ARC_PUSH
@@ -323,12 +323,12 @@ void inner_arc( vertex_array_holder& hold, const Point& P,
 }
 void vectors_to_arc( vertex_array_holder& hold, const Point& P,
 		const Color& C, const Color& C2,
-		Point A, Point B, float dangle, float r, float r2, bool ignor_ends,
+		Point A, Point B, real dangle, real r, real r2, bool ignor_ends,
 		Point* apparent_P)
 //triangulate an inner arc between vectors A and B,
 //  A and B are position vectors relative to P
 {
-	const double& m_pi = vaser_pi;
+	const real& m_pi = vaser_pi;
 	A *= 1/r;
 	B *= 1/r;
 	if ( A.x > 1.0-vaser_min_alw) A.x = 1.0-vaser_min_alw;
@@ -336,8 +336,8 @@ void vectors_to_arc( vertex_array_holder& hold, const Point& P,
 	if ( B.x > 1.0-vaser_min_alw) B.x = 1.0-vaser_min_alw;
 	if ( B.x <-1.0+vaser_min_alw) B.x =-1.0+vaser_min_alw;
 	
-	float angle1 = acos(A.x);
-	float angle2 = acos(B.x);
+	real angle1 = acos(A.x);
+	real angle2 = acos(B.x);
 	if ( A.y>0){ angle1=2*m_pi-angle1;}
 	if ( B.y>0){ angle2=2*m_pi-angle2;}
 	//printf( "steps=%d ",int((angle2-angle1)/den*r));
@@ -364,7 +364,7 @@ void annotate( const Point& P, Color cc, int I=-1)
 	char str[10];
 	sprintf(str,"%d",i);
 	gl_font( FL_HELVETICA, 8);
-	gl_draw( str,float(P.x+2),float(P.y));
+	gl_draw( str,real(P.x+2),real(P.y));
 	i++;
 }
 void annotate( const Point& P)
@@ -385,7 +385,7 @@ void draw_vector( const Point& P, const Point& V, const char* name)
 	{
 		glColor3f(0,0,0);
 		gl_font( FL_HELVETICA, 8);
-		gl_draw( name,float(P2.x+2),float(P2.y));
+		gl_draw( name,real(P2.x+2),real(P2.y));
 	}
 }
 void printpoint( const Point& P, const char* name)
@@ -555,7 +555,7 @@ int triangle_knife_cut( const Point& kn1, const Point& kn2, const Point& kn_out,
 		
 		Point interP1,interP2;
 		Color interC1,interC2;
-		double ble1,kne1, ble2,kne2;
+		real ble1,kne1, ble2,kne2;
 		Point::intersect( kn1,kn2, ip1,outp, interP1, &kne1,&ble1);
 		Point::intersect( kn1,kn2, ip2,outp, interP2, &kne2,&ble2);
 		
@@ -769,7 +769,7 @@ void vah_N_knife_cut( vertex_array_holder& in, vertex_array_holder& out,
 	}
 }
 
-const float cri_core_adapt = 0.0001f;
+const real cri_core_adapt = 0.0001f;
 void anchor_late( const Vec2* P, const Color* C, st_polyline* SL,
 		vertex_array_holder& tris,
 		Point cap1, Point cap2)
@@ -834,7 +834,7 @@ void anchor_late( const Vec2* P, const Color* C, st_polyline* SL,
 	Color Cpt; //color at PT
 	if ( SL[1].degenT || SL[1].degenR)
 	{
-		float pt = sqrt(SL[1].pt);
+		real pt = sqrt(SL[1].pt);
 		if ( SL[1].pre_full)
 			Cpt = Color_between(C[0],C[1], pt);
 		else
@@ -1065,7 +1065,7 @@ void anchor_cap( const Vec2* P, const Color* C, st_polyline* SL,
 					Point app_P = O+SL[i].T;
 					Point bR = SL[i].bR;
 					bR.follow_signs(cur_cap);
-					float dangle = get_PLJ_round_dangle(SL[i].t,SL[i].r);
+					real dangle = get_PLJ_round_dangle(SL[i].t,SL[i].r);
 					
 					vectors_to_arc( strip, O, C[i], C[i],
 					SL[i].T+bR, -SL[i].T+bR,
@@ -1215,7 +1215,7 @@ void segment_late( const Vec2* P, const Color* C, st_polyline* SL,
 			Point app_P = O+SL[j].T;
 			Point bR = SL[j].bR;
 			bR.follow_signs( j==0?cap1:cap2);
-			float dangle = get_PLJ_round_dangle(SL[j].t,SL[j].r);
+			real dangle = get_PLJ_round_dangle(SL[j].t,SL[j].r);
 			
 			vectors_to_arc( cap, O, C[j], C[j],
 			SL[j].T+bR, -SL[j].T+bR,
@@ -1294,7 +1294,7 @@ void segment_late( const Vec2* P, const Color* C, st_polyline* SL,
 
 void segment( st_anchor& SA, const polyline_opt* options,  bool cap_first, bool cap_last, char last_cap_type=-1)
 {
-	double* weight = SA.W;
+	real* weight = SA.W;
 	if ( !SA.P || !SA.C || !weight) return;
 	
 	Point P[2]; P[0]=SA.P[0]; P[1]=SA.P[1];
@@ -1307,7 +1307,7 @@ void segment( st_anchor& SA, const polyline_opt* options,  bool cap_first, bool 
 	Point T1,T2;
 	Point R1,R2;
 	Point bR;
-	double t,r;
+	real t,r;
 	
 	bool varying_weight = !(weight[0]==weight[1]);
 	
@@ -1318,7 +1318,7 @@ void segment( st_anchor& SA, const polyline_opt* options,  bool cap_first, bool 
 	{
 		if ( weight[i]>=0.0 && weight[i]<1.0)
 		{
-			double f=weight[i]-static_cast<int>(weight[i]);
+			real f=weight[i]-static_cast<int>(weight[i]);
 			C[i].a *=f;
 		}
 	}
@@ -1385,7 +1385,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 	
 	Point* P = SA.P;
 	Color* C = SA.C;
-	double* weight = SA.W;
+	real* weight = SA.W;
 
 	{	st_polyline emptySL;
 		SA.SL[0]=emptySL; SA.SL[1]=emptySL; SA.SL[2]=emptySL;
@@ -1395,14 +1395,14 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 	SA.cap_start = Point();
 	SA.cap_end = Point();
 	
-	//const double critical_angle=11.6538;
+	//const real critical_angle=11.6538;
 	//	critical angle in degrees where a miter is force into bevel
 	//	it is _similar_ to cairo_set_miter_limit () but cairo works with ratio while VASEr works with included angle
-	const double cos_cri_angle=0.979386; //cos(critical_angle)
+	const real cos_cri_angle=0.979386; //cos(critical_angle)
 	
 	bool varying_weight = !(weight[0]==weight[1] & weight[1]==weight[2]);
 	
-	double combined_weight=weight[1]+(opt.feather?opt.feathering:0.0);
+	real combined_weight=weight[1]+(opt.feather?opt.feathering:0.0);
 	if ( combined_weight < cri_segment_approx)
 	{
 		segment( SA, &opt, cap_first,false, opt.joint==PLJ_round?PLC_round:PLC_butt);
@@ -1422,7 +1422,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 	{	//lower the transparency for weight < 1.0
 		if ( weight[i]>=0.0 && weight[i]<1.0)
 		{
-			double f=weight[i];
+			real f=weight[i];
 			C[i].a *=f;
 		}
 	}
@@ -1430,7 +1430,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 	{	int i=0;
 	
 		Point cap1;
-		double r,t;		
+		real r,t;		
 		make_T_R_C( P[i], P[i+1], &T2,&R2,&cap1, weight[i],opt, &r,&t,0);
 		if ( varying_weight) {
 		make_T_R_C( P[i], P[i+1], &T31,&R31,0, weight[i+1],opt, 0,0,0);
@@ -1457,8 +1457,8 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 		SL[i].djoint=opt.cap;
 		SL[i].T=T2;
 		SL[i].R=R2;
-		SL[i].t=(float)t;
-		SL[i].r=(float)r;
+		SL[i].t=(real)t;
+		SL[i].r=(real)r;
 		SL[i].degenT = false;
 		SL[i].degenR = false;
 		
@@ -1470,7 +1470,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 	{	int i=2;
 
 		Point cap2;
-		double t,r;
+		real t,r;
 		make_T_R_C( P[i-1],P[i], 0,0,&cap2,weight[i],opt, &r,&t,0);
 		if ( opt.cap==PLC_square)
 		{
@@ -1486,7 +1486,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 	
 	{	int i=1;
 	
-		double r,t;
+		real r,t;
 		Point P_cur = P[i]; //current point //to avoid calling constructor repeatedly
 		Point P_nxt = P[i+1]; //next point
 		Point P_las = P[i-1]; //last point
@@ -1497,7 +1497,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 		}
 		
 		{
-		Point bR; float length_cur, length_nxt;
+		Point bR; real length_cur, length_nxt;
 		make_T_R_C( P_las, P_cur,  &T1,&R1, 0, weight[i-1],opt,0,0, &length_cur);
 		if ( varying_weight) {
 		make_T_R_C( P_las, P_cur, &T21,&R21,0, weight[i],opt,  0,0,0);
@@ -1517,8 +1517,8 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 		SL[i].T=T2;
 		SL[i].R=R2;
 		SL[i].bR=bR;
-		SL[i].t=(float)t;
-		SL[i].r=(float)r;
+		SL[i].t=(real)t;
+		SL[i].r=(real)r;
 		SL[i].degenT = false;
 		SL[i].degenR = false;
 		
@@ -1535,7 +1535,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 			ln1.normalize();
 			ln2.normalize();
 			Point::dot(ln1,ln2, V);
-			double cos_tho=-V.x-V.y;
+			real cos_tho=-V.x-V.y;
 			bool zero_degree = Point::negligible(cos_tho-1);
 			bool d180_degree = cos_tho < -1+0.0001;
 			bool smaller_than_30_degree = cos_tho > 0.8660254;
@@ -1593,7 +1593,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 			
 			//make intersections
 			Point PR1,PR2, PT1,PT2;
-			double pt1,pt2;
+			real pt1,pt2;
 			
 			char result1r = Point::intersect( P_nxt-T31-R31, P_nxt+T31+R31,
 						P_las+T1+R1, P_cur+T21+R21, //knife1
@@ -1641,7 +1641,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 				SL[i].degenR=true;
 				SL[i].PT = is_result1r? PT1:PT2; //this is is_result1r!!
 				SL[i].PR = is_result1r? PR1:PR2;
-				SL[i].pt = float(is_result1r? pt1:pt2);
+				SL[i].pt = real(is_result1r? pt1:pt2);
 					if ( SL[i].pt < 0)
 						SL[i].pt = cri_core_adapt;
 				SL[i].pre_full = is_result1r;
@@ -1680,7 +1680,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 				SL[i].degenT=true;
 				SL[i].pre_full=is_result1t;
 				SL[i].PT = is_result1t? PT1:PT2;
-				SL[i].pt = float(is_result1t? pt1:pt2);
+				SL[i].pt = real(is_result1t? pt1:pt2);
 			}
 			
 			//make joint
@@ -1718,7 +1718,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 	
 	{	int i=2;
 
-		double r,t;
+		real r,t;
 		make_T_R_C( P[i-1],P[i], &T2,&R2,0,weight[i],opt,  &r,&t,0);
 			same_side_of_line( R2, SL[i-1].R, P[i-1],P[i]);
 				T2.follow_signs(R2);
@@ -1726,8 +1726,8 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 		SL[i].djoint=opt.cap;
 		SL[i].T=T2;
 		SL[i].R=R2;
-		SL[i].t=(float)t;
-		SL[i].r=(float)r;
+		SL[i].t=(real)t;
+		SL[i].r=(real)r;
 		SL[i].degenT = false;
 		SL[i].degenR = false;
 	}
@@ -1792,9 +1792,9 @@ public:
 };
 #endif //VASE_RENDERER_EXPER
 
-void poly_point_inter( const Point* P, const Color* C, const double* W, const polyline_inopt* inopt,
-		Point& p, Color& c, double& w,
-		int at, double t)
+void poly_point_inter( const Point* P, const Color* C, const real* W, const polyline_inopt* inopt,
+		Point& p, Color& c, real& w,
+		int at, real t)
 {
 	#define color(I)  C[inopt&&inopt->const_color?0: I]
 	#define weight(I) W[inopt&&inopt->const_weight?0: I]
@@ -1823,7 +1823,7 @@ void poly_point_inter( const Point* P, const Color* C, const double* W, const po
 void polyline_approx(
 	const Vec2* points,
 	const Color* C,
-	const double* W,
+	const real* W,
 	int length,
 	const polyline_opt* opt,
 	const polyline_inopt* inopt)
@@ -1831,7 +1831,7 @@ void polyline_approx(
 	const Point* P=(Point*)points;
 	bool cap_first= inopt? !inopt->no_cap_first :true;
 	bool cap_last=  inopt? !inopt->no_cap_last  :true;
-	double* seg_len=inopt? inopt->segment_length: 0;
+	real* seg_len=inopt? inopt->segment_length: 0;
 
 	st_anchor SA1,SA2;
 	vertex_array_holder vcore;  //curve core
@@ -1849,7 +1849,7 @@ void polyline_approx(
 
 	for( int i=1; i<length-1; i++)
 	{
-		double t,r;
+		real t,r;
 		determine_t_r(weight(i),t,r);
 		if ( opt && opt->feather && !opt->no_feather_at_core)
 			r*=opt->feathering;
@@ -1867,10 +1867,10 @@ void polyline_approx(
 	}
 	Point P_las,P_fir;
 	Color C_las,C_fir;
-	double W_las,W_fir;
+	real W_las,W_fir;
 	poly_point_inter( P,C,W,inopt, P_las,C_las,W_las, length-2, 0.5);
 	{
-		double t,r;
+		real t,r;
 		determine_t_r(W_las,t,r);
 		if ( opt && opt->feather && !opt->no_feather_at_core)
 			r*=opt->feathering;
@@ -1944,7 +1944,7 @@ void polyline_approx(
 void polyline_exact(
 	const Vec2* P,
 	const Color* C,
-	const double* W,
+	const real* W,
 	int size_of_P,
 	const polyline_opt* opt,
 	const polyline_inopt* inopt)
@@ -1959,7 +1959,7 @@ void polyline_exact(
 
 	Point mid_l, mid_n; //the last and the next mid point
 	Color c_l, c_n;
-	double w_l, w_n;
+	real w_l, w_n;
 	{	//init for the first anchor
 		poly_point_inter( (Point*)P,C,W,inopt, mid_l,c_l,w_l, 0, join_first?0.5:0);
 	}
@@ -2012,7 +2012,7 @@ void polyline_exact(
 void polyline_range(
 	const Vec2* P,
 	const Color* C,
-	const double* W,
+	const real* W,
 	int length,
 	const polyline_opt* opt,
 	const polyline_inopt* in_options,
@@ -2036,7 +2036,7 @@ void polyline_range(
 void polyline(
 	const Vec2* PP,  //pointer to array of point of a polyline
 	const Color* C,  //array of color
-	const double* W, //array of weight
+	const real* W, //array of weight
 	int length, //size of the buffer P
 	const polyline_opt* options, //options
 	const polyline_inopt* in_options) //internal options
@@ -2075,7 +2075,7 @@ void polyline(
 	{
 		Point V1=P[i]-P[i-1];
 		Point V2=P[i+1]-P[i];
-		double len=0.0;
+		real len=0.0;
 		if( inopt.segment_length)
 		{
 			V1 /= inopt.segment_length[i];
@@ -2087,12 +2087,12 @@ void polyline(
 			len += V1.normalize()*0.5;
 			len += V2.normalize()*0.5;
 		}
-		double costho = V1.x*V2.x+V1.y*V2.y;
-		//double angle = acos(costho)*180/vaser_pi;
-		const double cos_a = cos(15*vaser_pi/180);
-		const double cos_b = cos(10*vaser_pi/180);
-		const double cos_c = cos(25*vaser_pi/180);
-		double weight = W[inopt.const_weight?0:i];
+		real costho = V1.x*V2.x+V1.y*V2.y;
+		//real angle = acos(costho)*180/vaser_pi;
+		const real cos_a = cos(15*vaser_pi/180);
+		const real cos_b = cos(10*vaser_pi/180);
+		const real cos_c = cos(25*vaser_pi/180);
+		real weight = W[inopt.const_weight?0:i];
 		bool approx = false;
 		if( (weight<7 && costho>cos_a) ||
 			(costho>cos_b) || //when the angle difference at an anchor is smaller than a critical degree, do polyline approximation
@@ -2131,60 +2131,60 @@ void polyline(
 
 //export implementations
 
-void polyline( const Vec2* P, const Color* C, const double* W, int length, const polyline_opt* opt)
+void polyline( const Vec2* P, const Color* C, const real* W, int length, const polyline_opt* opt)
 {
 	VASErin::polyline(P,C,W,length,opt,0);
 }
-void polyline( const Vec2* P, Color C, double W, int length, const polyline_opt* opt) //constant color and weight
+void polyline( const Vec2* P, Color C, real W, int length, const polyline_opt* opt) //constant color and weight
 {
 	VASErin::polyline_inopt inopt={0};
 	inopt.const_color=true;
 	inopt.const_weight=true;
 	VASErin::polyline(P,&C,&W,length,opt,&inopt);
 }
-void polyline( const Vec2* P, const Color* C, double W, int length, const polyline_opt* opt) //constant weight
+void polyline( const Vec2* P, const Color* C, real W, int length, const polyline_opt* opt) //constant weight
 {
 	VASErin::polyline_inopt inopt={0};
 	inopt.const_weight=true;
 	VASErin::polyline(P,C,&W,length,opt,&inopt);
 }
-void polyline( const Vec2* P, Color C, const double* W, int length, const polyline_opt* opt) //constant color
+void polyline( const Vec2* P, Color C, const real* W, int length, const polyline_opt* opt) //constant color
 {
 	VASErin::polyline_inopt inopt={0};
 	inopt.const_color=true;
 	VASErin::polyline(P,&C,W,length,opt,&inopt);
 }
 
-void segment(  Vec2 P1, Vec2 P2, Color C1, Color C2, double W1, double W2, const polyline_opt* options)
+void segment(  Vec2 P1, Vec2 P2, Color C1, Color C2, real W1, real W2, const polyline_opt* options)
 {
 	Vec2   AP[2];
 	Color  AC[2];
-	double AW[2];
+	real AW[2];
 		AP[0] = P1; AC[0] = C1; AW[0] = W1;
 		AP[1] = P2; AC[1] = C2; AW[1] = W2;
 	polyline( AP, AC, AW, 2, options);
 }
-void segment(  Vec2 P1, Vec2 P2, Color C, double W, const polyline_opt* options) //constant color and weight
+void segment(  Vec2 P1, Vec2 P2, Color C, real W, const polyline_opt* options) //constant color and weight
 {
 	Vec2   AP[2];
 		AP[0] = P1;
 		AP[1] = P2;
 	polyline( AP, C, W, 2, options);
 }
-void segment(  Vec2 P1, Vec2 P2, Color C1, Color C2, double W, const polyline_opt* options) //constant weight
+void segment(  Vec2 P1, Vec2 P2, Color C1, Color C2, real W, const polyline_opt* options) //constant weight
 {
 	Vec2   AP[2];
 	Color  AC[2];
-	double AW[2];
+	real AW[2];
 		AP[0] = P1; AC[0] = C1; AW[0] = W;
 		AP[1] = P2; AC[1] = C2; AW[1] = W;
 	polyline( AP, AC, AW, 2, options);
 }
-void segment(  Vec2 P1, Vec2 P2, Color C, double W1, double W2, const polyline_opt* options) //const color
+void segment(  Vec2 P1, Vec2 P2, Color C, real W1, real W2, const polyline_opt* options) //const color
 {
 	Vec2   AP[2];
 	Color  AC[2];
-	double AW[2];
+	real AW[2];
 		AP[0] = P1; AC[0] = C; AW[0] = W1;
 		AP[1] = P2; AC[1] = C; AW[1] = W2;
 	polyline( AP, AC, AW, 2, options);

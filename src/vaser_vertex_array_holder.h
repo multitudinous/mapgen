@@ -16,7 +16,7 @@ namespace VASEr
 		int count; //counter
 		int glmode; //drawing mode in opengl
 		bool jumping;
-		std::vector<float> vert; //because it holds 2d vectors
+		std::vector<real> vert; //because it holds 2d vectors
 		std::vector<float> color; //RGBA
 
 		vertex_array_holder();

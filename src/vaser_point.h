@@ -13,10 +13,10 @@ namespace VASEr
 			Point() { clear(); }
 			Point(const Vec2& P) { set(P.x, P.y); }
 			Point(const Point& P) { set(P.x, P.y); }
-			Point(double X, double Y) { set(X, Y); }
+			Point(real X, real Y) { set(X, Y); }
 
 			void clear()			{ x = 0.0; y = 0.0; }
-			void set(double X, double Y)	{ x = X;   y = Y; }
+			void set(real X, real Y)	{ x = X;   y = Y; }
 
 			Vec2 vec() {
 				Vec2 V;
@@ -25,15 +25,15 @@ namespace VASEr
 			}
 
 			//attributes
-			double length() const
+			real length() const
 			{
 				return sqrt(x*x + y*y);
 			}
-			double slope() const
+			real slope() const
 			{
 				return y / x;
 			}
-			static double signed_area(const Point& P1, const Point& P2, const Point& P3)
+			static real signed_area(const Point& P1, const Point& P2, const Point& P3)
 			{
 				return (P2.x - P1.x)*(P3.y - P1.y) - (P3.x - P1.x)*(P2.y - P1.y);
 			}
@@ -51,7 +51,7 @@ namespace VASEr
 			{
 				return Point(x - b.x, y - b.y);
 			}
-			Point operator*(double k) const
+			Point operator*(real k) const
 			{
 				return Point(x*k, y*k);
 			}
@@ -70,12 +70,12 @@ namespace VASEr
 				x -= b.x; y -= b.y;
 				return *this;
 			}
-			Point& operator*=(const double k)
+			Point& operator*=(const real k)
 			{
 				x *= k; y *= k;
 				return *this;
 			}
-			Point& operator/=(const double k)
+			Point& operator/=(const real k)
 			{
 				x /= k; y /= k;
 				return *this;
@@ -102,9 +102,9 @@ namespace VASEr
 				x = -a.x;
 				y = -a.y;
 			}
-			double normalize()
+			real normalize()
 			{
-				double L = length();
+				real L = length();
 				if (L > vaser_min_alw)
 				{
 					x /= L; y /= L;
@@ -113,7 +113,7 @@ namespace VASEr
 			}
 			void perpen() //perpendicular: anti-clockwise 90 degrees
 			{
-				double y_value = y;
+				real y_value = y;
 				y = x;
 				x = -y_value;
 			}
@@ -126,7 +126,7 @@ namespace VASEr
 			void follow_direction(const Point& a);
 
 			//judgements
-			static inline bool negligible(double M)
+			static inline bool negligible(real M)
 			{
 				return -vaser_min_alw < M && M < vaser_min_alw;
 			}
@@ -153,13 +153,13 @@ namespace VASEr
 			}
 
 			//operations require 2 input points
-			static double distance_squared(const Point& A, const Point& B)
+			static real distance_squared(const Point& A, const Point& B)
 			{
-				double dx = A.x - B.x;
-				double dy = A.y - B.y;
+				real dx = A.x - B.x;
+				real dy = A.y - B.y;
 				return (dx*dx + dy*dy);
 			}
-			static inline double distance(const Point& A, const Point& B)
+			static inline real distance(const Point& A, const Point& B)
 			{
 				return sqrt(distance_squared(A, B));
 			}
@@ -215,10 +215,10 @@ namespace VASEr
 			static char intersect(const Point& P1, const Point& P2,  //line 1
 				const Point& P3, const Point& P4, //line 2
 				Point& Pout,			  //the output point
-				double* ua_out = 0, double* ub_out = 0)
+				real* ua_out = 0, real* ub_out = 0)
 			{ //Determine the intersection point of two line segments
-				double mua, mub;
-				double denom, numera, numerb;
+				real mua, mub;
+				real denom, numera, numerb;
 
 				denom = (P4.y - P3.y) * (P2.x - P1.x) - (P4.x - P3.x) * (P2.y - P1.y);
 				numera = (P4.x - P3.x) * (P1.y - P3.y) - (P4.y - P3.y) * (P1.x - P3.x);

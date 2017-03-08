@@ -1,0 +1,58 @@
+---
+output:
+  mode: windowless
+  width: 700
+  height: 600
+  layeroutmode: false
+  file: gyd/img.png
+  bgcolor: FFFFFF
+  msaa: false
+  ssaa: true
+  ssaamul: 2
+styles:
+- name: eros
+  polyfill:
+    draw: true
+    colorramp: color_eros
+    colorbyfeature: true
+    feature: VALUE 
+  polyoutline:
+    draw: true
+    linewidth: 4
+    color: 0
+    jtaa: true
+    jtaasamples: 16
+    jtaaoffset: 1.0
+- name: eros_labels
+  labels:
+    draw: true
+    fontsize: 24
+    color: 0
+    feature: pm10
+colorramps:
+- name: color_eros
+  max: ff0000
+  mid: ffff00
+  min: 55aa00
+  buckets: 12
+  minv: -0.1
+  maxv: 1.1
+dataobjs:
+- name: eros_data
+  type: geojson
+  file: zonepolys.geojson 
+mapobjs:
+- name: eros_map
+  type: layer
+  style: eros
+  children:
+  - dataobj: eros_data
+fonts:
+- name: title
+  face: Raleway
+  size: 14px
+  color: 0
+- name: value
+  face: Raleway
+  size: 14px
+  color: 0

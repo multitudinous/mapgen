@@ -1,18 +1,19 @@
 #pragma once
+#include "vaser.h"
 
 namespace VASEr
 {
 	namespace VASErin
 	{	//VASEr internal namespace
 
-		int curve4_div(double x1, double y1,
-			double x2, double y2,
-			double x3, double y3,
-			double x4, double y4,
-			double m_approximation_scale,
-			double m_angle_tolerance,
-			double m_cusp_limit,
-			void(*add_point)(void*, double, double),
+		int curve4_div(real x1, real y1,
+			real x2, real y2,
+			real x3, real y3,
+			real x4, real y4,
+			real m_approximation_scale,
+			real m_angle_tolerance,
+			real m_cusp_limit,
+			void(*add_point)(void*, real, real),
 			void* obj);
 
 	}

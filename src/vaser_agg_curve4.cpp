@@ -68,7 +68,9 @@
 //          http://www.antigrain.com
 //-----------------------------------------------------------------------
 
+#include "vaser.h"
 #include <math.h>
+
 namespace VASEr
 {
 	namespace VASErin
@@ -78,27 +80,27 @@ namespace VASEr
 #define M_PI 3.141592653589793238462643
 #endif
 
-		double calc_sq_distance(double x1, double y1, double x2, double y2)
+		real calc_sq_distance(real x1, real y1, real x2, real y2)
 		{
-			double dx = x2 - x1;
-			double dy = y2 - y1;
+			real dx = x2 - x1;
+			real dy = y2 - y1;
 			return dx * dx + dy * dy;
 		}
 
-		void recursive_bezier(double x1, double y1,
-			double x2, double y2,
-			double x3, double y3,
-			double x4, double y4,
+		void recursive_bezier(real x1, real y1,
+			real x2, real y2,
+			real x3, real y3,
+			real x4, real y4,
 			unsigned level,
-			double m_angle_tolerance,
-			double m_cusp_limit,
-			double m_distance_tolerance_square,
-			void(*add_point)(void*, double, double),
+			real m_angle_tolerance,
+			real m_cusp_limit,
+			real m_distance_tolerance_square,
+			void(*add_point)(void*, real, real),
 			void* obj)
 		{
-			const double curve_distance_epsilon = 1e-30;
-			const double curve_collinearity_epsilon = 1e-30;
-			const double curve_angle_tolerance_epsilon = 0.01;
+			const real curve_distance_epsilon = 1e-30;
+			const real curve_collinearity_epsilon = 1e-30;
+			const real curve_angle_tolerance_epsilon = 0.01;
 			const int curve_recursion_limit = 32;
 
 			if (level > curve_recursion_limit)
@@ -108,27 +110,27 @@ namespace VASEr
 
 			// Calculate all the mid-points of the line segments
 			//----------------------
-			double x12 = (x1 + x2) / 2;
-			double y12 = (y1 + y2) / 2;
-			double x23 = (x2 + x3) / 2;
-			double y23 = (y2 + y3) / 2;
-			double x34 = (x3 + x4) / 2;
-			double y34 = (y3 + y4) / 2;
-			double x123 = (x12 + x23) / 2;
-			double y123 = (y12 + y23) / 2;
-			double x234 = (x23 + x34) / 2;
-			double y234 = (y23 + y34) / 2;
-			double x1234 = (x123 + x234) / 2;
-			double y1234 = (y123 + y234) / 2;
+			real x12 = (x1 + x2) / 2;
+			real y12 = (y1 + y2) / 2;
+			real x23 = (x2 + x3) / 2;
+			real y23 = (y2 + y3) / 2;
+			real x34 = (x3 + x4) / 2;
+			real y34 = (y3 + y4) / 2;
+			real x123 = (x12 + x23) / 2;
+			real y123 = (y12 + y23) / 2;
+			real x234 = (x23 + x34) / 2;
+			real y234 = (y23 + y34) / 2;
+			real x1234 = (x123 + x234) / 2;
+			real y1234 = (y123 + y234) / 2;
 
 			// Try to approximate the full cubic curve by a single straight line
 			//------------------
-			double dx = x4 - x1;
-			double dy = y4 - y1;
+			real dx = x4 - x1;
+			real dy = y4 - y1;
 
-			double d2 = fabs(((x2 - x4) * dy - (y2 - y4) * dx));
-			double d3 = fabs(((x3 - x4) * dy - (y3 - y4) * dx));
-			double da1, da2, k;
+			real d2 = fabs(((x2 - x4) * dy - (y2 - y4) * dx));
+			real d3 = fabs(((x3 - x4) * dy - (y3 - y4) * dx));
+			real da1, da2, k;
 
 			switch ((int(d2 > curve_collinearity_epsilon) << 1) +
 				int(d3 > curve_collinearity_epsilon))
@@ -309,17 +311,17 @@ namespace VASEr
 				add_point, obj);
 		}
 
-		int curve4_div(double x1, double y1,
-			double x2, double y2,
-			double x3, double y3,
-			double x4, double y4,
-			double m_approximation_scale,
-			double m_angle_tolerance,
-			double m_cusp_limit,
-			void(*add_point)(void*, double, double),
+		int curve4_div(real x1, real y1,
+			real x2, real y2,
+			real x3, real y3,
+			real x4, real y4,
+			real m_approximation_scale,
+			real m_angle_tolerance,
+			real m_cusp_limit,
+			void(*add_point)(void*, real, real),
 			void* obj)
 		{
-			double m_distance_tolerance_square = 0.5 / m_approximation_scale;
+			real m_distance_tolerance_square = 0.5 / m_approximation_scale;
 			m_distance_tolerance_square *= m_distance_tolerance_square;
 			int m_count = 0;
 			add_point(obj, x1, y1);

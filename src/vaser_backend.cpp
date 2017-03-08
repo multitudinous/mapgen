@@ -10,13 +10,16 @@ namespace VASEr
 		{
 			if (vah.count > 0) //save some effort
 			{
-				glVertexPointer(2, GL_FLOAT, 0, &vah.vert[0]);
+				int type = GL_FLOAT;
+				if (sizeof(real) == 8) type = GL_DOUBLE;
+				
+				glVertexPointer(2, type, 0, &vah.vert[0]);
 				glColorPointer(4, GL_FLOAT, 0, &vah.color[0]);
 				glDrawArrays(vah.glmode, 0, vah.count);
 			}
 		}
 
-		void backend::polyline(const Vec2* P, Color C, double W, int length, const polyline_opt*) //constant color and weight
+		void backend::polyline(const Vec2* P, Color C, real W, int length, const polyline_opt*) //constant color and weight
 		{
 			int type = 0;
 			if (sizeof(Vec2) == 16)

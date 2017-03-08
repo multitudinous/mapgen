@@ -7,14 +7,17 @@
 
 /* Basic usage
 * You should provide these structs before any vase_renderer include, using
-struct Vec2 { double x,y;};
+struct Vec2 { real x,y;};
 struct Color { float r,g,b,a;};
 * or
 typedef your_vec2 Vec2;
 typedef your_color Color;
 */
 
-struct Vec2 { double x, y; };
+#define real double
+//#define real float
+
+struct Vec2 { real x, y; };
 struct Color { float r, g, b, a; };
 
 #define VASER_DEBUG 1
@@ -29,16 +32,16 @@ struct Color { float r, g, b, a; };
 
 namespace VASEr
 {
-const double vaser_pi=3.141592653589793;
+const real vaser_pi=3.141592653589793;
 
 struct gradient_stop
 {
-	double t; //position
+	real t; //position
 	char type; //GS_xx
 	union
 	{
 		Color color;
-		double weight;
+		real weight;
 	};
 };
 	const char GS_none  =0;
@@ -92,7 +95,7 @@ struct polyline_opt
 	char joint; //use PLJ_xx
 	char cap;   //use PLC_xx
 	bool feather;
-		double feathering;
+		real feathering;
 		bool no_feather_at_cap;
 		bool no_feather_at_core;
 };
@@ -110,14 +113,14 @@ struct polyline_opt
 	const char PLC_last  =20;
 	const char PLC_none  =30;
 
-void polyline( const Vec2*, const Color*, const double*, int length, const polyline_opt*);
-void polyline( const Vec2*, Color, double W, int length, const polyline_opt*); //constant color and weight
-void polyline( const Vec2*, const Color*, double W, int length, const polyline_opt*); //constant weight
-void polyline( const Vec2*, Color, const double* W, int length, const polyline_opt*); //constant color
-void segment( Vec2, Vec2, Color, Color, double W1, double W2, const polyline_opt*);
-void segment( Vec2, Vec2, Color, double W, const polyline_opt*); //constant color and weight
-void segment( Vec2, Vec2, Color, Color, double W, const polyline_opt*); //constant weight
-void segment( Vec2, Vec2, Color, double W1, double W2, const polyline_opt*); //const color
+void polyline( const Vec2*, const Color*, const real*, int length, const polyline_opt*);
+void polyline( const Vec2*, Color, real W, int length, const polyline_opt*); //constant color and weight
+void polyline( const Vec2*, const Color*, real W, int length, const polyline_opt*); //constant weight
+void polyline( const Vec2*, Color, const real* W, int length, const polyline_opt*); //constant color
+void segment( Vec2, Vec2, Color, Color, real W1, real W2, const polyline_opt*);
+void segment( Vec2, Vec2, Color, real W, const polyline_opt*); //constant color and weight
+void segment( Vec2, Vec2, Color, Color, real W, const polyline_opt*); //constant weight
+void segment( Vec2, Vec2, Color, real W1, real W2, const polyline_opt*); //const color
 
 struct polybezier_opt
 {
@@ -126,13 +129,13 @@ struct polybezier_opt
 };
 
 void polybezier( const Vec2*, const gradient*, int length, const polybezier_opt*);
-void polybezier( const Vec2*, Color, double W, int length, const polybezier_opt*);
+void polybezier( const Vec2*, Color, real W, int length, const polybezier_opt*);
 
 namespace VASErin
 { //VASEr internal namespace
-	const double vaser_min_alw = 0.00000000001; //smallest value not regarded as zero
+	const real vaser_min_alw = 0.00000000001; //smallest value not regarded as zero
 	const Color default_color = { 0, 0, 0, 1 };
-	const double default_weight = 1.0;
+	const real default_weight = 1.0;
 }
 
 } //namespace VASEr

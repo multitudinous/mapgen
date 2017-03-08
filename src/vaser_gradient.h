@@ -7,9 +7,9 @@ namespace VASEr
 	namespace VASErin
 	{	//VASEr internal namespace
 
-		double grad_getstep(double A, double B, double t, double T);
+		real grad_getstep(real A, real B, real t, real T);
 
-		void gradient_apply(const gradient* gradp, Color* C, double* W, const double* L, int length, double path_length);
+		void gradient_apply(const gradient* gradp, Color* C, real* W, const real* L, int length, real path_length);
 
 	} //sub namespace VASErin
 }
