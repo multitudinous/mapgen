@@ -2056,11 +2056,13 @@ void polyline(
 	if( options)    opt=*options;
 	if( in_options) inopt=*in_options;
 
+	/*
 	DEBUG("polyline points - count: %d", length);
 	for (int i = 0; i < length; i++)
 	{
 		DEBUG("Pt %d: %lf, %lf", i, PP[i].x, PP[i].y);
 	}
+	*/
 
 
 	/* if( opt.fallback)

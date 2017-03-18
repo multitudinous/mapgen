@@ -215,18 +215,20 @@ void GeoPoly::drawOutlineShader(DrawData *pdd, const Rgbf &color, float linew)
 void GeoPoly::drawOutlineVaser(DrawData *pdd, const Rgbf &color, float linew)
 {
 	LogTrace("drawOutlineVaser - pt count: %d", _pts.size());
-	//std::vector<Vec2> pts(_pts.size());
-	std::vector<Vec2> pts;
+	std::vector<Vec2> pts(_pts.size());
+	//std::vector<Vec2> pts;
 	for (size_t i = 0; i < _pts.size(); i++)
 	{
+		/*
 		Vec2 pt;
 		pt.x = _pts[i].dX;
 		pt.y = _pts[i].dY;
 		pts.push_back(pt);
-		//pts[i].x = _pts[i].dX;
-		//pts[i].y = _pts[i].dY;
+		*/
+		pts[i].x = _pts[i].dX;
+		pts[i].y = _pts[i].dY;
 
-		LogTrace("pt %d: orig(%lf, %lf), convert(%lf, %lf), assign(%lf, %lf)", i, _pts[i].dX, _pts[i].dY, pts[i].x, pts[i].y, pt.x, pt.y);
+		//LogTrace("pt %d: orig(%lf, %lf), convert(%lf, %lf), assign(%lf, %lf)", i, _pts[i].dX, _pts[i].dY, pts[i].x, pts[i].y, pt.x, pt.y);
 	}
 
 	Color col;
