@@ -13,7 +13,7 @@ namespace VASEr
 				static size_t count = 0;
 				count++;
 
-				if (count > 823)
+				if (count > 815)
 				{
 					return;
 				}
