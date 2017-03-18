@@ -33,12 +33,8 @@ namespace VASEr
 				}
 				*/
 
-				if (count <= 818)
-				{
-					return;
-				}
 
-				//if (count == 819) return;
+				if (count != 819) return;
 
 				int type = GL_FLOAT;
 				if (sizeof(real) == 8) type = GL_DOUBLE;
@@ -50,15 +46,14 @@ namespace VASEr
 				
 
 				
-				/*
-				DEBUG("draw count %d", count);
+				
+				DEBUG("draw count %d, glmode: %d, %0xX", count, vah.glmode, vah.glmode);
 
 				
 				for (size_t i = 0; i < vah.vert.size(); i += 2)
 				{
 					DEBUG("vaser pt %lf, %lf", vah.vert[i], vah.vert[i + 1]);
 				}
-				*/
 				
 				
 			}
