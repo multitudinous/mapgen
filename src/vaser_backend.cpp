@@ -13,14 +13,15 @@ namespace VASEr
 				static size_t count = 0;
 				count++;
 
-				/*
+				
 				if (count > 818)
 				{
-					return;
+					glFinish();
+					//return;
 				}
-				*/
+				
 
-				if (count == 819) return;
+				//if (count == 819) return;
 
 				int type = GL_FLOAT;
 				if (sizeof(real) == 8) type = GL_DOUBLE;
