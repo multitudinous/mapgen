@@ -10,23 +10,31 @@ namespace VASEr
 		{
 			if (vah.count > 0) //save some effort
 			{
+				static size_t count = 0;
+				count++;
+
+				if (count > 50)
+				{
+					return;
+				}
+
 				int type = GL_FLOAT;
 				if (sizeof(real) == 8) type = GL_DOUBLE;
 				//int type = GL_DOUBLE;
 				
-				/*
+				
 				glVertexPointer(2, type, 0, &vah.vert[0]);
 				glColorPointer(4, GL_FLOAT, 0, &vah.color[0]);
 				glDrawArrays(vah.glmode, 0, vah.count);
-				*/
+				
 
 				
-				/*
+				DEBUG("draw count %d", count);
 				for (size_t i = 0; i < vah.vert.size(); i += 2)
 				{
 					DEBUG("vaser pt %lf, %lf", vah.vert[i], vah.vert[i + 1]);
 				}
-				*/
+				
 			}
 		}
 
