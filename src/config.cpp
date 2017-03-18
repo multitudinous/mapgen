@@ -21,6 +21,8 @@ Config::Config()
     _jtaaOn = false;
     _jtaaSamp = 16;
     _jtaaoffset = 1;
+
+	_mapExtentsInflatePer = .02;
 }
 
 bool Config::windowless()

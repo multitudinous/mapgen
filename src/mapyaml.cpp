@@ -194,7 +194,7 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
     else
     {
         LogTrace("%s Map extents not set or not valid, so zooming to data extents.", func);
-        pgis->zoomExtents(.02);
+        pgis->zoomExtents(_cfg->mapExtentsInflatePer());
     }
 
 
@@ -277,6 +277,7 @@ void MapYaml::loadOutput(const YAML::Node& node)
     _cfg->lyrOutMode(getBool(node, "layeroutmode", _cfg->lyrOutMode()));
     _cfg->colrClear(getColorRgbf(node, "bgcolor", _cfg->colrClear()));
     _cfg->mapExtents(getExtents(node, "extents"));
+	_cfg->mapExtentsInflatePer(getDbl(node, "extentsinflate", _cfg->mapExtentsInflatePer()));
     _cfg->msaaOn(getBool(node, "msaa", _cfg->msaaOn()));
     _cfg->msaaSamples(getInt(node, "msamples", _cfg->msaaSamples()));
     _cfg->ssaaOn(getBool(node, "ssaa", _cfg->ssaaOn()));

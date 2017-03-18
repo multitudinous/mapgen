@@ -49,6 +49,7 @@ file: "somefile.png"        # file to output to, if no path is given it will sav
 layeroutmode: true | false  # if true, each layer will be output to its own png file with a transparent background, using the "name of the layer.png", the path will be the same path as the output file
 bgcolor: #FFFFFF            # optional if you want to set the background color, default is white, for layer output it won't matter
 extents: l,r,t,b            # optional if you want to force the extents of the map you can here, otherwise map will automatically zoom to extents of the data
+extentsinflate: 0.02        # optional if not specifying extents, then extents are computed, you can inflate by a percent of the extents.. currently this is defaulted to .02 (2%)
 msaa: true                  # enable or disable multisample rendering here (this affects each layer output and is the default for all layers, you can enable or disable this per layer.. see map object below)
 msamples: 16                # number of samples used for multisample rendering
 ssaa: true                  # enable or disable super sample antialiasing rendering

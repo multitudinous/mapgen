@@ -44,6 +44,8 @@ public:
     const Extents& mapExtents() const { return _mapExtents;  }
     void mapExtents(const Extents &e) { _mapExtents = e; }
     bool mapExentsValid() const { return (fabs(_mapExtents.area()) > 0.0001); }
+	double mapExtentsInflatePer() const { return _mapExtentsInflatePer;  }
+	void mapExtentsInflatePer(double per) { _mapExtentsInflatePer = per; }
 
     bool msaaOn() const { return _msaaOn;  }
     void  msaaOn(bool on) { _msaaOn = on; }
@@ -80,6 +82,7 @@ protected:
     std::string _datafile;
 
     Extents _mapExtents;
+	double _mapExtentsInflatePer;
 
     bool _msaaOn;
     int _samples;
