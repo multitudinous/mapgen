@@ -34,7 +34,7 @@ namespace VASEr
 				*/
 
 
-				if (count != 819) return;
+				if (count != 820) return;
 
 				int type = GL_FLOAT;
 				if (sizeof(real) == 8) type = GL_DOUBLE;
