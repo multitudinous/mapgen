@@ -447,6 +447,7 @@ void push_quad_( short line, vertex_array_holder& core,
 		const Color& c0, const Color& c1, const Color& c2, const Color& c3)
 {
 
+	line = 0; // get rid of not used warning
 	/*
 	if( P0.is_zero()) DEBUG("pushed P0 (0,0) at %d\n",line);
 	if( P1.is_zero()) DEBUG("pushed P1 (0,0) at %d\n",line);
@@ -501,7 +502,7 @@ int triangle_knife_cut( const Point& kn1, const Point& kn2, const Point& kn_out,
 	int points_cut_away = 0;
 	
 	bool kn_colored = kC0 && kC1; //if true, use the colors of knife instead
-	bool std_sign = Point::signed_area( kn1,kn2,kn_out) > 0;
+	bool std_sign = (Point::signed_area( kn1,kn2,kn_out) > 0);
 	bool s1 = Point::signed_area( kn1,kn2,ST.T1[0])>0 == std_sign; //true means this point should be cut
 	bool s2 = Point::signed_area( kn1,kn2,ST.T1[1])>0 == std_sign;
 	bool s3 = Point::signed_area( kn1,kn2,ST.T1[2])>0 == std_sign;
@@ -716,15 +717,21 @@ void vah_N_knife_cut( vertex_array_holder& in, vertex_array_holder& out,
 			for ( int p=0; p<cur_count; p++) //each triangle to be cut
 			{
 				//perform cut
-				if ( ST[p].T1c > 0)
-					if ( kn_colored)
-					triangle_knife_cut( kn0[k], kn1[k], kn2[k],
-							   &kC0[k],&kC1[k],
-								ST[p]);
+				if (ST[p].T1c > 0)
+				{
+					if (kn_colored)
+					{
+						triangle_knife_cut(kn0[k], kn1[k], kn2[k],
+							&kC0[k], &kC1[k],
+							ST[p]);
+					}
 					else
-					triangle_knife_cut( kn0[k],kn1[k],kn2[k],
-							    0,0,ST[p]);
-				
+					{
+						triangle_knife_cut(kn0[k], kn1[k], kn2[k],
+							0, 0, ST[p]);
+					}
+				}
+
 				//push retaining part
 				if ( ST[p].T1c > 0) {
 					out.push( ST[p].T1[0], ST[p].C1[0]);
@@ -773,7 +780,8 @@ const real cri_core_adapt = 0.0001f;
 void anchor_late( const Vec2* P, const Color* C, st_polyline* SL,
 		vertex_array_holder& tris,
 		Point cap1, Point cap2)
-{	const int size_of_P = 3;
+{	
+	//const int size_of_P = 3; // not used
 
 	tris.set_gl_draw_mode(GL_TRIANGLES);
 	
@@ -1108,7 +1116,7 @@ void anchor_cap( const Vec2* P, const Color* C, st_polyline* SL,
 			else //if ( SL[i].djoint == PLC_butt | SL[i].cap == PLC_square | SL[i].cap == PLC_rect)
 			{	//rectangle caps
 				Point P_cur = P[i];
-				bool degen_nxt=0, degen_las=0;
+				//bool degen_nxt=0, degen_las=0; // NOT USED
 				if ( k == 0)
 					if ( SL[0].djoint==PLC_butt || SL[0].djoint==PLC_square)
 						P_cur -= cap1;
