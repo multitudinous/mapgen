@@ -66,7 +66,7 @@ namespace VASEr
 				}
 				*/
 
-				glPointSize(2);
+				glPointSize(10);
 				int v = 0;
 				glBegin(GL_POINTS);
 				for (int i = 0; i < vah.count; i++)
@@ -77,6 +77,7 @@ namespace VASEr
 					else if (i == 3) glColor3f(0, 1, 1);
 					
 					glVertex2d(vah.vert[v], vah.vert[v + 1]); v += 2;
+					break;
 				}
 				glEnd();
 
