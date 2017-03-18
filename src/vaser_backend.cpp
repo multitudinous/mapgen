@@ -13,6 +13,8 @@ namespace VASEr
 				static size_t count = 0;
 				count++;
 
+
+				/*
 				static size_t flushcount = 0;
 				flushcount++;
 
@@ -22,6 +24,7 @@ namespace VASEr
 					flushcount = 0;
 					glFinish();
 				}
+				*/
 
 				/*
 				if (count > 818)
@@ -29,7 +32,11 @@ namespace VASEr
 					return;
 				}
 				*/
-				
+
+				if (count <= 818)
+				{
+					return;
+				}
 
 				//if (count == 819) return;
 
