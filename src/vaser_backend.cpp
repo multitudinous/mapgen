@@ -39,15 +39,34 @@ namespace VASEr
 				int type = GL_FLOAT;
 				if (sizeof(real) == 8) type = GL_DOUBLE;
 				
-				
 				glVertexPointer(2, type, 0, &vah.vert[0]);
 				glColorPointer(4, GL_FLOAT, 0, &vah.color[0]);
 				glDrawArrays(vah.glmode, 0, vah.count);
+
+				int vnum = 0;
+				int tricount = vah.count - 2;
+				for (int i = 0; i < tricount; i++)
+				{
+					float r = 1, g = 0, b=0;
+					int v = vnum;
+					glBegin(GL_LINE_LOOP);
+						glColor3f(r, g, b);
+						glVertex2d(vah.vert[v], vah.vert[v + 1]); v += 2;
+						glVertex2d(vah.vert[v], vah.vert[v + 1]); v += 2;
+						glVertex2d(vah.vert[v], vah.vert[v + 1]); v += 2;
+					glEnd();
+
+					vnum += 2;
+					r = 0; 
+					g = 0;
+					b = 1;
+				}
+
 				
 
 				
 				
-				DEBUG("draw count %d, glmode: %d, %0xX", count, vah.glmode, vah.glmode);
+				DEBUG("draw count %d, array count: %d, glmode: %d, 0x%X", count, vah.count, vah.glmode, vah.glmode);
 
 				
 				for (size_t i = 0; i < vah.vert.size(); i += 2)
