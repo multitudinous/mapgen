@@ -16,6 +16,11 @@ namespace VASEr
 				glVertexPointer(2, type, 0, &vah.vert[0]);
 				glColorPointer(4, GL_FLOAT, 0, &vah.color[0]);
 				glDrawArrays(vah.glmode, 0, vah.count);
+
+				for (size_t i = 0; i < vah.vert.size(); i += 2)
+				{
+					DEBUG("vaser pt %lf, %lf", vah.vert[i], vah.vert[i + 1]);
+				}
 			}
 		}
 

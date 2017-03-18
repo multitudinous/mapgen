@@ -39,7 +39,8 @@ void Logger::logMsg(const tchar *pacMsg)
 #ifdef _MSC_VER
 	//OutputDebugString(pacMsg);
 #endif
-	std::cout << pacMsg << std::endl;
+	//std::cout << pacMsg << std::endl;
+	std::cout << pacMsg;
 
     if (_fp)
     {
