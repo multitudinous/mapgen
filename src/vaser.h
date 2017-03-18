@@ -17,7 +17,8 @@ typedef your_color Color;
 #define real double
 //#define real float
 
-struct Vec2 { real x, y; };
+//struct Vec2 { real x, y; };
+struct Vec2 { double x, y; };
 struct Color { float r, g, b, a; };
 
 #define VASER_DEBUG 1
