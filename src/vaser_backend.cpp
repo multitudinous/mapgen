@@ -39,10 +39,13 @@ namespace VASEr
 				int type = GL_FLOAT;
 				if (sizeof(real) == 8) type = GL_DOUBLE;
 				
+				/*
 				glVertexPointer(2, type, 0, &vah.vert[0]);
 				glColorPointer(4, GL_FLOAT, 0, &vah.color[0]);
 				glDrawArrays(vah.glmode, 0, vah.count);
+				*/
 
+				/*
 				int vnum = 0;
 				int tricount = vah.count - 2;
 				for (int i = 0; i < tricount; i++)
@@ -61,6 +64,21 @@ namespace VASEr
 					g = 0;
 					b = 1;
 				}
+				*/
+
+				glPointSize(2);
+				int v = 0;
+				glBegin(GL_POINTS);
+				for (int i = 0; i < vah.count; i++)
+				{
+					if (i == 0) glColor3f(1, 0, 0);
+					else if (i == 1) glColor3f(0, 0, 1);
+					else if (i == 2) glColor3f(1, 0, 1);
+					else if (i == 3) glColor3f(0, 1, 1);
+					
+					glVertex2d(vah.vert[v], vah.vert[v + 1]); v += 2;
+				}
+				glEnd();
 
 				
 
@@ -87,7 +105,7 @@ namespace VASEr
 				type = GL_FLOAT;
 
 			glColor4f(C.r, C.g, C.b, C.a);
-			glLineWidth(W);
+			glLineWidth((float)W);
 			if (type)
 			{
 				glEnableClientState(GL_VERTEX_ARRAY);
