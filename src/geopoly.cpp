@@ -221,7 +221,9 @@ void GeoPoly::drawOutlineVaser(DrawData *pdd, const Rgbf &color, float linew)
 		Vec2 pt;
 		pt.x = _pts[i].dX;
 		pt.y = _pts[i].dY;
-		pts[i] = pt;
+		//pts[i] = pt;
+		pts[i].x = _pts[i].dX;
+		pts[i].y = _pts[i].dY;
 
 		LogTrace("pt %d: orig(%lf, %lf), convert(%lf, %lf)", i, _pts[i].dX, _pts[i].dY, pts[i].x, pts[i].y);
 	}
