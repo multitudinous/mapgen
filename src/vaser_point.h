@@ -220,6 +220,9 @@ namespace VASEr
 				real mua, mub;
 				real denom, numera, numerb;
 
+				static unsigned int testn = 0;
+				testn++;
+
 				denom = (P4.y - P3.y) * (P2.x - P1.x) - (P4.x - P3.x) * (P2.y - P1.y);
 				numera = (P4.x - P3.x) * (P1.y - P3.y) - (P4.y - P3.y) * (P1.x - P3.x);
 				numerb = (P2.x - P1.x) * (P1.y - P3.y) - (P2.y - P1.y) * (P1.x - P3.x);
@@ -235,6 +238,8 @@ namespace VASEr
 				if (negligible(denom)) {
 					Pout.x = 0;
 					Pout.y = 0;
+
+					DEBUG("intersect lines parallel: test: %d - pt1(%lf, %lf), pt2(%lf, %lf), pt3(%lf, %lf), pt4(%lf, %lf)", testn, P1.x, P1.y, P2.x, P2.y, P3.x, P3.y, P4.x, P4.y);
 					return 0; //meaning lines are parallel
 				}
 

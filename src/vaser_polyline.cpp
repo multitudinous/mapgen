@@ -1571,6 +1571,8 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 							P_nxt+T31, P_cur+T2,
 							interP);
 				
+				//DEBUG("intersection test: cos(angle)=%.4f, angle=%.4f(degree)", cos_tho, acos(cos_tho) * 180 / 3.14159);
+				
 				if ( result3) {
 					vP = interP - P_cur;
 					SL[i].vP=vP;
@@ -1578,7 +1580,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 				} else {
 					SL[i].vP=SL[i].T;
 					SL[i].vR=SL[i].R;
-					DEBUG( "intersection failed: cos(angle)=%.4f, angle=%.4f(degree)\n", cos_tho, acos(cos_tho)*180/3.14159);
+					DEBUG( "intersection failed: cos(angle)=%.4f, angle=%.4f(degree)", cos_tho, acos(cos_tho)*180/3.14159);
 				}
 			}
 			
