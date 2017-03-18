@@ -1431,7 +1431,7 @@ int anchor( st_anchor& SA, const polyline_opt* options, bool cap_first, bool cap
 		if ( weight[i]>=0.0 && weight[i]<1.0)
 		{
 			real f=weight[i];
-			C[i].a *=f;
+			C[i].a *= (float)f;
 		}
 	}
 	
@@ -1823,7 +1823,7 @@ void poly_point_inter( const Point* P, const Color* C, const real* W, const poly
 	else
 	{
 		p = (P[at]+P[at+1]) * t;
-		c = Color_between(color(at),color(at+1), t);
+		c = Color_between(color(at),color(at+1), (float)t);
 		w = (weight(at)+weight(at+1)) * t;
 	}
 	#undef color
