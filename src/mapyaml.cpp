@@ -194,7 +194,7 @@ bool MapYaml::load(YAML::Node &doc, GisSys *pgis)
     else
     {
         LogTrace("%s Map extents not set or not valid, so zooming to data extents.", func);
-        pgis->zoomExtents();
+        pgis->zoomExtents(.02);
     }
 
 

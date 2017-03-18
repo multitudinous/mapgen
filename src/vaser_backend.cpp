@@ -34,16 +34,16 @@ namespace VASEr
 				*/
 
 
-				if (count != 820) return;
+				//if (count != 820) return;
 
 				int type = GL_FLOAT;
 				if (sizeof(real) == 8) type = GL_DOUBLE;
 				
-				/*
+				
 				glVertexPointer(2, type, 0, &vah.vert[0]);
 				glColorPointer(4, GL_FLOAT, 0, &vah.color[0]);
 				glDrawArrays(vah.glmode, 0, vah.count);
-				*/
+				
 
 				/*
 				int vnum = 0;
@@ -66,6 +66,7 @@ namespace VASEr
 				}
 				*/
 
+				/*
 				glPointSize(10);
 				int v = 0;
 				glBegin(GL_POINTS);
@@ -92,6 +93,7 @@ namespace VASEr
 				{
 					DEBUG("vaser pt %lf, %lf", vah.vert[i], vah.vert[i + 1]);
 				}
+				*/
 				
 				
 			}
