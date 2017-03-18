@@ -13,12 +13,22 @@ namespace VASEr
 				static size_t count = 0;
 				count++;
 
+				static size_t flushcount = 0;
+				flushcount++;
+
 				
+				if (flushcount > 200)
+				{
+					flushcount = 0;
+					glFinish();
+				}
+
+				/*
 				if (count > 818)
 				{
-					glFinish();
-					//return;
+					return;
 				}
+				*/
 				
 
 				//if (count == 819) return;
@@ -33,14 +43,16 @@ namespace VASEr
 				
 
 				
+				/*
 				DEBUG("draw count %d", count);
 
-				/*
+				
 				for (size_t i = 0; i < vah.vert.size(); i += 2)
 				{
 					DEBUG("vaser pt %lf, %lf", vah.vert[i], vah.vert[i + 1]);
 				}
 				*/
+				
 				
 			}
 		}
