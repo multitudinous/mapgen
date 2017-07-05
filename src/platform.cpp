@@ -34,6 +34,10 @@ void Platform::getFontSearchPaths(std::vector<std::string> *list)
 #if defined(LINUX) || defined(__linux)
     list->push_back(std::string("/usr/share/fonts/"));
     list->push_back(std::string("~/.fonts/"));
+    if( char const* env_p = std::getenv( "MAPGEN_FONT_PATH" ) )
+    {
+        list->push_back( env_p );
+    }
 #endif
 }
 
