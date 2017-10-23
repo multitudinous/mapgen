@@ -6,7 +6,7 @@
 
 FILE *Logger::_fp = NULL;
 bool Logger::_logXml = false;
-#define MG_LOG_TRACE 1
+#define MG_LOG_TRACE 0
 #define MG_LOG_WARNING 1
 //============================================================================
 //============================================================================
