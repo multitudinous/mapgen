@@ -27,7 +27,7 @@ _seltext(true)
 
 //============================================================================
 //============================================================================
-GeoImgRaster::GeoImgRaster(PTexture tx, const Extents &ext) : 
+GeoImgRaster::GeoImgRaster(PTexture tx, const Extents &ext) :
 GeoImg(tx, ext),
 _cselimg({ 0, 0, 0, 0 }),
 _cselscr({ 0, 0, 0, 0 }),
@@ -78,7 +78,7 @@ void GeoImgRaster::draw(DrawData *pdd)
 
         // lets draw our results as a 2d overlay
     UtlGL::overaly2dInit();
-    
+
     PDrawAttr attrprev = pdd->_drawAttr;
     pdd->_drawAttr = pdd->_drawAttrOverlay;
     _seltext.draw(pdd);
@@ -169,7 +169,7 @@ void GeoImgRaster::runSel(DrawData *pdd)
     _cselgrd[2] = c.blue();
     _cselgrd[3] = c.alpha();
     */
-    
+
 
 
     _selmx = pdd->dataSel()->mx();
@@ -268,7 +268,7 @@ float GeoImgRaster::drawValidate(DrawData *pdd, FILE *pstFP)
     double u, v;
     double datav, datano, datana;
     std::vector<BYTE> cimg(4), cgrd(4), cscr(4);
-    
+
     int scrloc = 0;
     BYTE *pscr = (BYTE *)imgscr.getBuf();
     bool loggedUnExpeced = false;
@@ -280,7 +280,7 @@ float GeoImgRaster::drawValidate(DrawData *pdd, FILE *pstFP)
         // image is flipped so bottom is v == 1, top is v == 0
         v = 1 - ((double)(y - extscr.b) / (double)extscr.height());
         v = UtlMath::clamp(v, 0.0, 1.0);
-        
+
         for (int x = extscr.l; x < extscr.r; x++)
         {
             totalcount++;
@@ -312,8 +312,8 @@ float GeoImgRaster::drawValidate(DrawData *pdd, FILE *pstFP)
                 }
                 continue;
             }
-            
-            
+
+
 
             // lets compare colors
             bool output = false;
@@ -341,7 +341,7 @@ float GeoImgRaster::drawValidate(DrawData *pdd, FILE *pstFP)
             UtlString::format(sout1, "invalid x: %d, y: %d - %s\n", x, y, msg.c_str());
             UtlString::format(sout2, "invalid x: %d, y: %d\n", x, y);
             createInfoBlock(datav, datano, datana, cimg, cscr, cgrd, &sout2);
-            
+
             sout1 += sout2;
             if (errorcount < 20)
             {
@@ -428,7 +428,7 @@ int GeoImgRaster::dataValidate(float u, float v, double *datav, double *datano, 
     }
 
     BYTE *buf = (BYTE *)_tx->img()->getBuf();
-    *cimg = { 0, 0, 0, 255 };
+    *cimg = { 0, 0, 0, char(255) };
     (*cimg)[0] = buf[loc + 0];
     if (bytesperpix >= 3)
     {
@@ -457,12 +457,12 @@ int GeoImgRaster::dataValidate(float u, float v, double *datav, double *datano, 
     // get the screen color
     if (cscr)
     {
-        *cscr = { 0, 0, 0, 255 };
+      *cscr = { 0, 0, 0, char(255) };
         glReadPixels(sx, sy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &(*cscr)[0]);
     }
 
     // get the gradient color
-    *cgrd = { 0, 0, 0, 255 };
+    *cgrd = { 0, 0, 0, char(255) };
     QColor c = _picker->pickByPercent(*datana);
     (*cgrd)[0] = c.red();
     (*cgrd)[1] = c.green();
