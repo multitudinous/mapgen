@@ -331,17 +331,55 @@ PGlObj GeoJson::getPoly(OGRPolygon *ogrpoly)
 
     LogTrace("Polygon with %d points, interior rings: %d", poly->size(), ogrpoly->getNumInteriorRings());
 
+	/*
+	Point2d ptMax(-9999999999, -9999999999);
+	Point2d ptMin(9999999999, 9999999999);
+	for (int i = 0; i < poly->size(); i++)
+	{
+		Point2d pt = poly->getPts()[i];
+		if (pt.dX > ptMax.dX) ptMax.dX = pt.dX;
+		if (pt.dY > ptMax.dY) ptMax.dY = pt.dY;
+		if (pt.dX < ptMin.dX) ptMin.dX = pt.dX;
+		if (pt.dY < ptMin.dY) ptMin.dY = pt.dY;
+
+		//LogTrace("Pt %d: %f, %f", i, pt.x(), pt.y());
+	}
+
+	for (int i = 0; i < poly->size(); i++)
+	{
+		Point2d pt = poly->getPts()[i];
+
+		double x = pt.dX - ptMin.dX;
+		double y = pt.dY - ptMin.dY;
+
+		LogTrace("Pt %d: %f, %f", i, x, y);
+	}
+	*/
+
     return obj;
 }
 
 //============================================================================
 //============================================================================
-void GeoJson::getPoly(OGRLinearRing *ring, GeoPoly *poly)
+void GeoJson::getPoly(OGRLinearRing *ring, GeoPoly *poly, bool removeDups)
 {
 	for (int i = 0; i < ring->getNumPoints(); i++)
 	{
 		Point2d ptin(ring->getX(i), ring->getY(i)); //pt->getZ(i)
 		Point2d pt = convertPt(ptin, _trans);
+
+		if (!poly->size())
+		{
+			poly->push_back(pt);
+			continue;
+		}
+
+		if (poly->getPts()[poly->size() - 1] == pt)
+		{
+			LogWarning("Duplicate point found in polygon, pt will not be added");
+			continue;
+		}
+
 		poly->push_back(pt);
 	}
 }

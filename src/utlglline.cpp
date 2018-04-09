@@ -523,6 +523,7 @@ PVbo UtlGlLine::createLined(const ListPt2d &points, float thickness, int join, i
     dt.vert = GL_DOUBLE;
     PVbo vbo(new Vbo());
     vbo->create(n_vertices, sizeof(vertex_t), vertices, n_indices, indices, Vbo::SOffsets(Vbo::E_VTYPE_VCT_D), dt);
+
     return vbo;
 }
 

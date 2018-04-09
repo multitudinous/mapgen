@@ -17,6 +17,7 @@ public:
     virtual void initLabels(DrawData *pdd);
 
     void push_back(const Point2d &pt);
+	void pop_back(); // remove the last element
     size_t ptCount() const { return _pts.size(); }
     size_t size() const { return _pts.size(); }
     Point2d at(int i) const;

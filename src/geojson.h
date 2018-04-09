@@ -60,7 +60,7 @@ protected:
     int getGeometry(OGRLayer *plyr, std::vector<PGlObj> *vpolys);
     bool convertGeometry(OGRGeometry *geom, OGRFeatureDefn *poFDefn, OGRFeature *poFeature, std::vector<PGlObj> *vpolys);
     PGlObj getPoly(OGRPolygon *ogrpoly);
-	void getPoly(OGRLinearRing *ring, GeoPoly *poly);
+	void getPoly(OGRLinearRing *ring, GeoPoly *poly, bool removeDups=true);
     void initFields(GeoPoly *poly, OGRFeatureDefn *poFDefn, OGRFeature *poFeature);
 
     void logLayerNames();
